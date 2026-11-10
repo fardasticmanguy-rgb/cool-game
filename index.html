@@ -185,6 +185,10 @@ input:focus{border-color:var(--butter)}
 .gtog.on{border-color:var(--mint);color:var(--ink);text-decoration:none}
 .gtog[disabled],.seg[disabled]{cursor:default}
 .linkbtn{appearance:none;border:0;background:none;color:var(--butter);font-weight:800;font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
+.lhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.codebox{display:flex;flex-direction:column;align-items:center;gap:4px}
+.codebox b{font-family:var(--display);font-weight:400;font-size:28px;letter-spacing:.25em;color:var(--mint)}
+#jcode{font-family:var(--display);letter-spacing:.3em;text-transform:uppercase;text-align:center;max-width:140px}
 .big[data-act]{cursor:default;user-select:none;-webkit-user-select:none}
 @keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}15%{opacity:1;transform:translate(-50%,-70%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
 .emos{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
@@ -957,6 +961,12 @@ async function openPeerDirectory(options, { browsing = () => true } = {}) {
 
   return {
     peers: snapshot,
+    refresh() {
+      if (closed) return;
+      scanner.scan();
+      setTimeout(() => !closed && scanner.scan(), 900);
+      notify();
+    },
     settled: () => scanner.settled(),
     onPeers(listener) {
       listeners.add(listener);
@@ -2316,7 +2326,7 @@ function saveName(){
   ls.set("cp.name",me.name);
   if(el)el.value=me.name;
 }
-function newCode(){const a="bcdfghjkmnpqrstvwxz23456789";let s="";for(let i=0;i<8;i++)s+=a[ri(a.length)];return s}
+function newCode(){const a="bcdfghjkmnpqrstvwxz";let s="";for(let i=0;i<4;i++)s+=a[ri(a.length)];return s}
 function openList(){
   if(!dir)return[];
   const list=[];
@@ -2352,6 +2362,7 @@ async function enter(c,create){
     }
   }
   joining=false;menuNote="";
+  if(!create)ss.set("cp.rejoin",c);else ss.set("cp.rejoin","");
   nr=joined;code=c;practice=false;G=null;mySub=null;isHost=false;enteredAt=Date.now();lostSince=0;
   nr.presence({pid:me.pid,name:me.name,col:me.col,res:null,g:null}).catch(()=>{});
   nr.onPeers(()=>sync());
@@ -2368,7 +2379,7 @@ function startPractice(){
 }
 async function leave(){
   stopStage();
-  const r=nr;nr=null;
+  const r=nr;nr=null;ss.set("cp.rejoin","");
   if(r){try{await r.presence({g:null,res:null});await r.leave()}catch(e){}}
   isHost=false;practice=false;G=null;code=null;mySub=null;cPick=null;armX2=false;armSh=false;pX2=null;myAct=null;bSel=null;hSel=[];hMyKnown=null;hMyPend=null;chatLog=[];chatSig="";chatOpen=false;unread=0;
   lobbyPresence();
@@ -2389,7 +2400,7 @@ function emoBar(){
   const emos=EMO.map((e,i)=>!emoOk(i)?"":`<button class="emo${i===7?" wide":""}" data-act="emo" data-i="${i}" aria-label="React ${i===7?"بعبوص":e}">${e}</button>`).join("");
   return `<div class="emos">${emos}<button class="emo chatbtn" data-act="chat" aria-label="Chat">💬</button></div>`;
 }
-function topBar(label){return `<div class="top"><div class="rd">${label}</div><span class="sp"></span><button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>`}
+function topBar(label){return `<div class="top"><div class="rd">${label}</div><span class="sp"></span>${!isHost&&!practice?`<button class="mute" data-act="reload" title="Stuck? Reload and rejoin">↻</button>`:""}<button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>`}
 
 function menuHTML(){
   return `
@@ -2398,9 +2409,10 @@ function menuHTML(){
     <label for="nm">Your name</label>
     <input id="nm" maxlength="14" autocomplete="off" placeholder="Type a name" value="${esc(me.name)}">
     <div class="row"><button class="btn primary grow" data-act="quick" id="quickBtn">Quick play</button><button class="btn grow" data-act="create" id="createBtn">Host</button></div>
+    <div class="row"><input id="jcode" maxlength="4" autocomplete="off" placeholder="CODE" aria-label="Lobby code"><button class="btn grow" data-act="jcode" id="jcodeBtn">Join with code</button></div>
     <p id="netmsg" class="note"></p>
   </section>
-  <section class="panel"><h2>OPEN LOBBIES</h2><div id="opens" class="opens"></div></section>
+  <section class="panel"><div class="lhead"><h2>OPEN LOBBIES</h2><button class="btn small ghost" data-act="refresh" id="refreshBtn">↻ Refresh</button></div><div id="opens" class="opens"></div><p class="note">Don't see it? Tap Refresh, or ask for the 4-letter code.</p><p class="note ar" dir="rtl" lang="ar">مش لاقي اللوبي؟ دوس Refresh، أو اطلب الكود.</p></section>
   <button class="btn ghost" data-act="practice">Practice vs bots</button>
   <section class="rules">
     <h2>HOW TO PLAY</h2>
@@ -2433,7 +2445,7 @@ function renderMenuBits(){
   const msg=$("#netmsg"),opens=$("#opens");
   if(!msg||!opens)return;
   const off=!dir||joining;
-  $("#createBtn").disabled=off;$("#quickBtn").disabled=off;
+  $("#quickBtn").disabled=off;$("#createBtn").disabled=!window.Peer||joining;const jb=$("#jcodeBtn");if(jb)jb.disabled=!window.Peer||joining;
   const warn=(menuNote&&!joining)||netState==="none";
   const text=menuNote||(netState==="wait"?"Connecting…":netState==="none"?"Online didn't load. Practice still works.":"Quick play joins an open lobby, or opens one for you.");
   if(msg.textContent!==text)msg.textContent=text;
@@ -2492,7 +2504,7 @@ function lobbyParts(){
   const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${free<=0?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to tap Start.</p>`;
   return{
     "s-top":topBar("LOBBY"),
-    "s-head":`<section class="panel center"><div class="big" data-act="secret">${esc(nameOf(G.host))}'s lobby</div>${G.locked?`<p class="note warn">🔒 Lobby locked. New people can't join.</p>`:""}${G.ff?"":`<button class="ffbtn" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly OFF</button>`}${host&&showCode&&G.ff?`<div class="coderow"><input id="ffcode" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Code" aria-label="Code"><button class="btn small" data-act="ffcode">OK</button></div>`:""}${ffMsg&&G.ff?`<p class="note warn">${esc(ffMsg)}`:!G.ff?`<p class="note">Rude reactions are ON 😈 Tap the switch to turn them off.`:`<p class="note">`}</p></section>`,
+    "s-head":`<section class="panel center"><div class="big" data-act="secret">${esc(nameOf(G.host))}'s lobby</div>${code&&!practice?`<div class="codebox">Code: <b>${esc(code.toUpperCase())}</b><span class="note">Friends can type this if your lobby doesn't show up.<br><span dir="rtl" lang="ar">لو اللوبي مش ظاهر عند صحابك، يكتبوا الكود ده.</span></span></div>`:""}${G.locked?`<p class="note warn">🔒 Lobby locked. New people can't join.</p>`:""}${G.ff?"":`<button class="ffbtn" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly OFF</button>`}${host&&showCode&&G.ff?`<div class="coderow"><input id="ffcode" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Code" aria-label="Code"><button class="btn small" data-act="ffcode">OK</button></div>`:""}${ffMsg&&G.ff?`<p class="note warn">${esc(ffMsg)}`:!G.ff?`<p class="note">Rude reactions are ON 😈 Tap the switch to turn them off.`:`<p class="note">`}</p></section>`,
     "s-opts":optsHTML(host,lens),
     "s-list":`<section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2><div class="lob">${rows}${empty}</div></section>`,
     "s-act":actions,
@@ -2589,6 +2601,9 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b||b.disabled)return;
   const a=b.dataset.act;
   if(a==="quick")quickPlay();
+  else if(a==="jcode")joinCode();
+  else if(a==="reload")location.reload();
+  else if(a==="refresh"){if(dir&&dir.refresh){menuNote="Refreshing…";renderMenuBits();dir.refresh();setTimeout(()=>{if(menuNote==="Refreshing…"){menuNote="";renderMenuBits()}},2500)}else location.reload()}
   else if(a==="create")enter(newCode(),true);
   else if(a==="opengame")enter(b.dataset.code,false);
   else if(a==="practice")startPractice();
@@ -2615,7 +2630,10 @@ document.addEventListener("click",e=>{
   else if(a==="mute"){muted=!muted;ls.set("cp.mute",muted?"1":"0");if(!muted)tone(660,.08,"square",.03);render()}
 });
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="ffcode")tryCode()});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="jcode")joinCode()});
+function joinCode(){const i=$("#jcode");const c=(i?i.value:"").toLowerCase().replace(/[^a-z]/g,"");if(c.length!==4){menuNote="Codes are 4 letters.";renderMenuBits();return}enter(c,false)}
 document.addEventListener("input",e=>{
+  if(e.target.id==="jcode")e.target.value=e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,4);
   if(e.target.id==="nm"){const v=clean(e.target.value);if(v){me.name=v;ls.set("cp.name",v)}}
 });
 
@@ -2630,6 +2648,7 @@ function loadScript(src){return new Promise(r=>{const s=document.createElement("
   netState=dir?"ok":"none";
   if(dir)dir.onPeers(()=>{if(screen==="menu")renderMenuBits()});
   render();renderMenuBits();
+  const rj=ss.get("cp.rejoin");if(rj&&screen==="menu"){menuNote="Rejoining…";enter(rj,false)}
 })();
 window.addEventListener("pagehide",()=>{try{nr&&nr.leave()}catch(e){}});
 </script>
