@@ -1,38 +1,40 @@
 # Crashpot
 
-A quick card game for 2 to 6 players. One game takes under a minute.
+A party of tiny games for 2 to 6 players. No talking needed.
 
 **Play:** https://fardasticmanguy-rgb.github.io/cool-game/
 
-## How to play
+## How it works
 
-1. Pick a card.
-2. Same card as someone? You both get 0.
-3. Biggest card wins the coins.
-4. The red box changes the rule each round.
-5. One time per game, tap ×2 to double your round.
+1. Tap **Quick play** (or Host) and get your friends into the lobby.
+2. The host picks 4, 6 or 9 games and taps Start.
+3. Before each game, a box explains the rules with a countdown. Then the game starts.
+4. Win games to get points. Most points at the end wins.
 
 ## إزاي تلعب
 
-1. اختار كارت.
-2. نفس كارت حد تاني؟ انتو الاتنين تاخدوا صفر.
-3. أكبر كارت ياخد الفلوس.
-4. المربع الأحمر بيغير القاعدة كل دور.
-5. مرة واحدة في الجيم، دوس ×2 عشان تضاعف الدور.
+1. دوس **Quick play** وخلي صحابك يدخلوا اللوبي.
+2. الهوست يختار ٤ أو ٦ أو ٩ ألعاب ويدوس Start.
+3. قبل كل لعبة، في مربع بيشرح القواعد وعداد. بعدها اللعبة تبدأ.
+4. اكسب الألعاب عشان تاخد نقط. اللي معاه أكتر نقط في الآخر يكسب.
 
-## Twists
+## The games
 
-| Twist | Rule |
+| Game | What to do |
 | --- | --- |
-| High Roller | Biggest card wins |
-| Lowball | Smallest card wins |
-| Double Up | Biggest card wins double |
-| Landmine | A secret number is a bomb: −4 |
-| Payday | Everyone gets their card number in coins |
-| Heist | Winner steals 3 from 1st place |
-| Copycat | Match someone to win |
-| Bullseye | Closest to the target wins |
+| 🃏 Crash Cards | Pick a card nobody else picks |
+| 🚦 Green Light | Wait for green, then tap fast |
+| 👊 Button Masher | Tap as many times as you can |
+| 🧮 Math Rush | Answer as many as you can |
+| 🔍 Odd One Out | Find the different emoji |
+| ⏱️ Stop at 5 | Stop the hidden clock at 5.00 |
+| 🎨 Color Trap | Tap the color, not the word |
+| 🤝 Grab or Share | Share with everyone, or grab it all |
+| ⚖️ Pick a Side | The smaller side wins |
 
-## Playing with friends
+## Extras
 
-Tap **Quick play** to join an open lobby, or to open one if there isn't any. Lobbies also show up under **Open lobbies**. Tap the emoji buttons to react without talking. **Practice vs bots** works offline.
+- Emoji reactions to trash-talk without talking
+- **Family friendly** switch in the lobby hides rude reactions
+- Bots can fill empty seats
+- **Practice vs bots** works offline
