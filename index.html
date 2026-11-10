@@ -165,6 +165,16 @@ input:focus{border-color:var(--butter)}
 .handwrap{display:flex;flex-direction:column;gap:6px}
 .handlbl{align-items:center}
 .float{position:fixed;z-index:50;font-size:36px;line-height:1;pointer-events:none;transform:translate(-50%,-50%);animation:floatup 1.6s ease-out forwards}
+.float.txt{font-family:"Cairo",var(--body);font-size:17px;font-weight:800;background:var(--ink);color:var(--cardink);padding:7px 12px;border-radius:16px;white-space:nowrap;animation-duration:2.2s;box-shadow:0 4px 0 rgba(0,0,0,.3)}
+.emo.wide{width:54px}
+.emo.on{background:var(--butter)}
+.phrs{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:8px}
+.phr{appearance:none;border:0;background:var(--raise);color:var(--ink);border-radius:999px;padding:7px 12px;font-family:"Cairo",var(--body);font-weight:800;font-size:14px;cursor:pointer}
+.phr:active{transform:scale(.94)}
+.coderow{display:flex;gap:8px;width:100%;max-width:280px}
+.coderow input{padding:9px 12px;font-size:16px;text-align:center;letter-spacing:.2em}
+.ffbtn.nope{animation:shake .35s}
+.big[data-act]{cursor:default;user-select:none;-webkit-user-select:none}
 @keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}15%{opacity:1;transform:translate(-50%,-70%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
 .emos{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 .emo{appearance:none;border:0;background:var(--panel);border-radius:999px;width:42px;height:42px;font-size:21px;cursor:pointer;display:grid;place-items:center;transition:transform .1s;padding:0}
@@ -862,7 +872,11 @@ async function openPeerDirectory(options, { browsing = () => true } = {}) {
 <script>
 const INTRO_MS=6000,RESULT_MS=4800,GRACE_MS=1300,MAXP=6,RP=[5,3,2,1];
 const COLS=["#ff6b57","#ffd43b","#4be3b0","#6fb6ff","#ff8ad8","#c3a6ff"];
-const EMO=["😂","😭","😡","🔥","💀","👀","🖕"];
+const EMO=["😂","😭","😡","🔥","💀","👀","🖕","👉🍑"];
+const PHR=["خد في طيزك 🍑","يا ابن الجزمة 👞","يا حيوان 🐴","يا عرص","اتنيل 🙄","طظ فيك","يخربيتك 😂","يا معفن 🤢","يلعن أبوك","يا وسخ","إيه الهبل ده 🤡","روح العب بعيد يا فاشل"];
+const RUDE=6,FF_CODE="1936";
+const REACT=i=>i<EMO.length?EMO[i]:PHR[i-EMO.length];
+const REACT_TXT=i=>i===7?"👉🍑 بعبوص":i>=EMO.length?PHR[i-EMO.length]:"";
 const BOTN=["Bolt","Mochi","Pixel","Ziggy","Nugget","Waffles","Turbo","Pickle"];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1178,7 +1192,7 @@ function phaseSound(){
 }
 
 function newLobby(){
-  return{gid:rid(),host:me.pid,v:0,phase:"lobby",len:6,ff:false,k:0,list:[],data:null,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],total:{},wins:{},rec:{},t0:0,dur:0,now:0,done:[],res:null,be:{}};
+  return{gid:rid(),host:me.pid,v:0,phase:"lobby",len:6,ff:true,k:0,list:[],data:null,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],total:{},wins:{},rec:{},t0:0,dur:0,now:0,done:[],res:null,be:{}};
 }
 function lobbyRoster(){
   const out=[],seen=new Set();
@@ -1234,8 +1248,9 @@ function collectOne(p){
 function botEmotes(pts,best){
   for(const p of G.roster){
     if(!p.bot||Math.random()<.5)continue;
-    const pool=pts[p.id]===best&&best>0?[0,3,6]:pts[p.id]>0?[5,0]:[1,2,4,6];
-    const ok=pool.filter(emoOk);
+    let pool=pts[p.id]===best&&best>0?[0,3,6,7,EMO.length+6,EMO.length]:pts[p.id]>0?[5,0]:[1,2,4,6,7,EMO.length+1,EMO.length+4,EMO.length+8,EMO.length+10];
+    if(!G.ff&&Math.random()<.5)pool=pool.filter(i=>i>=RUDE);
+    const ok=pool.filter(emoOk);if(!ok.length)continue;
     const prev=G.be[p.id];G.be[p.id]={i:ok[ri(ok.length)],n:(prev?prev.n:0)+1};
   }
 }
@@ -1248,7 +1263,22 @@ function addBot(){
   G.roster.push({id:"bot-"+rid(),name,col,bot:true});publish();
 }
 function rmBot(id){if(!G)return;G.roster=G.roster.filter(r=>!(r.bot&&r.id===id));publish()}
-function toggleFF(){if(!G||!isHost)return;G.ff=!G.ff;publish()}
+let showCode=false,ffMsg="",secretTaps=[];
+function toggleFF(){
+  if(!G||!isHost)return;
+  if(!G.ff){G.ff=true;showCode=false;ffMsg="";publish();return}
+  ffMsg="🔒 Locked";render();setTimeout(()=>{if(ffMsg==="🔒 Locked"){ffMsg="";render()}},1500);
+}
+function secretTap(){
+  if(!G||!isHost||!G.ff)return;
+  const now=Date.now();secretTaps=secretTaps.filter(t=>now-t<2500);secretTaps.push(now);
+  if(secretTaps.length>=5){secretTaps=[];showCode=true;ffMsg="";render();setTimeout(()=>{const i=$("#ffcode");if(i)i.focus()},50)}
+}
+function tryCode(){
+  const i=$("#ffcode");if(!i||!G||!isHost)return;
+  if(i.value.trim()===FF_CODE){G.ff=false;showCode=false;ffMsg="";publish()}
+  else{ffMsg="Wrong code";i.value="";render()}
+}
 function setLen(n){if(!G||!isHost||G.phase!=="lobby")return;G.len=n;publish()}
 
 function hostTick(force){
@@ -1320,20 +1350,25 @@ function watchdog(){
 }
 
 function checkEmotes(){
-  if(nr)for(const p of nr.peers()){if(p.sameTab)continue;const pr=p.presence||{};if(typeof pr.pid==="string")seeEmo(pr.pid,pr.emo,true)}
-  if(G&&G.be)for(const id in G.be)seeEmo(id,G.be[id],false);
+  if(nr)for(const p of nr.peers()){
+    if(p.sameTab)continue;
+    const pr=p.presence||{};if(typeof pr.pid!=="string")continue;
+    if(!seenEmo.has(pr.pid)){seenEmo.set(pr.pid,pr.emo&&Number.isInteger(pr.emo.n)?pr.emo.n:0);continue}
+    seeEmo(pr.pid,pr.emo);
+  }
+  if(G&&G.be)for(const id in G.be)seeEmo(id,G.be[id]);
 }
-function seeEmo(id,e,skipFirst){
-  if(!e||typeof e!=="object"||!EMO[e.i]||!Number.isInteger(e.n))return;
-  const had=seenEmo.has(id),last=seenEmo.get(id)||0;
-  if(had&&e.n<=last)return;
+function seeEmo(id,e){
+  if(!e||typeof e!=="object"||!Number.isInteger(e.i)||!REACT(e.i)||!Number.isInteger(e.n))return;
+  if(e.n<=(seenEmo.get(id)||0))return;
   seenEmo.set(id,e.n);
-  if((had||!skipFirst)&&emoOk(e.i))spawnEmo(id,EMO[e.i]);
+  if(emoOk(e.i))spawnEmo(id,e.i);
 }
-function spawnEmo(id,emoji){
+function spawnEmo(id,i){
   const el=document.querySelector(`[data-pid="${CSS.escape(id)}"]`);
-  const f=document.createElement("span");
-  f.className="float";f.textContent=emoji;
+  const f=document.createElement("span"),txt=REACT_TXT(i);
+  f.className="float"+(txt?" txt":"");f.textContent=txt||REACT(i);
+  if(txt){f.dir="rtl";f.lang="ar"}
   if(el){const r=el.getBoundingClientRect();f.style.left=(r.left+r.width/2+ri(24)-12)+"px";f.style.top=(r.top+r.height/2)+"px"}
   else{f.style.left=(window.innerWidth/2+ri(80)-40)+"px";f.style.top=(window.innerHeight-90)+"px"}
   document.body.append(f);
@@ -1341,9 +1376,9 @@ function spawnEmo(id,emoji){
 }
 function sendEmo(i){
   const now=Date.now();
-  if(now-lastEmoAt<450||!EMO[i]||!emoOk(i))return;
+  if(now-lastEmoAt<450||!emoOk(i))return;
   lastEmoAt=now;emoN++;
-  spawnEmo(me.pid,EMO[i]);
+  spawnEmo(me.pid,i);
   if(nr&&!practice)nr.presence({emo:{i,n:emoN}}).catch(()=>{});
 }
 
@@ -1421,8 +1456,14 @@ function submit(v){
   if(isHost)hostTick();
 }
 
-function emoOk(i){return !(i===6&&G&&G.ff)}
-function emoBar(){return `<div class="emos">${EMO.map((e,i)=>!emoOk(i)?"":`<button class="emo" data-act="emo" data-i="${i}" aria-label="React ${e}">${e}</button>`).join("")}</div>`}
+let showPhr=false;
+function emoOk(i){return Number.isInteger(i)&&!!REACT(i)&&!(i>=RUDE&&(!G||G.ff))}
+function emoBar(){
+  const emos=EMO.map((e,i)=>!emoOk(i)?"":`<button class="emo${i===7?" wide":""}" data-act="emo" data-i="${i}" aria-label="React ${i===7?"بعبوص":e}">${e}</button>`).join("");
+  const rude=G&&!G.ff;
+  const phr=rude&&showPhr?`<div class="phrs" dir="rtl" lang="ar">${PHR.map((t,k)=>`<button class="phr" data-act="emo" data-i="${EMO.length+k}">${esc(t)}</button>`).join("")}</div>`:"";
+  return `<div class="emos">${emos}${rude?`<button class="emo${showPhr?" on":""}" data-act="phr" aria-label="Phrases">💬</button>`:""}</div>${phr}`;
+}
 function topBar(label){return `<div class="top"><div class="rd">${label}</div><span class="sp"></span><button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>`}
 
 function menuHTML(){
@@ -1493,7 +1534,7 @@ function lobbyParts(){
   const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${free<=0?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to tap Start.</p>`;
   return{
     "s-top":topBar("LOBBY"),
-    "s-head":`<section class="panel center"><div class="big">${esc(nameOf(G.host))}'s lobby</div><div class="segs"><span class="note">Games:</span>${lens}</div><button class="ffbtn${G.ff?" on":""}" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly ${G.ff?"ON":"OFF"}</button><p class="note">${G.ff?"Rude reactions are hidden.":"All reactions allowed. Host can switch on Family friendly."}</p></section>`,
+    "s-head":`<section class="panel center"><div class="big" data-act="secret">${esc(nameOf(G.host))}'s lobby</div><div class="segs"><span class="note">Games:</span>${lens}</div><button class="ffbtn${G.ff?" on":""}${ffMsg?" nope":""}" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly ${G.ff?"ON 🔒":"OFF"}</button>${host&&showCode&&G.ff?`<div class="coderow"><input id="ffcode" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Secret code" aria-label="Secret code"><button class="btn small" data-act="ffcode">Unlock</button></div>`:""}<p class="note${ffMsg?" warn":""}">${ffMsg?esc(ffMsg):G.ff?"Rude stuff is hidden.":"Rude reactions are ON 😈 Tap the switch to turn Family friendly back on."}</p></section>`,
     "s-list":`<section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2><div class="lob">${rows}${empty}</div></section>`,
     "s-act":actions,
     "s-emo":emoBar()
@@ -1590,10 +1631,14 @@ document.addEventListener("click",e=>{
   else if(a==="rmbot")rmBot(b.dataset.id);
   else if(a==="len")setLen(+b.dataset.n);
   else if(a==="ff")toggleFF();
+  else if(a==="secret")secretTap();
+  else if(a==="ffcode")tryCode();
+  else if(a==="phr"){showPhr=!showPhr;render()}
   else if(a==="start"||a==="again")startGame();
   else if(a==="emo")sendEmo(+b.dataset.i);
   else if(a==="mute"){muted=!muted;ls.set("cp.mute",muted?"1":"0");if(!muted)tone(660,.08,"square",.03);render()}
 });
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="ffcode")tryCode()});
 document.addEventListener("input",e=>{
   if(e.target.id==="nm"){const v=clean(e.target.value);if(v){me.name=v;ls.set("cp.name",v)}}
 });
