@@ -35,6 +35,6 @@ A party of tiny games for 2 to 6 players. No talking needed.
 ## Extras
 
 - Emoji reactions to trash-talk without talking
-- **Family friendly** switch in the lobby hides rude reactions
+- **Family friendly** mode is on by default
 - Bots can fill empty seats
 - **Practice vs bots** works offline
