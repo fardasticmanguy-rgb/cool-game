@@ -346,7 +346,15 @@ input:focus{border-color:var(--butter)}
 .hmap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;max-width:420px}
 .spot{appearance:none;border:2px solid transparent;background:var(--bg);color:var(--ink);border-radius:12px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;cursor:default;padding:2px;font:inherit}
 .spot .se{font-size:clamp(22px,7vw,30px);line-height:1}
-.spot .sn{font-size:10px;font-weight:700;color:var(--dim)}
+.spot .sn{font-size:10px;font-weight:700;color:var(--dim);line-height:1.1}
+.spot .sn.ar{font-family:"Cairo",var(--body);font-size:10px}
+.bact small{display:block;font-family:"Cairo",var(--body);font-size:13px;font-weight:800;opacity:.8}
+.bhelp{margin:0;font-size:12px;color:var(--dim);line-height:1.4}
+.bhelp span{display:block;font-family:"Cairo",var(--body);font-weight:700}
+.bl small{display:block;font-family:"Cairo",var(--body);font-weight:700;color:var(--dim);font-size:13px}
+.prompt .ar,.prompt span.ar{display:block;font-family:"Cairo",var(--body);font-weight:700;color:var(--dim);font-size:14px}
+.role .ran{font-family:"Cairo",var(--body);font-weight:800;font-size:13px;color:var(--butter)}
+.hinfo span{font-family:"Cairo",var(--body)}
 .spot .sw3{position:absolute;bottom:2px;left:2px;right:2px;font-size:9px;font-weight:800;background:var(--butter);color:var(--cardink);border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .spot.pickable{cursor:pointer;border-color:var(--line)}
 .spot.pickable:hover{border-color:var(--butter)}
@@ -1749,11 +1757,11 @@ document.addEventListener("keydown",e=>{
 });
 
 const ROLES={
-  fighter:{n:"Fighter",i:"🗡️",hp:10,atk:3,sp:"Power Slash",sd:"Attack with +3 damage.",sa:"ضربة قوية +٣.",tgt:true},
-  tank:{n:"Tank",i:"🛡️",hp:14,atk:2,sp:"Fortress",sd:"Parry everything and heal 2.",sa:"صد كل حاجة واشفي ٢.",tgt:false},
-  ninja:{n:"Ninja",i:"🥷",hp:8,atk:3,sp:"Shadow Strike",sd:"An attack that can't be parried.",sa:"ضربة محدش يقدر يصدها.",tgt:true},
-  healer:{n:"Healer",i:"💚",hp:9,atk:2,sp:"Heal",sd:"Heal yourself 4 HP.",sa:"اشفي نفسك ٤.",tgt:false},
-  berserk:{n:"Berserker",i:"🔥",hp:9,atk:4,sp:"Rage",sd:"Hit everyone for 2. Takes +1 damage from hits.",sa:"اضرب الكل ٢. بياخد ضربة زيادة ١.",tgt:false}
+  fighter:{a:"مقاتل",n:"Fighter",i:"🗡️",hp:10,atk:3,sp:"Power Slash",sd:"Attack with +3 damage.",sa:"ضربة قوية +٣.",tgt:true},
+  tank:{a:"دبابة",n:"Tank",i:"🛡️",hp:14,atk:2,sp:"Fortress",sd:"Parry everything and heal 2.",sa:"صد كل حاجة واشفي ٢.",tgt:false},
+  ninja:{a:"نينجا",n:"Ninja",i:"🥷",hp:8,atk:3,sp:"Shadow Strike",sd:"An attack that can't be parried.",sa:"ضربة محدش يقدر يصدها.",tgt:true},
+  healer:{a:"دكتور",n:"Healer",i:"💚",hp:9,atk:2,sp:"Heal",sd:"Heal yourself 4 HP.",sa:"اشفي نفسك ٤.",tgt:false},
+  berserk:{a:"المجنون",n:"Berserker",i:"🔥",hp:9,atk:4,sp:"Rage",sd:"Hit everyone for 2. Takes +1 damage from hits.",sa:"اضرب الكل ٢. بياخد ضربة زيادة ١.",tgt:false}
 };
 const ROLE_IDS=Object.keys(ROLES);
 const BSPEED={chill:{role:15000,turn:14000,rev:5500},normal:{role:12000,turn:10000,rev:4500},fast:{role:9000,turn:7000,rev:3500}};
@@ -1820,26 +1828,26 @@ function bResolve(){
   const parry=new Set(alive.filter(id=>A[id]&&(A[id].k==="parry"||(A[id].k==="sp"&&G.f[id].role==="tank"))));
   const hit=(a,t,amt,unblock,label)=>{
     if(G.f[t].role==="berserk")amt+=1;
-    if(parry.has(t)&&!unblock){dmg[a]+=2;lines.push(`🛡 ${nm(t)} parried ${nm(a)}! ${nm(a)} −2`);return}
-    dmg[t]+=amt;hitBy[t].push(a);lines.push(`${label} ${nm(a)} → ${nm(t)} −${amt}`);
+    if(parry.has(t)&&!unblock){dmg[a]+=2;lines.push([`🛡 ${nm(t)} parried ${nm(a)}! ${nm(a)} −2`,`${nm(t)} صد ضربة ${nm(a)}!`]);return}
+    dmg[t]+=amt;hitBy[t].push(a);lines.push([`${label} ${nm(a)} → ${nm(t)} −${amt}`,`${nm(a)} ضرب ${nm(t)}`]);
   };
   for(const id of alive){
     const a=A[id],f=G.f[id],R=ROLES[f.role];
-    if(!a){lines.push(`😶 ${nm(id)} froze`);continue}
+    if(!a){lines.push([`😶 ${nm(id)} froze`,`${nm(id)} اتنح ومعملش حاجة`]);continue}
     const bonus=f.chg?3:0;
     if(a.k==="atk"){hit(id,a.tg,R.atk+bonus,false,"⚔️");f.chg=0}
-    else if(a.k==="chg"){f.chg=1;lines.push(`⚡ ${nm(id)} is charging up`)}
+    else if(a.k==="chg"){f.chg=1;lines.push([`⚡ ${nm(id)} is charging up`,`${nm(id)} بيشحن`])}
     else if(a.k==="parry"){f.lp=G.bt}
     else if(a.k==="sp"){
       f.cd=3;
       if(f.role==="fighter"){hit(id,a.tg,R.atk+3+bonus,false,"💥");f.chg=0}
       else if(f.role==="ninja"){hit(id,a.tg,R.atk+bonus,true,"🥷");f.chg=0}
-      else if(f.role==="healer"){heal[id]+=4;lines.push(`💚 ${nm(id)} healed +4`)}
-      else if(f.role==="tank"){heal[id]+=2;f.lp=G.bt;lines.push(`🏰 ${nm(id)} built a fortress +2`)}
+      else if(f.role==="healer"){heal[id]+=4;lines.push([`💚 ${nm(id)} healed +4`,`${nm(id)} عالج نفسه`])}
+      else if(f.role==="tank"){heal[id]+=2;f.lp=G.bt;lines.push([`🏰 ${nm(id)} built a fortress +2`,`${nm(id)} عمل قلعة`])}
       else if(f.role==="berserk"){for(const t of alive)if(t!==id)hit(id,t,2+bonus,false,"🔥");f.chg=0}
     }
   }
-  for(const id of alive)if(A[id]&&A[id].k==="parry"&&!lines.some(l=>l.startsWith(`🛡 ${nm(id)} parried`)))lines.push(`🛡 ${nm(id)} parried nothing`);
+  for(const id of alive)if(A[id]&&A[id].k==="parry"&&!lines.some(l=>l[0].startsWith(`🛡 ${nm(id)} parried`)))lines.push([`🛡 ${nm(id)} parried nothing`,`${nm(id)} صد على الفاضي`]);
   const died=[];
   for(const id of alive){
     const f=G.f[id];
@@ -1847,7 +1855,7 @@ function bResolve(){
     if(f.cd>0&&!(A[id]&&A[id].k==="sp"))f.cd--;
     if(f.hp<=0){f.hp=0;f.alive=false;f.dt=G.bt;died.push(id);for(const k of new Set(hitBy[id]))if(G.f[k])G.f[k].kills++}
   }
-  died.forEach(id=>lines.push(`💀 ${nm(id)} is out!`));
+  died.forEach(id=>lines.push([`💀 ${nm(id)} is out!`,`${nm(id)} خرج من اللعبة!`]));
   G.blog=lines;G.bdied=died;
 }
 function bTick(now){
@@ -1901,20 +1909,21 @@ function bFighters(target){
 }
 function bRoleHTML(){
   const mine=myActNow();
-  return `<div class="table"><div class="headline">Pick your fighter</div><p class="sub">اختار الشخصية بتاعتك</p><div class="roles">${ROLE_IDS.map(id=>{const R=ROLES[id];return `<button class="role${mine&&mine.role===id?" sel":""}" data-act="brole" data-r="${id}" ${inRoster()?"":"disabled"}><span class="ri">${R.i}</span><b>${R.n}</b><span class="rs">❤️ ${R.hp} · ⚔️ ${R.atk}</span><span class="rsp">✨ ${esc(R.sp)}: ${esc(R.sd)}</span><span class="rsp ar" dir="rtl" lang="ar">${esc(R.sa)}</span></button>`}).join("")}</div><div class="secs" id="secs"></div></div>`;
+  return `<div class="table"><div class="headline">Pick your fighter</div><p class="sub ar" dir="rtl" lang="ar">اختار المقاتل بتاعك. كل واحد ليه صحة وضربة وحركة خاصة مختلفة.</p><div class="roles">${ROLE_IDS.map(id=>{const R=ROLES[id];return `<button class="role${mine&&mine.role===id?" sel":""}" data-act="brole" data-r="${id}" ${inRoster()?"":"disabled"}><span class="ri">${R.i}</span><b>${R.n}</b><span class="ran" dir="rtl" lang="ar">${R.a}</span><span class="rs">❤️ ${R.hp} · ⚔️ ${R.atk}</span><span class="rsp">✨ ${esc(R.sp)}: ${esc(R.sd)}</span><span class="rsp ar" dir="rtl" lang="ar">${esc(R.sa)}</span></button>`}).join("")}</div><div class="secs" id="secs"></div></div>`;
 }
 function bTurnHTML(){
   const f=G.f[me.pid],a=myActNow(),R=f&&ROLES[f.role];
-  if(!f||!f.alive)return `<div class="table bt">${bFighters(false)}<p class="sub">${f?"You're out. Watch the chaos 👀":"You're watching."}</p><div class="secs" id="secs"></div></div>`;
+  if(!f||!f.alive)return `<div class="table bt">${bFighters(false)}<p class="sub">${f?"You're out. Watch the chaos 👀 · خرجت، اتفرج 👀":"You're watching. · بتتفرج"}</p><div class="secs" id="secs"></div></div>`;
   const need=bSel&&(bSel.k==="atk"||(bSel.k==="sp"&&R.tgt));
   const lab=a?(a.k==="atk"?`⚔️ Attack → ${nm(a.tg)}`:a.k==="parry"?"🛡 Parry":a.k==="chg"?"⚡ Charge":`✨ ${esc(R.sp)}${a.tg?" → "+nm(a.tg):""}`):"";
   const btn=(k,t,dis)=>`<button class="bact${bSel&&bSel.k===k?" on":""}" data-act="bact" data-k="${k}" ${dis?"disabled":""}>${t}</button>`;
   return `<div class="table bt">${bFighters(need)}<div class="secs" id="secs"></div>
-  <div class="bacts">${btn("atk","⚔️ Attack")}${btn("parry","🛡 Parry",f.lp===G.bt-1)}${btn("chg","⚡ Charge",!!f.chg)}${btn("sp",`✨ ${esc(R.sp)}${f.cd>0?" ("+f.cd+")":""}`,f.cd>0)}</div>
-  <p class="prompt">${need?"Tap who to hit 👆":a?`Locked: <b>${lab}</b>`:"Choose your move"}</p></div>`;
+  <div class="bacts">${btn("atk","⚔️ Attack<small>اضرب</small>")}${btn("parry","🛡 Parry<small>صد</small>",f.lp===G.bt-1)}${btn("chg","⚡ Charge<small>اشحن</small>",!!f.chg)}${btn("sp",`✨ ${esc(R.sp)}${f.cd>0?" ("+f.cd+")":""}<small>حركة خاصة</small>`,f.cd>0)}</div>
+  <p class="bhelp">Parry blocks every hit and hurts whoever hit you (not 2 turns in a row). Charge = +3 on your next hit.<span dir="rtl" lang="ar">الصد بيمنع أي ضربة وبيأذي اللي ضربك (مش دورين ورا بعض). الشحن = +٣ على ضربتك الجاية.</span></p>
+  <p class="prompt">${need?"Tap who to hit 👆 <span class=ar dir=rtl lang=ar>دوس على اللي عايز تضربه</span>":a?`Locked: <b>${lab}</b> <span class=ar dir=rtl lang=ar>تمام، استنى الباقيين</span>`:"Choose your move <span class=ar dir=rtl lang=ar>اختار حركتك</span>"}</p></div>`;
 }
 function bRevealHTML(anim){
-  return `<div class="table bt${anim?" anim":""}">${bFighters(false)}<div class="blog">${(G.blog||[]).map((l,i)=>`<div class="bl late" style="--n:${i/1.5}">${l}</div>`).join("")}</div></div>`;
+  return `<div class="table bt${anim?" anim":""}">${bFighters(false)}<div class="blog">${(G.blog||[]).map((l,i)=>`<div class="bl late" style="--n:${i/1.5}">${Array.isArray(l)?`${l[0]}<small dir="rtl" lang="ar">${l[1]}</small>`:l}</div>`).join("")}</div></div>`;
 }
 function bRender(){
   layout("brawl",["s-top","timer","s-table","s-emo"]);
@@ -2045,7 +2054,7 @@ function hMapHTML(mode){
     if(searched)cls+=" searched";if(justS)cls+=" flash";if(i===mySpot&&!isSeek)cls+=" mine";if(fnd.length)cls+=" found";
     if(act!=="noop")cls+=" pickable";
     const who=[...fnd,...endH].map(x=>esc(nameOf(x.id))).join(", ");
-    return `<button class="spot${cls}" data-act="${act}" data-s="${i}" ${act==="noop"?"tabindex=\"-1\"":""}><span class="se">${s[0]}</span><span class="sn">${s[1]}</span>${who?`<span class="sw3">${who}</span>`:i===mySpot&&!isSeek?`<span class="sw3">YOU</span>`:""}</button>`;
+    return `<button class="spot${cls}" data-act="${act}" data-s="${i}" ${act==="noop"?"tabindex=\"-1\"":""}><span class="se">${s[0]}</span><span class="sn">${s[1]}</span><span class="sn ar" lang="ar">${s[2]}</span>${who?`<span class="sw3">${who}</span>`:i===mySpot&&!isSeek?`<span class="sw3">YOU</span>`:""}</button>`;
   }).join("")}</div>`;
 }
 function hMySpot(){
@@ -2070,20 +2079,20 @@ function hBodyHTML(anim){
   let banner,mode="view",prompt="";
   if(G.phase==="hide"){
     banner=isSeek?`<b>You're the SEEKER 👀</b><span dir="rtl" lang="ar">انت اللي بتدور. غمض عينك!</span>`:`<b>HIDE! 🙈</b><span dir="rtl" lang="ar">استخبى! ${sk} بيدور عليك.</span>`;
-    if(isSeek)prompt="Eyes closed… hiders are picking spots.";else if(inR){mode="hide";prompt=myActNow()?"Hidden! Tap another spot to switch.":"Tap a spot to hide in."}
+    if(isSeek)prompt="Eyes closed… hiders are picking spots.<span class=ar dir=rtl lang=ar>غمض عينك… الناس بتستخبى.</span>";else if(inR){mode="hide";prompt=myActNow()?"Hidden! Tap another spot to switch.<span class=ar dir=rtl lang=ar>استخبيت! دوس على مكان تاني لو عايز تغير.</span>":"Tap a spot to hide in.<span class=ar dir=rtl lang=ar>دوس على مكان عشان تستخبى فيه.</span>"}
   }else if(G.phase==="seek"){
     banner=isSeek?`<b>SEARCH! 🔦 Pick ${per} spot${per===1?"":"s"}</b><span dir="rtl" lang="ar">اختار ${per} أماكن تدور فيهم.</span>`:out?`<b>You got found 😭</b><span dir="rtl" lang="ar">اتمسكت!</span>`:`<b>Stay or sneak? 🤫</b><span dir="rtl" lang="ar">اقعد مكانك ولا اتحرك جنبك؟ الحركة بتعمل صوت!</span>`;
-    if(isSeek){mode="seek";prompt=myActNow()?`Searching ${myActNow().spots.length} spot${myActNow().spots.length===1?"":"s"}. Tap to change.`:`Select up to ${per}, then tap Search.`}
-    else if(!out&&inR){mode="move";prompt=myActNow()?(myActNow().mv===hMySpot()?"Staying put.":"Sneaking over…"):"Tap your spot to stay, or a spot next to it to move."}
+    if(isSeek){mode="seek";prompt=myActNow()?`Searching ${myActNow().spots.length} spot${myActNow().spots.length===1?"":"s"}. Tap to change.<span class=ar dir=rtl lang=ar>بتدور. دوس عشان تغير.</span>`:`Select up to ${per}, then tap Search.<span class=ar dir=rtl lang=ar>اختار لحد ${per} أماكن، وبعدين دوس Search.</span>`}
+    else if(!out&&inR){mode="move";prompt=myActNow()?(myActNow().mv===hMySpot()?"Staying put.<span class=ar dir=rtl lang=ar>قاعد مكانك.</span>":"Sneaking over…<span class=ar dir=rtl lang=ar>بتتسحب…</span>"):"Tap your spot to stay, or a spot next to it to move.<span class=ar dir=rtl lang=ar>دوس على مكانك عشان تفضل، أو على مكان جنبك عشان تتحرك.</span>"}
   }else if(G.phase==="hreveal"){
-    const l=G.hlast;banner=l.found.length?`<b>FOUND ${l.found.map(x=>esc(nameOf(x.id))).join(", ")}! 🎯</b>`:`<b>Nobody there… 🤷</b>`;
-    prompt=l.dodged.length?`🏃 ${l.dodged.map(id=>esc(nameOf(id))).join(", ")} slipped away just in time!`:"";
+    const l=G.hlast;banner=l.found.length?`<b>FOUND ${l.found.map(x=>esc(nameOf(x.id))).join(", ")}! 🎯</b><span dir="rtl" lang="ar">اتمسك: ${l.found.map(x=>esc(nameOf(x.id))).join("، ")}!</span>`:`<b>Nobody there… 🤷</b><span dir="rtl" lang="ar">مفيش حد هنا…</span>`;
+    prompt=l.dodged.length?`🏃 ${l.dodged.map(id=>esc(nameOf(id))).join(", ")} slipped away just in time!<span class=ar dir=rtl lang=ar>${l.dodged.map(id=>esc(nameOf(id))).join("، ")} هرب في آخر لحظة!</span>`:"";
   }else{
-    banner=`<b>Round over!</b><span dir="rtl" lang="ar">الجولة خلصت!</span>`;prompt=left?`${hLeft().map(id=>esc(nameOf(id))).join(", ")} survived (+5)`:"Everyone got found!";
+    banner=`<b>Round over!</b><span dir="rtl" lang="ar">الجولة خلصت!</span>`;prompt=left?`${hLeft().map(id=>esc(nameOf(id))).join(", ")} survived (+5)<span class=ar dir=rtl lang=ar>نجوا ومحدش لقاهم (+٥)</span>`:"Everyone got found!<span class=ar dir=rtl lang=ar>كله اتمسك!</span>";
   }
   const noise=G.hlast&&G.hlast.noise&&(G.phase==="seek")?`<div class="noise">🔊 You heard something on ${G.hlast.noise.txt} <span dir="rtl" lang="ar">(في صوت ${G.hlast.noise.ar})</span></div>`:"";
   const seekBtn=mode==="seek"?`<button class="btn primary" data-act="hgo" ${hSel.length?"":"disabled"}>Search ${hSel.length||""}</button>`:"";
-  return `<div class="table ht${anim?" anim":""}"><div class="hban${isSeek?" seek":""}">${banner}</div><div class="hinfo">Seeker: <b>${sk}</b> · Hiding: <b>${left}</b> · Search ${G.st}/3</div>${noise}${hMapHTML(mode)}<p class="prompt">${prompt}</p>${seekBtn}<div class="secs" id="secs"></div></div>`;
+  return `<div class="table ht${anim?" anim":""}"><div class="hban${isSeek?" seek":""}">${banner}</div><div class="hinfo">Seeker: <b>${sk}</b> · Hiding: <b>${left}</b> · Search ${G.st}/3<span dir="rtl" lang="ar"> · بيدور: ${sk} · مستخبيين: ${left}</span></div>${noise}${hMapHTML(mode)}<p class="prompt">${prompt}</p>${seekBtn}<div class="secs" id="secs"></div></div>`;
 }
 function hChips(){
   return `<div class="players">${G.roster.map(p=>{
