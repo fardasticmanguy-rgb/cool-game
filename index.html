@@ -174,6 +174,17 @@ input:focus{border-color:var(--butter)}
 .coderow{display:flex;gap:8px;width:100%;max-width:280px}
 .coderow input{padding:9px 12px;font-size:16px;text-align:center;letter-spacing:.2em}
 .ffbtn.nope{animation:shake .35s}
+.opts{gap:12px}
+.orow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ol{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:10px}
+.opts .segs{flex-wrap:wrap;justify-content:flex-end}
+.opts .seg{font-size:13px;padding:6px 10px}
+.gtogs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px}
+.gtog{appearance:none;border:2px solid var(--line);background:transparent;color:var(--dim);border-radius:10px;padding:7px 9px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;text-align:left;text-decoration:line-through}
+.gtog span{font-size:17px}
+.gtog.on{border-color:var(--mint);color:var(--ink);text-decoration:none}
+.gtog[disabled],.seg[disabled]{cursor:default}
+.linkbtn{appearance:none;border:0;background:none;color:var(--butter);font-weight:800;font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
 .big[data-act]{cursor:default;user-select:none;-webkit-user-select:none}
 @keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}15%{opacity:1;transform:translate(-50%,-70%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
 .emos{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
@@ -1192,19 +1203,21 @@ function phaseSound(){
 }
 
 function newLobby(){
-  return{gid:rid(),host:me.pid,v:0,phase:"lobby",len:6,ff:true,k:0,list:[],data:null,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],total:{},wins:{},rec:{},t0:0,dur:0,now:0,done:[],res:null,be:{}};
+  return{gid:rid(),host:me.pid,v:0,phase:"lobby",len:6,ff:true,games:GAME_IDS.slice(),speed:"normal",botlvl:"normal",locked:false,k:0,list:[],data:null,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],total:{},wins:{},rec:{},t0:0,dur:0,now:0,done:[],res:null,be:{}};
 }
 function lobbyRoster(){
   const out=[],seen=new Set();
   const add=(id,name,col,bot)=>{if(seen.has(id)||out.length>=MAXP)return;seen.add(id);out.push({id,name:clean(name)||"Player",col:(Math.abs(+col)||0)%COLS.length,bot:!!bot})};
   add(me.pid,me.name,me.col,false);
-  if(nr)for(const p of nr.peers()){const pr=p.presence||{};if(!p.sameTab&&typeof pr.pid==="string"&&pr.pid)add(pr.pid.slice(0,16),pr.name,pr.col,false)}
+  const known=new Set(((G&&G.roster)||[]).map(r=>r.id));
+  if(nr)for(const p of nr.peers()){const pr=p.presence||{};if(!p.sameTab&&typeof pr.pid==="string"&&pr.pid&&(!(G&&G.locked)||known.has(pr.pid.slice(0,16))))add(pr.pid.slice(0,16),pr.name,pr.col,false)}
   for(const b of((G&&G.roster)||[]).filter(r=>r.bot))add(b.id,b.name,b.col,true);
   return out;
 }
 function makeList(len){
   const out=[];let bag=[];
-  while(out.length<len){if(!bag.length)bag=shuffle(GAME_IDS).filter(id=>id!==out[out.length-1]);out.push(bag.shift())}
+  const pool=(G&&G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAMES[id]);
+  while(out.length<len){if(!bag.length){bag=shuffle(pool);if(pool.length>1&&bag[0]===out[out.length-1])bag.push(bag.shift())}out.push(bag.shift())}
   return out;
 }
 function startGame(){
@@ -1215,12 +1228,12 @@ function startGame(){
   beginIntro();publish();
 }
 function beginIntro(){
-  G.phase="intro";G.data=cur().setup();G.t0=Date.now();G.dur=INTRO_MS;G.done=[];G.res=null;H=freshH();mySub=null;
+  G.phase="intro";G.data=cur().setup();G.t0=Date.now();G.dur=(SPEED[G.speed]||SPEED.normal).intro;G.done=[];G.res=null;H=freshH();mySub=null;
 }
 function beginPlay(){
   const g=cur(),now=Date.now();
   G.phase="play";G.t0=now;G.dur=g.play+GRACE_MS;G.done=[];
-  for(const p of G.roster)if(p.bot){H.bots[p.id]=g.bot(G.data);H.botAt[p.id]=now+(g.early?900+ri(Math.min(5000,g.play-1500)):g.play+ri(500))}
+  for(const p of G.roster)if(p.bot){H.bots[p.id]=botValue(g);if(H.bots[p.id]==null)continue;H.botAt[p.id]=now+(g.early?900+ri(Math.min(5000,g.play-1500)):g.play+ri(500))}
 }
 function endPlay(){
   const g=cur(),V={};
@@ -1232,7 +1245,7 @@ function endPlay(){
   if(g.rec){const id=G.list[G.k];for(const pid in V){const v=V[pid];if(!g.rec.valid(v))continue;const r=G.rec[id];if(!r||(g.rec.lower?v<r.v:v>r.v))G.rec[id]={id:pid,v}}}
   const lab={};for(const pid in V)lab[pid]=(a.lab&&a.lab[pid])||g.fmt(V[pid],G.data);
   G.res={pts,lab,head:a.head};
-  G.phase="result";G.t0=Date.now();G.dur=RESULT_MS;
+  G.phase="result";G.t0=Date.now();G.dur=(SPEED[G.speed]||SPEED.normal).result;
   botEmotes(pts,best);
 }
 function collectOne(p){
@@ -1279,6 +1292,27 @@ function tryCode(){
   if(i.value.trim()===FF_CODE){G.ff=false;showCode=false;ffMsg="";publish()}
   else{ffMsg="Wrong code";i.value="";render()}
 }
+const SPEED={chill:{intro:8000,result:6000},normal:{intro:INTRO_MS,result:RESULT_MS},fast:{intro:4000,result:3200}};
+function botValue(g){
+  const lvl=G.botlvl||"normal";
+  if(lvl==="easy"&&Math.random()<.3)return null;
+  const tries=lvl==="hard"?3:lvl==="easy"?2:1,vals=Array.from({length:tries},()=>g.bot(G.data));
+  if(tries===1)return vals[0];
+  const ok=v=>!g.rec||g.rec.valid(v);
+  const lower=g.rec?g.rec.lower:g===GAMES.color?false:null;
+  if(lower===null)return vals[0];
+  const good=(a,b)=>!ok(a)?false:!ok(b)?true:lower?a<b:a>b;
+  return vals.reduce((a,b)=>lvl==="hard"?(good(b,a)?b:a):(good(b,a)?a:b));
+}
+function setOpt(k,v){
+  if(!G||!isHost||G.phase!=="lobby")return;
+  if(k==="speed"&&SPEED[v])G.speed=v;
+  if(k==="botlvl"&&["easy","normal","hard"].includes(v))G.botlvl=v;
+  if(k==="locked")G.locked=!G.locked;
+  if(k==="game"&&GAMES[v]){const on=G.games.includes(v);if(on&&G.games.length<=1)return;G.games=on?G.games.filter(x=>x!==v):[...G.games,v]}
+  if(k==="allgames")G.games=GAME_IDS.slice();
+  publish();
+}
 function setLen(n){if(!G||!isHost||G.phase!=="lobby")return;G.len=n;publish()}
 
 function hostTick(force){
@@ -1316,7 +1350,7 @@ function publish(){
 }
 function lobbyPresence(){
   if(!dir)return;
-  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase,r:G.k+1,l:G.list.length||G.len}:null;
+  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase==="lobby"&&G.locked?"locked":G.phase,r:G.k+1,l:G.list.length||G.len}:null;
   const s=JSON.stringify(listing);
   if(s!==lastLobby){lastLobby=s;Promise.resolve(dir.presence({listing})).catch(()=>{})}
 }
@@ -1400,7 +1434,7 @@ function openList(){
     const n=Math.min(MAXP,Math.max(0,+l.n||0)),b=Math.min(MAXP,Math.max(0,+l.b||0));
     list.push({code:l.code,host:clean(l.host)||"Someone",n,b,st:String(l.st||""),r:+l.r||0,l:+l.l||0});
   }
-  const rank=g=>(g.st==="lobby"&&g.n+g.b<MAXP?0:1);
+  const rank=g=>(g.st==="lobby"&&g.n+g.b<MAXP?0:g.st==="locked"?2:1);
   return list.sort((a,b)=>rank(a)-rank(b)||b.n-a.n||a.code.localeCompare(b.code));
 }
 function quickPlay(){
@@ -1500,7 +1534,7 @@ function renderMenuBits(){
     if(!list.length)html=`<div class="empty">${dir.settled&&!dir.settled()?"Looking for lobbies…":"No lobbies yet. Tap Quick play to open one."}</div>`;
     else html=list.map(g=>{
       const total=g.n+g.b,open=g.st==="lobby"&&total<MAXP;
-      const badge=g.st==="lobby"?(open?"Join":"Full"):g.st==="over"?"Ending":`Game ${g.r}/${g.l}`;
+      const badge=g.st==="locked"?"🔒 Locked":g.st==="lobby"?(open?"Join":"Full"):g.st==="over"?"Ending":`Game ${g.r}/${g.l}`;
       return `<button class="open" data-act="opengame" data-code="${g.code}" ${joining?"disabled":""}><span class="dot" style="background:${COLS[hash(g.code)%COLS.length]}"></span><span class="om"><b>${esc(g.host)}'s lobby</b><br>${g.n} player${g.n===1?"":"s"}${g.b?` + ${g.b} bot${g.b===1?"":"s"}`:""}</span><span class="ob${open?"":" busy"}">${badge}</span></button>`;
     }).join("");
   }
@@ -1525,16 +1559,29 @@ function resultHTML(){
   const rows=G.roster.slice().sort((a,b)=>(r.pts[b.id]||0)-(r.pts[a.id]||0)).map((p,i)=>`<div class="rr${(r.pts[p.id]||0)>0?" got":""}" style="--i:${i}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span><span class="l">${esc(r.lab[p.id]||"—")}</span><span class="p">${(r.pts[p.id]||0)>0?"+"+r.pts[p.id]:"0"}</span></div>`).join("");
   return `<div class="table anim"><div class="potlbl">${g.i} ${esc(g.n)}</div><div class="headline">${r.head}</div><div class="rres">${rows}</div><p class="note">${G.k+1>=G.list.length?"Final scores next…":"Next game coming up…"}</p></div>`;
 }
+function optsHTML(host,lens){
+  const dis=host?"":"disabled";
+  const seg=(k,opts,cur)=>opts.map(([v,l])=>`<button class="seg${cur===v?" on":""}" data-act="opt" data-k="${k}" data-v="${v}" ${dis}>${l}</button>`).join("");
+  const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
+  return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
+  <div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div>
+  <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
+  <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
+  <div class="orow"><span class="ol">Lock lobby</span><button class="ffbtn${G.locked?" on":""}" data-act="opt" data-k="locked" ${dis}><span class="sw2"><i></i></span>${G.locked?"Locked":"Open"}</button></div>
+  <div class="ol">Which games ${host?`<button class="linkbtn" data-act="opt" data-k="allgames" ${dis}>All on</button>`:""}</div>
+  <div class="gtogs">${games}</div></section>`;
+}
 function lobbyParts(){
   const host=isHost;
   const rows=G.roster.map(p=>`<div class="lp" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span>${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
   const free=MAXP-G.roster.length;
   const empty=free>0?`<div class="empty">${free} open seat${free===1?"":"s"}. Friends tap your lobby under Open lobbies.</div>`:"";
-  const lens=[4,6,9].map(n=>`<button class="seg${G.len===n?" on":""}" data-act="len" data-n="${n}" ${host?"":"disabled"}>${n}</button>`).join("");
+  const lens=[4,6,9,12].map(n=>`<button class="seg${G.len===n?" on":""}" data-act="len" data-n="${n}" ${host?"":"disabled"}>${n}</button>`).join("");
   const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${free<=0?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to tap Start.</p>`;
   return{
     "s-top":topBar("LOBBY"),
-    "s-head":`<section class="panel center"><div class="big" data-act="secret">${esc(nameOf(G.host))}'s lobby</div><div class="segs"><span class="note">Games:</span>${lens}</div>${G.ff?"":`<button class="ffbtn" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly OFF</button>`}${host&&showCode&&G.ff?`<div class="coderow"><input id="ffcode" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Code" aria-label="Code"><button class="btn small" data-act="ffcode">OK</button></div>`:""}${ffMsg&&G.ff?`<p class="note warn">${esc(ffMsg)}`:!G.ff?`<p class="note">Rude reactions are ON 😈 Tap the switch to turn them off.`:`<p class="note">`}</p></section>`,
+    "s-head":`<section class="panel center"><div class="big" data-act="secret">${esc(nameOf(G.host))}'s lobby</div>${G.locked?`<p class="note warn">🔒 Lobby locked. New people can't join.</p>`:""}${G.ff?"":`<button class="ffbtn" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly OFF</button>`}${host&&showCode&&G.ff?`<div class="coderow"><input id="ffcode" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Code" aria-label="Code"><button class="btn small" data-act="ffcode">OK</button></div>`:""}${ffMsg&&G.ff?`<p class="note warn">${esc(ffMsg)}`:!G.ff?`<p class="note">Rude reactions are ON 😈 Tap the switch to turn them off.`:`<p class="note">`}</p></section>`,
+    "s-opts":optsHTML(host,lens),
     "s-list":`<section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2><div class="lob">${rows}${empty}</div></section>`,
     "s-act":actions,
     "s-emo":emoBar()
@@ -1596,7 +1643,7 @@ function render(){
     renderMenuBits();return;
   }
   if(!G){layout("wait",["s-top","s-table"]);part("s-top",topBar("LOBBY"));part("s-table",`<div class="table"><div class="headline">Connecting…</div><p class="sub">Getting the game from the host.</p></div>`);return}
-  if(G.phase==="lobby"){layout("lobby",["s-top","s-head","s-list","s-act","s-emo"]);const p=lobbyParts();for(const k in p)part(k,p[k]);return}
+  if(G.phase==="lobby"){layout("lobby",["s-top","s-head","s-list","s-act","s-opts","s-emo"]);const p=lobbyParts();for(const k in p)part(k,p[k]);return}
   if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=overParts();for(const k in p)part(k,p[k]);return}
   layout("game",["s-top","timer","s-chips","s-stage","s-emo"]);
   part("s-top",topBar(`GAME <b>${G.k+1}</b>/${G.list.length}`));
@@ -1630,6 +1677,7 @@ document.addEventListener("click",e=>{
   else if(a==="addbot")addBot();
   else if(a==="rmbot")rmBot(b.dataset.id);
   else if(a==="len")setLen(+b.dataset.n);
+  else if(a==="opt")setOpt(b.dataset.k,b.dataset.v);
   else if(a==="ff")toggleFF();
   else if(a==="secret")secretTap();
   else if(a==="ffcode")tryCode();
