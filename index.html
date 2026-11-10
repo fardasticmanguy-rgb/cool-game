@@ -121,10 +121,10 @@ input:focus{border-color:var(--butter)}
 .rc.boom .stamp{background:var(--cardink);color:var(--coral)}
 .rc .crown{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:11px;background:var(--ink);color:var(--cardink);padding:1px 6px;border-radius:999px;font-family:var(--body);font-weight:800;letter-spacing:.06em}
 .rc .auto{position:absolute;bottom:3px;font-family:var(--body);font-size:9px;font-weight:800;letter-spacing:.06em;opacity:.75}
-.anim .rv{animation:flip .5s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i)*.22s)}
-.anim .rc.crash{animation:shake .4s both;animation-delay:calc(var(--n)*.22s + .55s)}
-.anim .rc.win{animation:pop .6s both;animation-delay:calc(var(--n)*.22s + .5s)}
-.anim .late{animation:fade .4s both;animation-delay:calc(var(--n)*.22s + .45s)}
+.anim .rv{animation:flip .5s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i)*.14s)}
+.anim .rc.crash{animation:shake .4s both;animation-delay:calc(var(--n)*.14s + .55s)}
+.anim .rc.win{animation:pop .6s both;animation-delay:calc(var(--n)*.14s + .5s)}
+.anim .late{animation:fade .4s both;animation-delay:calc(var(--n)*.14s + .45s)}
 @keyframes flip{from{transform:rotateY(90deg) translateY(10px);opacity:0}to{transform:none;opacity:1}}
 @keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px) rotate(-4deg)}40%{transform:translateX(6px) rotate(4deg)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.22) rotate(-4deg)}100%{transform:scale(1.06)}}
@@ -160,6 +160,25 @@ input:focus{border-color:var(--butter)}
 .mute{appearance:none;border:2px solid var(--line);background:transparent;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;letter-spacing:.06em;cursor:pointer;color:var(--dim)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media (max-width:380px){.hand{gap:5px}.rv{width:58px}.rc{width:54px;font-size:26px}}
+.col{display:flex;flex-direction:column}
+.center{align-items:center;text-align:center}
+.handwrap{display:flex;flex-direction:column;gap:6px}
+.handlbl{align-items:center}
+.float{position:fixed;z-index:50;font-size:36px;line-height:1;pointer-events:none;transform:translate(-50%,-50%);animation:floatup 1.6s ease-out forwards}
+@keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}15%{opacity:1;transform:translate(-50%,-70%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
+.emos{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.emo{appearance:none;border:0;background:var(--panel);border-radius:999px;width:46px;height:46px;font-size:22px;cursor:pointer;display:grid;place-items:center;transition:transform .1s;padding:0}
+.emo:active{transform:scale(.85)}
+.emo:focus-visible,.x2:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+.x2{appearance:none;border:2px solid var(--butter);background:transparent;color:var(--butter);border-radius:999px;padding:5px 14px;font-family:var(--display);font-size:14px;cursor:pointer;letter-spacing:.02em}
+.x2.on{background:var(--butter);color:var(--cardink);animation:pulse 1s ease-in-out infinite}
+.x2[disabled]{opacity:.35;cursor:default;border-color:var(--line);color:var(--dim);animation:none}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.target{font-family:var(--display);background:var(--mint);color:var(--cardink);padding:4px 14px;border-radius:999px;font-size:16px}
+.rc .xb{position:absolute;top:4px;right:4px;font-size:10px;background:var(--cardink);color:var(--butter);padding:1px 4px;border-radius:4px;font-family:var(--body);font-weight:800}
+.chip .nm small.fire{color:var(--coral);font-weight:800}
+.chip .nm small.hasx{color:var(--butter);font-weight:800}
+.chip .st.late{animation:fade .35s both;animation-delay:calc(var(--n)*.14s + .4s)}
 </style>
 </head>
 <body>
@@ -532,11 +551,11 @@ function joinPeerRoom(hostId, role, { resume = false, options = {} } = {}) {
 
 const SLOT_COUNT = 16;
 const SLOT_PREFIX = "crashpot-pub-";
-const SCAN_INTERVAL = 4000;
-const PROBE_TIMEOUT = 5000;
-const LISTING_LIFETIME = 13000;
+const SCAN_INTERVAL = 2500;
+const PROBE_TIMEOUT = 4000;
+const LISTING_LIFETIME = 8000;
 const SERVE_LINGER = 6000;
-const SETTLE_DELAY = 1800;
+const SETTLE_DELAY = 1400;
 
 const slotId = (slot) => `${SLOT_PREFIX}${slot}`;
 
@@ -776,16 +795,19 @@ async function openPeerDirectory(options, { browsing = () => true } = {}) {
 }
 </script>
 <script>
-const PICK_MS=12000,REVEAL_MS=5600,ROUNDS=6,HAND=[1,2,3,4,5,6,7,8],MAXP=5;
+const PICK_MS=9000,REVEAL_MS=4200,ROUNDS=6,HAND=[1,2,3,4,5,6,7,8],MAXP=6;
 const COLS=["#ff6b57","#ffd43b","#4be3b0","#6fb6ff","#ff8ad8","#c3a6ff"];
+const EMO=["😂","😭","😡","🔥","💀","👀"];
 const BOTN=["Bolt","Mochi","Pixel","Ziggy","Nugget","Waffles","Turbo","Pickle"];
 const MODS={
-  high:{n:"High Roller",d:"Highest card wins the pot.",a:"أعلى كارت يكسب الفلوس."},
-  low:{n:"Lowball",d:"Lowest card wins the pot.",a:"أقل كارت يكسب الفلوس."},
-  double:{n:"Double Up",d:"Highest card wins double the pot.",a:"أعلى كارت ياخد الفلوس دبل."},
-  mine:{n:"Landmine",d:"Highest card wins. One secret number is a bomb: play it and lose 4.",a:"أعلى كارت يكسب. في رقم سري ملغوم، لو لعبته تخسر ٤."},
-  payday:{n:"Payday",d:"Everyone gets their card's number in coins.",a:"كل واحد ياخد رقم كارته فلوس."},
-  heist:{n:"Heist",d:"Highest card wins the pot and steals 3 from whoever is in 1st.",a:"أعلى كارت يكسب ويسرق ٣ من اللي في الأول."}
+  high:{n:"High Roller",d:"Biggest card wins.",a:"أكبر كارت يكسب."},
+  low:{n:"Lowball",d:"Smallest card wins.",a:"أصغر كارت يكسب."},
+  double:{n:"Double Up",d:"Biggest card wins double.",a:"أكبر كارت يكسب دبل."},
+  mine:{n:"Landmine",d:"Biggest card wins. One secret number is a bomb: −4.",a:"أكبر كارت يكسب. في رقم سري قنبلة: −٤."},
+  payday:{n:"Payday",d:"Everyone gets their card number in coins.",a:"كل واحد ياخد رقم كارته فلوس."},
+  heist:{n:"Heist",d:"Biggest card wins and steals 3 from 1st place.",a:"أكبر كارت يكسب ويسرق ٣ من اللي في الأول."},
+  copycat:{n:"Copycat",d:"Match someone to win! Matchers split the coins.",a:"اتطابق مع حد عشان تكسب! اللي اتطابقوا يقسموا الفلوس."},
+  bullseye:{n:"Bullseye",d:"Closest card to the target wins.",a:"أقرب كارت للرقم المطلوب يكسب."}
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -793,20 +815,23 @@ const ri=n=>Math.floor(Math.random()*n);
 const rid=()=>Math.random().toString(36).slice(2,10);
 const clean=s=>String(s??"").replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁦-⁩]/g,"").trim().slice(0,14);
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const ss={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}}};
 const hash=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
-
-const me={pid:ls.get("cp.pid")||rid(),name:clean(ls.get("cp.name")||""),col:0};
-ls.set("cp.pid",me.pid);
-me.col=hash(me.pid)%COLS.length;
-
-let dir=null,netState="wait",nr=null,code=null,screen="menu",isHost=false,practice=false,joining=false;
-let G=null,offset=0,H=freshH(),myPick=null,enteredAt=0,lostSince=0,lastSig="",lastAnim="",lastLobby="",muted=ls.get("cp.mute")!=="0",ac=null,menuNote="";
 const PEER_OPTS=(()=>{
   const q=new URLSearchParams(location.search),h=q.get("peerhost");
   if(!h)return{debug:0};
   const[hostname,port]=h.split(":");
   return{debug:0,host:hostname,port:Number(port)||9000,path:q.get("peerpath")||"/",secure:q.get("peersecure")==="1"};
 })();
+
+const me={pid:ss.get("cp.tab")||rid(),name:clean(ls.get("cp.name")||""),col:0};
+ss.set("cp.tab",me.pid);
+me.col=hash(me.pid)%COLS.length;
+
+let dir=null,netState="wait",nr=null,code=null,screen="menu",isHost=false,practice=false,joining=false;
+let G=null,offset=0,H=freshH(),myPick=null,enteredAt=0,lostSince=0,lastAnim="",lastLobby="",menuNote="",armX2=false;
+let muted=ls.get("cp.mute")!=="0",ac=null,emoN=0,lastEmoAt=0;
+const seenEmo=new Map();
 
 function freshH(){return{picks:{},bots:{},allAt:0}}
 
@@ -821,27 +846,28 @@ function tone(f,d,type,v,delay){
   }catch(e){}
 }
 function sfx(kind){
-  if(kind==="pick")tone(660,.08,"square",.03);
-  if(kind==="round"){tone(392,.1,"square",.04);tone(523,.12,"square",.04,.1)}
+  if(kind==="pick")tone(660,.07,"square",.03);
+  if(kind==="round"){tone(392,.08,"square",.04);tone(523,.1,"square",.04,.08)}
   if(kind==="reveal"&&G&&G.res){
-    G.roster.forEach((p,i)=>tone(300+i*80,.08,"triangle",.05,i*.22));
-    const n=G.roster.length*.22+.5;
-    if(G.res.crashed.length)tone(110,.35,"sawtooth",.06,n);
-    if(G.res.winner){tone(523,.1,"square",.04,n+.1);tone(659,.1,"square",.04,n+.2);tone(784,.2,"square",.04,n+.3)}
+    G.roster.forEach((p,i)=>tone(300+i*80,.07,"triangle",.05,i*.14));
+    const n=G.roster.length*.14+.35;
+    if(G.res.crashed.length)tone(110,.3,"sawtooth",.06,n);
+    if(G.res.winners.length){tone(523,.08,"square",.04,n+.08);tone(659,.08,"square",.04,n+.16);tone(784,.16,"square",.04,n+.24)}
   }
-  if(kind==="over"){[523,659,784,1046].forEach((f,i)=>tone(f,.18,"square",.04,i*.12))}
+  if(kind==="over")[523,659,784,1046].forEach((f,i)=>tone(f,.16,"square",.04,i*.1));
 }
 
 function handOf(id){const u=(G.used&&G.used[id])||[];return HAND.filter(c=>!u.includes(c))}
 function nameOf(id){const p=G&&G.roster.find(r=>r.id===id);return p?p.name:"?"}
-function colOf(id){const p=G&&G.roster.find(r=>r.id===id);return COLS[(p?p.col:0)%COLS.length]}
+function names(ids){return ids.map(id=>esc(nameOf(id))).join(", ")}
 function inRoster(){return !!(G&&G.roster.some(p=>p.id===me.pid))}
 function myPickValid(){return !!(myPick&&G&&myPick.g===G.gid&&myPick.r===G.round)}
+function armed(){return !!(G&&armX2===G.gid+"-"+G.round)}
+function hasX2(id){return !!(G&&!(G.x2used||{})[id])}
 
-function newLobby(epoch){
-  return{gid:rid(),epoch,host:me.pid,v:0,code,phase:"lobby",round:0,rounds:ROUNDS,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],used:{},scores:{},pot:0,carry:0,mod:"high",final:false,t0:0,dur:0,now:0,locked:[],res:null,stats:{crash:{},big:null}};
+function newLobby(){
+  return{gid:rid(),host:me.pid,v:0,phase:"lobby",round:0,rounds:ROUNDS,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],used:{},scores:{},x2used:{},streak:{},be:{},pot:0,carry:0,jackpot:0,mod:"high",final:false,target:0,t0:0,dur:0,now:0,locked:[],res:null,stats:{crash:{},big:null,bomb:{}}};
 }
-
 function lobbyRoster(){
   const out=[],seen=new Set();
   const add=(id,name,col,bot)=>{if(seen.has(id)||out.length>=MAXP)return;seen.add(id);out.push({id,name:clean(name)||"Player",col:(Math.abs(+col)||0)%COLS.length,bot:!!bot})};
@@ -850,16 +876,16 @@ function lobbyRoster(){
   for(const b of((G&&G.roster)||[]).filter(r=>r.bot))add(b.id,b.name,b.col,true);
   return out;
 }
-
 function chooseMod(){
   if(G.round===1)return"high";
-  if(G.final)return["high","low","mine"][ri(3)];
+  if(G.final)return["high","low","mine","bullseye"][ri(4)];
   const keys=Object.keys(MODS).filter(k=>k!==G.mod);
   return keys[ri(keys.length)];
 }
 function setupRound(){
   G.final=G.round===G.rounds;
   G.mod=chooseMod();
+  G.target=G.mod==="bullseye"?1+ri(8):0;
   G.jackpot=G.carry||0;
   G.pot=G.jackpot+3+ri(6);
   G.carry=0;G.t0=Date.now();G.dur=PICK_MS;G.locked=[];G.res=null;H=freshH();
@@ -867,9 +893,9 @@ function setupRound(){
 function startGame(){
   const ros=practice?G.roster:lobbyRoster();
   if(ros.length<2)return;
-  G.gid=rid();G.phase="pick";G.round=1;G.scores={};G.used={};G.carry=0;G.mod="high";G.stats={crash:{},big:null};
+  G.gid=rid();G.phase="pick";G.round=1;G.scores={};G.used={};G.x2used={};G.streak={};G.be={};G.carry=0;G.mod="high";G.stats={crash:{},big:null,bomb:{}};
   G.roster=ros;ros.forEach(p=>{G.scores[p.id]=0;G.used[p.id]=[]});
-  myPick=null;setupRound();publish();
+  myPick=null;armX2=false;setupRound();publish();
 }
 function addBot(){
   if(!G||G.roster.length>=MAXP)return;
@@ -883,58 +909,80 @@ function rmBot(id){if(!G)return;G.roster=G.roster.filter(r=>!(r.bot&&r.id===id))
 
 function botPick(id){
   const hand=handOf(id),m=G.mod;
-  const w=hand.map(c=>1+(m==="low"?Math.pow(9-c,1.6):m==="payday"?Math.pow(c,1.15)+3:Math.pow(c,1.45)));
+  const w=hand.map(c=>1+(m==="low"?Math.pow(9-c,1.6):m==="payday"?Math.pow(c,1.15)+3:m==="copycat"?4:m==="bullseye"?Math.pow(8-Math.abs(c-G.target),2):Math.pow(c,1.45)));
   let r=Math.random()*w.reduce((a,b)=>a+b,0);
   for(let i=0;i<hand.length;i++){r-=w[i];if(r<=0)return hand[i]}
   return hand[hand.length-1];
 }
+function botX2(id){return hasX2(id)&&(G.pot>=10||G.final||G.round===G.rounds-1)&&Math.random()<.55}
 
 function collectPicks(now){
   const picks={};
   for(const p of G.roster){
     if(p.bot){
-      if(H.picks[p.id]==null){
-        if(!H.bots[p.id])H.bots[p.id]=now+700+ri(3500);
-        if(now>=H.bots[p.id])H.picks[p.id]=botPick(p.id);
+      if(!H.picks[p.id]){
+        if(!H.bots[p.id])H.bots[p.id]=now+400+ri(2600);
+        if(now>=H.bots[p.id])H.picks[p.id]={c:botPick(p.id),x:botX2(p.id)};
       }
-      if(H.picks[p.id]!=null)picks[p.id]=H.picks[p.id];
+      if(H.picks[p.id])picks[p.id]=H.picks[p.id];
       continue;
     }
-    if(p.id===me.pid){if(myPickValid()&&handOf(p.id).includes(myPick.c))picks[p.id]=myPick.c;continue}
+    if(p.id===me.pid){if(myPickValid()&&handOf(p.id).includes(myPick.c))picks[p.id]={c:myPick.c,x:!!myPick.x&&hasX2(p.id)};continue}
     if(!nr)continue;
     for(const peer of nr.peers()){
       const pr=peer.presence||{},k=pr.pick;
       if(pr.pid!==p.id||!k||typeof k!=="object")continue;
-      if(k.g===G.gid&&k.r===G.round&&Number.isInteger(k.c)&&handOf(p.id).includes(k.c))picks[p.id]=k.c;
+      if(k.g===G.gid&&k.r===G.round&&Number.isInteger(k.c)&&handOf(p.id).includes(k.c))picks[p.id]={c:k.c,x:!!k.x&&hasX2(p.id)};
     }
   }
   return picks;
 }
 
-function resolve(plays,auto){
-  const ids=G.roster.map(p=>p.id),cnt={},d={};
-  ids.forEach(id=>{cnt[plays[id]]=(cnt[plays[id]]||0)+1;d[id]=0});
-  const solo=ids.filter(id=>cnt[plays[id]]===1),crashed=ids.filter(id=>cnt[plays[id]]>1);
+function resolve(P,auto){
+  const ids=G.roster.map(p=>p.id),cards={},cnt={},d={},x2={};
+  ids.forEach(id=>{cards[id]=P[id].c;x2[id]=!!P[id].x&&hasX2(id);cnt[cards[id]]=(cnt[cards[id]]||0)+1;d[id]=0});
+  const solo=ids.filter(id=>cnt[cards[id]]===1),crashed=ids.filter(id=>cnt[cards[id]]>1);
   const mult=(G.mod==="double"?2:1)*(G.final?2:1);
-  let winner=null,mine=null,stolen=null,carry=0,won=0,hit=[];
-  if(G.mod==="mine"){mine=1+ri(8);hit=ids.filter(id=>plays[id]===mine);hit.forEach(id=>d[id]-=4)}
-  if(G.mod==="payday"){solo.forEach(id=>d[id]+=plays[id]);carry=G.pot}
+  let winners=[],mine=null,stolen=null,carry=0,won=0,hit=[];
+  const split=list=>{won=Math.max(1,Math.floor(G.pot*mult/list.length));list.forEach(id=>d[id]+=won);winners=list};
+  if(G.mod==="mine"){mine=1+ri(8);hit=ids.filter(id=>cards[id]===mine);hit.forEach(id=>d[id]-=4)}
+  if(G.mod==="payday"){solo.forEach(id=>d[id]+=cards[id]);winners=solo.slice();carry=G.pot}
+  else if(G.mod==="copycat"){if(crashed.length)split(crashed);else carry=G.pot}
   else{
-    const pool=solo.filter(id=>plays[id]!==mine);
-    if(pool.length){
-      winner=pool.reduce((a,b)=>G.mod==="low"?(plays[b]<plays[a]?b:a):(plays[b]>plays[a]?b:a));
-      won=G.pot*mult;d[winner]+=won;
-      if(G.mod==="heist"){
-        const rivals=ids.filter(id=>id!==winner&&(G.scores[id]||0)>0).sort((a,b)=>G.scores[b]-G.scores[a]);
-        if(rivals[0]){const n=Math.min(3,G.scores[rivals[0]]);d[rivals[0]]-=n;d[winner]+=n;stolen={from:rivals[0],n}}
-      }
-    }else carry=G.pot;
+    const pool=solo.filter(id=>cards[id]!==mine);
+    if(!pool.length)carry=G.pot;
+    else if(G.mod==="bullseye"){const best=Math.min(...pool.map(id=>Math.abs(cards[id]-G.target)));split(pool.filter(id=>Math.abs(cards[id]-G.target)===best))}
+    else split([pool.reduce((a,b)=>G.mod==="low"?(cards[b]<cards[a]?b:a):(cards[b]>cards[a]?b:a))]);
   }
-  ids.forEach(id=>{G.used[id]=[...(G.used[id]||[]),plays[id]];G.scores[id]=(G.scores[id]||0)+d[id]});
-  crashed.forEach(id=>{G.stats.crash[id]=(G.stats.crash[id]||0)+1});
-  if(winner&&won>((G.stats.big&&G.stats.big.n)||0))G.stats.big={id:winner,n:won};
+  ids.forEach(id=>{if(x2[id]){d[id]*=2;G.x2used[id]=true}});
+  if(G.mod==="heist"&&winners.length===1){
+    const w=winners[0],sc=id=>(G.scores[id]||0)+d[id];
+    const rivals=ids.filter(id=>id!==w&&sc(id)>0).sort((a,b)=>sc(b)-sc(a));
+    if(rivals[0]){const n=Math.min(3,sc(rivals[0]));d[rivals[0]]-=n;d[w]+=n;stolen={from:rivals[0],n}}
+  }
+  ids.forEach(id=>{
+    G.used[id]=[...(G.used[id]||[]),cards[id]];
+    G.scores[id]=(G.scores[id]||0)+d[id];
+    G.streak[id]=winners.includes(id)&&d[id]>0?(G.streak[id]||0)+1:0;
+  });
+  if(G.mod!=="copycat")crashed.forEach(id=>{G.stats.crash[id]=(G.stats.crash[id]||0)+1});
+  hit.forEach(id=>{G.stats.bomb[id]=(G.stats.bomb[id]||0)+1});
+  winners.forEach(id=>{if(d[id]>((G.stats.big&&G.stats.big.n)||0))G.stats.big={id,n:d[id]}});
   G.carry=carry;
-  return{plays,crashed,winner,won,mine,hit,stolen,carry,d,auto};
+  return{cards,x2:ids.filter(id=>x2[id]),crashed,winners,won,mine,hit,stolen,carry,d,auto};
+}
+
+function botEmotes(){
+  const r=G.res;
+  for(const p of G.roster){
+    if(!p.bot||Math.random()<.45)continue;
+    let pool=[5];
+    if((r.d[p.id]||0)>0)pool=[0,3];
+    else if(r.hit.includes(p.id))pool=[4,2];
+    else if(r.crashed.includes(p.id)&&G.mod!=="copycat")pool=[1,2,4];
+    const prev=G.be[p.id];
+    G.be[p.id]={i:pool[ri(pool.length)],n:(prev?prev.n:0)+1};
+  }
 }
 
 function hostTick(force){
@@ -945,15 +993,15 @@ function hostTick(force){
     if(JSON.stringify(r)!==JSON.stringify(G.roster)){G.roster=r;ch=true}
   }else if(G.phase==="pick"){
     const picks=collectPicks(now),ids=G.roster.map(p=>p.id);
-    const locked=ids.filter(id=>picks[id]!=null);
+    const locked=ids.filter(id=>picks[id]);
     if(locked.join()!==(G.locked||[]).join()){G.locked=locked;ch=true}
     const all=locked.length===ids.length;
     if(all&&!H.allAt)H.allAt=now;
     if(!all)H.allAt=0;
-    if((all&&now-H.allAt>650)||now>=G.t0+G.dur){
+    if((all&&now-H.allAt>400)||now>=G.t0+G.dur){
       const auto=[];
-      ids.forEach(id=>{if(picks[id]==null){const h=handOf(id);picks[id]=h[ri(h.length)];auto.push(id)}});
-      G.res=resolve(picks,auto);G.phase="reveal";G.t0=now;G.dur=REVEAL_MS;ch=true;
+      ids.forEach(id=>{if(!picks[id]){const h=handOf(id);picks[id]={c:h[ri(h.length)],x:false};auto.push(id)}});
+      G.res=resolve(picks,auto);botEmotes();G.phase="reveal";G.t0=now;G.dur=REVEAL_MS;ch=true;
     }
   }else if(G.phase==="reveal"&&now>=G.t0+G.dur){
     if(G.round>=G.rounds){G.phase="over";G.t0=now;G.dur=0}
@@ -963,71 +1011,85 @@ function hostTick(force){
   if(ch)publish();
 }
 
+function phaseSfx(prev){
+  const key=G.gid+"-"+G.round+"-"+G.phase;
+  if(key===prev)return key;
+  if(G.phase==="reveal")sfx("reveal");
+  else if(G.phase==="pick")sfx("round");
+  else if(G.phase==="over")sfx("over");
+  return key;
+}
+let sfxKey="";
 function publish(){
   if(!G)return;
-  const prevPhase=publish.lastPhase,prevKey=publish.lastKey;
-  G.v=(G.v||0)+1;G.now=Date.now();G.host=me.pid;G.code=code;
+  G.v=(G.v||0)+1;G.now=Date.now();G.host=me.pid;
   if(nr&&!practice)nr.presence({g:G}).catch(()=>{});
   lobbyPresence();
-  const key=G.gid+"-"+G.round+"-"+G.phase;
-  if(key!==prevKey){
-    if(G.phase==="reveal")sfx("reveal");
-    else if(G.phase==="pick")sfx("round");
-    else if(G.phase==="over"&&prevPhase!=="over")sfx("over");
-  }
-  publish.lastPhase=G.phase;publish.lastKey=key;
-  render();
+  sfxKey=phaseSfx(sfxKey);
+  render();checkEmotes();
 }
-
 function lobbyPresence(){
   if(!dir)return;
-  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.length,st:G.phase,max:MAXP}:null;
+  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase,r:G.round}:null;
   const s=JSON.stringify(listing);
   if(s!==lastLobby){lastLobby=s;Promise.resolve(dir.presence({listing})).catch(()=>{})}
 }
-
-function beats(a,b){
-  if(!b)return true;
-  if((a.epoch||0)!==(b.epoch||0))return(a.epoch||0)>(b.epoch||0);
-  return String(a.host||"")<String(b.host||"");
-}
 function bestHost(){
   if(!nr)return null;
-  let b=null;
   for(const p of nr.peers()){
     if(p.sameTab)continue;
     const g=p.presence&&p.presence.g;
-    if(!g||typeof g!=="object"||typeof g.gid!=="string"||!Array.isArray(g.roster))continue;
-    if(!b||beats(g,b))b=g;
+    if(g&&typeof g==="object"&&typeof g.gid==="string"&&Array.isArray(g.roster))return g;
   }
-  return b;
+  return null;
 }
 function adopt(g){
-  if(G&&g.gid===G.gid&&g.v===G.v&&g.epoch===G.epoch&&g.host===G.host)return;
-  const prev=G;
+  if(G&&g.gid===G.gid&&g.v===G.v)return;
   G=JSON.parse(JSON.stringify(g));
   offset=Date.now()-(+g.now||Date.now());
   if(!myPickValid())myPick=null;
-  const key=G.gid+"-"+G.round+"-"+G.phase,pkey=prev?prev.gid+"-"+prev.round+"-"+prev.phase:"";
-  if(key!==pkey){
-    if(G.phase==="reveal")sfx("reveal");
-    else if(G.phase==="pick")sfx("round");
-    else if(G.phase==="over")sfx("over");
-  }
+  sfxKey=phaseSfx(sfxKey);
 }
 function sync(){
   if(!nr)return;
   if(isHost)hostTick();
   else{const best=bestHost();if(best)adopt(best)}
-  render();
+  render();checkEmotes();
 }
 function watchdog(){
   if(!nr||isHost||screen!=="room")return;
+  const now=Date.now(),ended=nr.ended&&nr.ended();
+  if(!ended&&(nr.connected()||now-enteredAt<4000)){lostSince=0;return}
+  if(!lostSince)lostSince=now;
+  if(ended||now-lostSince>7000){menuNote="The host closed that lobby.";leave()}
+}
+
+function checkEmotes(){
+  if(nr)for(const p of nr.peers()){if(p.sameTab)continue;const pr=p.presence||{};if(typeof pr.pid==="string")seeEmo(pr.pid,pr.emo,true)}
+  if(G&&G.be)for(const id in G.be)seeEmo(id,G.be[id],false);
+}
+function seeEmo(id,e,skipFirst){
+  if(!e||typeof e!=="object"||!EMO[e.i]||!Number.isInteger(e.n))return;
+  const had=seenEmo.has(id),last=seenEmo.get(id)||0;
+  if(had&&e.n<=last)return;
+  seenEmo.set(id,e.n);
+  if(had||!skipFirst)spawnEmo(id,EMO[e.i]);
+}
+function spawnEmo(id,emoji){
+  const el=document.querySelector(`[data-pid="${CSS.escape(id)}"]`);
+  const f=document.createElement("span");
+  f.className="float";f.textContent=emoji;
+  if(el){const r=el.getBoundingClientRect();f.style.left=(r.left+r.width/2+ri(24)-12)+"px";f.style.top=(r.top+r.height/2)+"px"}
+  else{f.style.left=(window.innerWidth/2+ri(80)-40)+"px";f.style.top=(window.innerHeight-90)+"px"}
+  document.body.append(f);
+  setTimeout(()=>f.remove(),1700);
+}
+function sendEmo(i){
   const now=Date.now();
-  const gone=(nr.ended&&nr.ended())||(!nr.connected()&&now-enteredAt>4000);
-  if(!gone){lostSince=0;return}
-  if(!lostSince){lostSince=now;return}
-  if(nr.ended&&nr.ended()||now-lostSince>8000){menuNote="The host closed that lobby.";leave()}
+  if(now-lastEmoAt<500||!EMO[i])return;
+  lastEmoAt=now;emoN++;
+  spawnEmo(me.pid,EMO[i]);
+  if(nr&&!practice)nr.presence({emo:{i,n:emoN}}).catch(()=>{});
 }
 
 function saveName(){
@@ -1039,9 +1101,27 @@ function saveName(){
 }
 function newCode(){const a="bcdfghjkmnpqrstvwxz23456789";let s="";for(let i=0;i<8;i++)s+=a[ri(a.length)];return s}
 
+function openList(){
+  if(!dir)return[];
+  const list=[];
+  for(const p of dir.peers()){
+    const l=p.presence&&p.presence.listing;
+    if(p.sameTab||!l||typeof l.code!=="string"||!/^[a-z0-9]{4,12}$/.test(l.code))continue;
+    if(list.some(x=>x.code===l.code))continue;
+    const n=Math.min(MAXP,Math.max(0,+l.n||0)),b=Math.min(MAXP,Math.max(0,+l.b||0));
+    list.push({code:l.code,host:clean(l.host)||"Someone",n,b,st:String(l.st||""),r:+l.r||0});
+  }
+  const rank=g=>(g.st==="lobby"&&g.n+g.b<MAXP?0:1);
+  return list.sort((a,b)=>rank(a)-rank(b)||b.n-a.n||a.code.localeCompare(b.code));
+}
+function quickPlay(){
+  const open=openList().filter(g=>g.st==="lobby"&&g.n<MAXP);
+  if(open[0])enter(open[0].code,false);else enter(newCode(),true);
+}
+
 async function enter(c,create){
-  if(joining)return;
-  if(!window.Peer){menuNote="Online play couldn't load. Check your connection, or try Practice.";renderMenuBits();return}
+  if(joining||screen!=="menu")return;
+  if(!window.Peer){menuNote="Online didn't load. Check your internet, or tap Practice.";renderMenuBits();return}
   saveName();
   c=String(c||"").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,12);
   if(!c)return;
@@ -1052,238 +1132,265 @@ async function enter(c,create){
     catch(e){
       if(create&&e&&e.code==="taken"&&tries++<3){c=newCode();continue}
       joining=false;
-      menuNote=e&&e.code==="not_found"?"That lobby is gone. Pick another one.":"Couldn't connect. Try again in a moment.";
+      menuNote=e&&e.code==="not_found"?"That lobby closed. Pick another one.":"Couldn't connect. Tap it again.";
       renderMenuBits();return;
     }
   }
   joining=false;menuNote="";
-  nr=joined;code=c;practice=false;G=null;myPick=null;isHost=false;enteredAt=Date.now();lostSince=0;lastSig="";
+  nr=joined;code=c;practice=false;G=null;myPick=null;armX2=false;isHost=false;enteredAt=Date.now();lostSince=0;
   nr.presence({pid:me.pid,name:me.name,col:me.col,pick:null,g:null}).catch(()=>{});
   nr.onPeers(()=>sync());
-  if(create){isHost=true;G=newLobby(1);hostTick(true)}
+  if(create){isHost=true;G=newLobby();hostTick(true)}
   screen="room";render();
 }
 function startPractice(){
+  if(joining)return;
   saveName();
-  practice=true;isHost=true;nr=null;code=null;myPick=null;lastSig="";
-  G=newLobby(1);
-  const pool=BOTN.slice().sort(()=>Math.random()-.5).slice(0,3);
-  pool.forEach((n,i)=>G.roster.push({id:"bot-"+rid(),name:n,col:(me.col+1+i)%COLS.length,bot:true}));
+  practice=true;isHost=true;nr=null;code=null;myPick=null;armX2=false;
+  G=newLobby();
+  BOTN.slice().sort(()=>Math.random()-.5).slice(0,3).forEach((n,i)=>G.roster.push({id:"bot-"+rid(),name:n,col:(me.col+1+i)%COLS.length,bot:true}));
   screen="room";startGame();
 }
 async function leave(){
   const r=nr;nr=null;
   if(r){try{await r.presence({g:null,pick:null});await r.leave()}catch(e){}}
-  isHost=false;practice=false;G=null;code=null;myPick=null;lastSig="";
+  isHost=false;practice=false;G=null;code=null;myPick=null;armX2=false;
   lobbyPresence();
   screen="menu";render();
 }
+function sendPick(){if(nr&&!practice)nr.presence({pick:myPick}).catch(()=>{})}
 function choose(c){
   if(!G||G.phase!=="pick"||!inRoster())return;
   if(!handOf(me.pid).includes(c))return;
   if(myPickValid()&&myPick.c===c)return;
-  myPick={g:G.gid,r:G.round,c};sfx("pick");
-  if(nr&&!practice)nr.presence({pick:myPick}).catch(()=>{});
+  myPick={g:G.gid,r:G.round,c,x:armed()&&hasX2(me.pid)};sfx("pick");
+  sendPick();
   if(isHost)hostTick();
   render();
 }
+function toggleX2(){
+  if(!G||G.phase!=="pick"||!inRoster()||!hasX2(me.pid))return;
+  armX2=armed()?false:G.gid+"-"+G.round;
+  if(myPickValid()){myPick={...myPick,x:armed()};sendPick();if(isHost)hostTick()}
+  tone(armed()?880:440,.08,"square",.03);
+  render();
+}
+
+function emoBar(){return `<div class="emos">${EMO.map((e,i)=>`<button class="emo" data-act="emo" data-i="${i}" aria-label="React ${e}">${e}</button>`).join("")}</div>`}
+function topBar(label){return `<div class="top"><div class="rd">${label}</div><span class="sp"></span><button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>`}
 
 function menuHTML(){
   return `
-  <header class="brand"><h1>CRASH<span>POT</span></h1><p class="tag">Pick a card. Don't match anyone. Take the pot.</p><p class="tag ar" dir="rtl" lang="ar">اختار كارت، متتطابقش مع حد، وخد الفلوس.</p></header>
+  <header class="brand"><h1>CRASH<span>POT</span></h1><p class="tag">Pick a card nobody else picks.</p><p class="tag ar" dir="rtl" lang="ar">اختار كارت محدش تاني اختاره.</p></header>
   <section class="panel">
     <label for="nm">Your name</label>
     <input id="nm" maxlength="14" autocomplete="off" placeholder="Type a name" value="${esc(me.name)}">
-    <button class="btn primary" data-act="create" id="createBtn">Host a lobby</button>
+    <div class="row"><button class="btn primary grow" data-act="quick" id="quickBtn">Quick play</button><button class="btn grow" data-act="create" id="createBtn">Host</button></div>
     <p id="netmsg" class="note"></p>
   </section>
   <section class="panel"><h2>OPEN LOBBIES</h2><div id="opens" class="opens"></div></section>
   <button class="btn ghost" data-act="practice">Practice vs bots</button>
   <section class="rules">
     <h2>HOW TO PLAY</h2>
-    <div class="rule"><i>1</i><div>Everyone picks a card at the same time.</div></div>
-    <div class="rule"><i>2</i><div>Same card as someone else? You both <b>crash</b> and get 0.</div></div>
-    <div class="rule"><i>3</i><div>Highest card nobody else picked wins the pot.</div></div>
-    <div class="rule"><i>4</i><div>Each card works once. Every round has a twist, so read the red box.</div></div>
+    <div class="rule"><i>1</i><div>Pick a card.</div></div>
+    <div class="rule"><i>2</i><div>Same card as someone? You both get <b>0</b>.</div></div>
+    <div class="rule"><i>3</i><div>Biggest card wins the coins.</div></div>
+    <div class="rule"><i>4</i><div>The red box changes the rule each round.</div></div>
+    <div class="rule"><i>×2</i><div>One time per game, tap ×2 to double your round.</div></div>
   </section>
   <section class="rules ar" dir="rtl" lang="ar">
     <h2>إزاي تلعب</h2>
-    <div class="rule"><i>١</i><div>كله بيختار كارت في نفس الوقت.</div></div>
-    <div class="rule"><i>٢</i><div>لو اخترت نفس كارت حد تاني، انتو الاتنين <b>تتكرشوا</b> وتاخدوا صفر.</div></div>
-    <div class="rule"><i>٣</i><div>أعلى كارت محدش اختاره غيرك ياخد الفلوس.</div></div>
-    <div class="rule"><i>٤</i><div>كل كارت تلعبه مرة واحدة بس. وكل دور فيه قاعدة جديدة، اقرا المربع الأحمر.</div></div>
+    <div class="rule"><i>١</i><div>اختار كارت.</div></div>
+    <div class="rule"><i>٢</i><div>نفس كارت حد تاني؟ انتو الاتنين تاخدوا <b>صفر</b>.</div></div>
+    <div class="rule"><i>٣</i><div>أكبر كارت ياخد الفلوس.</div></div>
+    <div class="rule"><i>٤</i><div>المربع الأحمر بيغير القاعدة كل دور.</div></div>
+    <div class="rule"><i>×٢</i><div>مرة واحدة في الجيم، دوس ×2 عشان تضاعف الدور.</div></div>
   </section>`;
 }
 function renderMenuBits(){
   const msg=$("#netmsg"),opens=$("#opens");
   if(!msg||!opens)return;
   const off=!dir||joining;
-  $("#createBtn").disabled=off;
-  msg.className="note"+(menuNote&&!joining||netState==="none"?" warn":"");
-  msg.textContent=menuNote||(netState==="wait"?"Connecting to online play…":netState==="none"?"Online play couldn't load. Practice still works.":"Host a lobby and it shows up for everyone with this page open.");
-  if(!dir){opens.innerHTML=`<div class="empty">${netState==="wait"?"Looking for lobbies…":"Lobbies aren't available right now."}</div>`;return}
-  const list=[];
-  for(const p of dir.peers()){
-    const l=p.presence&&p.presence.listing;
-    if(p.sameTab||!l||typeof l.code!=="string"||!/^[a-z0-9]{4,12}$/.test(l.code))continue;
-    if(list.some(x=>x.code===l.code))continue;
-    list.push({code:l.code,host:clean(l.host)||"Someone",n:Math.min(MAXP,Math.max(0,+l.n||0)),st:String(l.st||"")});
+  $("#createBtn").disabled=off;$("#quickBtn").disabled=off;
+  const warn=(menuNote&&!joining)||netState==="none";
+  const text=menuNote||(netState==="wait"?"Connecting…":netState==="none"?"Online didn't load. Practice still works.":"Quick play joins an open lobby, or opens one for you.");
+  if(msg.textContent!==text)msg.textContent=text;
+  msg.className="note"+(warn?" warn":"");
+  let html;
+  if(!dir)html=`<div class="empty">${netState==="wait"?"Looking for lobbies…":"Lobbies aren't available right now."}</div>`;
+  else{
+    const list=openList();
+    if(!list.length)html=`<div class="empty">${dir.settled&&!dir.settled()?"Looking for lobbies…":"No lobbies yet. Tap Quick play to open one."}</div>`;
+    else html=list.map(g=>{
+      const total=g.n+g.b,open=g.st==="lobby"&&total<MAXP;
+      const badge=g.st==="lobby"?(open?"Join":"Full"):g.st==="over"?"Ending":"Round "+g.r;
+      return `<button class="open" data-act="opengame" data-code="${g.code}" ${joining?"disabled":""}><span class="dot" style="background:${COLS[hash(g.code)%COLS.length]}"></span><span class="om"><b>${esc(g.host)}'s lobby</b><br>${g.n} player${g.n===1?"":"s"}${g.b?` + ${g.b} bot${g.b===1?"":"s"}`:""}</span><span class="ob${open?"":" busy"}">${badge}</span></button>`;
+    }).join("");
   }
-  if(!list.length){opens.innerHTML=`<div class="empty">${dir.settled&&!dir.settled()?"Looking for lobbies…":"No lobbies open. Host one and your friends will see it here."}</div>`;return}
-  opens.innerHTML=list.map((g,i)=>{
-    const full=g.n>=MAXP,open=g.st==="lobby"&&!full;
-    const badge=open?"Join":g.st==="lobby"?"Full":g.st==="over"?"Finished":"Playing";
-    return `<button class="open" data-act="opengame" data-code="${g.code}" ${joining?"disabled":""}><span class="dot" style="background:${COLS[hash(g.code)%COLS.length]}"></span><span class="om"><b>${esc(g.host)}'s lobby</b><br>${g.n}/${MAXP} players</span><span class="ob${open?"":" busy"}">${badge}</span></button>`;
-  }).join("");
+  if(opens.dataset.k!==html){opens.dataset.k=html;opens.innerHTML=html}
 }
 
 function chipsHTML(){
   return `<div class="players">${G.roster.map(p=>{
     let st="",cls="";
     if(G.phase==="pick"){const l=(G.locked||[]).includes(p.id);st=l?"Ready":"…";cls=l?"ready":""}
-    else if(G.phase==="reveal"&&G.res){const d=G.res.d[p.id]||0;st=d>0?"+"+d:d<0?String(d):"0";cls=d>0?"plus":d<0?"minus":""}
-    const score=G.phase==="reveal"&&G.res?(G.scores[p.id]||0)-(G.res.d[p.id]||0):(G.scores[p.id]||0);
-    return `<div class="chip${p.id===me.pid?" me":""}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${p.bot?"<small>BOT</small>":""}${p.id===me.pid?"<small>YOU</small>":""}</span><span class="sc">${G.phase==="reveal"?`<span class="late" style="--n:${G.roster.length}">${G.scores[p.id]||0}</span>`:score}</span><span class="st ${cls}${G.phase==="reveal"?" late":""}" style="--n:${G.roster.length}">${st}</span></div>`;
+    else if(G.phase==="reveal"&&G.res){const d=G.res.d[p.id]||0;st=d>0?"+"+d:d<0?String(d):"0";cls=(d>0?"plus":d<0?"minus":"")+" late"}
+    const tags=`${p.bot?"<small>BOT</small>":""}${p.id===me.pid?"<small>YOU</small>":""}${(G.streak[p.id]||0)>=2?`<small class="fire">🔥</small>`:""}${hasX2(p.id)?`<small class="hasx">×2</small>`:""}`;
+    return `<div class="chip${p.id===me.pid?" me":""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${tags}</span><span class="sc">${G.scores[p.id]||0}</span><span class="st ${cls}" style="--n:${G.roster.length}">${st}</span></div>`;
   }).join("")}</div>`;
-}
-function topHTML(){
-  return `<div class="top"><div class="rd">ROUND <b>${G.round}</b>/${G.rounds}</div><span class="sp"></span><button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>`;
 }
 function modHTML(anim){
   const m=MODS[G.mod]||MODS.high;
-  return `<div class="mod${G.final?" final":""}${anim?" enter":""}"><div class="mn">${G.final?"Final round · ":""}${esc(m.n)}</div><div class="md">${esc(m.d)}${G.final&&G.mod!=="payday"?" Pot pays double.":""}</div><div class="md ar" dir="rtl" lang="ar">${esc(m.a)}${G.final&&G.mod!=="payday"?" آخر دور: الفلوس دبل.":""}</div></div>`;
+  const fin=G.final&&G.mod!=="payday";
+  return `<div class="mod${G.final?" final":""}${anim?" enter":""}"><div class="mn">${G.final?"Last round · ":""}${esc(m.n)}</div><div class="md">${esc(m.d)}${fin?" Coins pay double.":""}</div><div class="md ar" dir="rtl" lang="ar">${esc(m.a)}${fin?" آخر دور: الفلوس دبل.":""}</div></div>`;
 }
 function handHTML(){
   const used=(G.used&&G.used[me.pid])||[];
   const can=G.phase==="pick"&&inRoster();
-  const left=HAND.filter(c=>!used.includes(c)).length;
-  return `<div><div class="handlbl"><span>Your hand</span><span>${left} card${left===1?"":"s"} left</span></div><div class="hand">${HAND.map(c=>{
+  const x2=hasX2(me.pid),on=armed()&&x2&&can;
+  return `<div class="handwrap"><div class="handlbl"><span>Your cards</span>${inRoster()?`<button class="x2${on?" on":""}" data-act="x2" ${!x2||!can?"disabled":""}>${x2?(on?"×2 ON":"×2"):"×2 USED"}</button>`:""}</div><div class="hand">${HAND.map(c=>{
     const u=used.includes(c),sel=myPickValid()&&myPick.c===c&&G.phase==="pick";
-    return `<button class="card${u?" used":""}${sel?" sel":""}" data-act="card" data-c="${c}" ${u||!can?"disabled":""} aria-label="Card ${c}${u?" (used)":""}">${c}</button>`;
+    return `<button class="card${u?" used":""}${sel?" sel":""}" data-act="card" data-c="${c}" ${u||!can?"disabled":""} aria-label="Card ${c}">${c}</button>`;
   }).join("")}</div></div>`;
 }
 function tablePick(){
-  const jack=G.jackpot>0?`<div class="jack">Includes ${G.jackpot} rolled over</div>`:"";
   const mult=(G.mod==="double"?2:1)*(G.final?2:1);
   let prompt;
-  if(!inRoster())prompt="You're watching this one. You'll be dealt in next game.";
-  else if(myPickValid())prompt=`Locked in <b>${myPick.c}</b>. Tap another card to switch.`;
-  else prompt="Pick a card";
-  return `<div class="table"><div class="potlbl">${G.mod==="payday"?"Pot (rolls over)":"Pot"}</div><div class="potbig">${G.pot}${mult>1&&G.mod!=="payday"?`<small>×${mult}</small>`:""}</div>${jack}<div class="secs" id="secs"></div><div class="prompt">${prompt}</div></div>`;
+  if(!inRoster())prompt="You're watching. You'll play next game.";
+  else if(myPickValid())prompt=`Locked in <b>${myPick.c}</b>${myPick.x?" with ×2":""}. Tap another card to switch.`;
+  else prompt="Pick a card!";
+  return `<div class="table">${G.mod==="bullseye"?`<span class="target">TARGET ${G.target}</span>`:""}<div class="potlbl">Coins</div><div class="potbig">${G.pot}${mult>1&&G.mod!=="payday"?`<small>×${mult}</small>`:""}</div>${G.jackpot>0?`<div class="jack">+${G.jackpot} rolled over</div>`:""}<div class="secs" id="secs"></div><div class="prompt">${prompt}</div></div>`;
 }
 function tableReveal(anim){
   const r=G.res,n=G.roster.length;
-  let head,crashHead=false;
-  if(G.mod==="payday"){const s=G.roster.filter(p=>(r.d[p.id]||0)>0).length;head=s?"Payday! Solo cards cash in":"Nobody got paid";crashHead=!s}
-  else if(r.winner){head=`${esc(nameOf(r.winner))} takes ${r.won}`;if(r.stolen)head+=` and steals ${r.stolen.n} from ${esc(nameOf(r.stolen.from))}`}
-  else{head="Total crash. Pot rolls over";crashHead=true}
+  let head,bad=false;
+  if(G.mod==="payday"){head=r.winners.length?"Payday! Solo cards cash in":"Nobody got paid";bad=!r.winners.length}
+  else if(G.mod==="copycat"){head=r.winners.length?`${names(r.winners)} matched! +${r.won} each`:"Nobody matched. Coins roll over";bad=!r.winners.length}
+  else if(r.winners.length===1){const w=r.winners[0];head=`${esc(nameOf(w))} wins +${r.d[w]-(r.stolen?r.stolen.n:0)}`;if(r.stolen)head+=` and steals ${r.stolen.n} from ${esc(nameOf(r.stolen.from))}`}
+  else if(r.winners.length>1)head=`${names(r.winners)} tie! +${r.won} each`;
+  else{head="Everyone crashed! Coins roll over";bad=true}
   const subs=[];
-  if(r.mine!=null)subs.push(r.hit.length?`<b>${r.hit.map(id=>esc(nameOf(id))).join(", ")}</b> hit the mine. −4`:"Nobody hit the mine.");
-  if(r.crashed.length&&!crashHead)subs.push(`${r.crashed.length} cards crashed.`);
-  if(r.auto&&r.auto.length)subs.push(`${r.auto.map(id=>esc(nameOf(id))).join(", ")} ran out of time. Random card played.`);
+  if(r.mine!=null)subs.push(r.hit.length?`<b>${names(r.hit)}</b> hit the bomb. −4`:"Nobody hit the bomb.");
+  if(r.x2.length)subs.push(`${names(r.x2)} used ×2.`);
+  if(r.auto.length)subs.push(`${names(r.auto)} ran out of time.`);
   const cards=G.roster.map((p,i)=>{
-    const c=r.plays[p.id],crash=r.crashed.includes(p.id),boom=r.mine!=null&&c===r.mine,win=r.winner===p.id;
+    const c=r.cards[p.id],crash=r.crashed.includes(p.id)&&G.mod!=="copycat",boom=r.mine!=null&&c===r.mine,win=r.winners.includes(p.id)&&(r.d[p.id]||0)>0;
     const cls=boom?"boom":crash?"crash":win?"win":"";
-    const stamp=boom?`<span class="stamp">MINE</span>`:crash?`<span class="stamp">CRASH</span>`:"";
-    return `<div class="rv" style="--i:${i};--n:${n}"><div class="rc ${cls}" style="--n:${n}">${c}${stamp}${win?`<span class="crown">WIN</span>`:""}${r.auto.includes(p.id)?`<span class="auto">AUTO</span>`:""}</div><div class="who" style="color:${COLS[p.col%COLS.length]}">${esc(p.name)}</div></div>`;
+    const stamp=boom?`<span class="stamp">BOMB</span>`:crash?`<span class="stamp">CRASH</span>`:"";
+    return `<div class="rv" style="--i:${i}"><div class="rc ${cls}" style="--n:${n}">${c}${stamp}${win?`<span class="crown">WIN</span>`:""}${r.x2.includes(p.id)?`<span class="xb">×2</span>`:""}${r.auto.includes(p.id)?`<span class="auto">AUTO</span>`:""}</div><div class="who" style="color:${COLS[p.col%COLS.length]}">${esc(p.name)}</div></div>`;
   }).join("");
-  return `<div class="table${anim?" anim":""}">${r.mine!=null?`<span class="minechip late" style="--n:${n}">MINE WAS ${r.mine}</span>`:""}<div class="reveal">${cards}</div><div class="headline late${crashHead?" crash":""}" style="--n:${n}">${head}</div>${subs.length?`<div class="sub late" style="--n:${n}">${subs.join(" ")}</div>`:""}</div>`;
+  return `<div class="table${anim?" anim":""}">${r.mine!=null?`<span class="minechip late" style="--n:${n}">BOMB WAS ${r.mine}</span>`:""}${G.mod==="bullseye"?`<span class="target">TARGET ${G.target}</span>`:""}<div class="reveal">${cards}</div><div class="headline late${bad?" crash":""}" style="--n:${n}">${head}</div>${subs.length?`<div class="sub late" style="--n:${n}">${subs.join(" ")}</div>`:""}</div>`;
 }
-function lobbyHTML(){
+function lobbyParts(){
   const host=isHost;
-  const rows=G.roster.map(p=>`<div class="lp"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span>${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
-  const empty=G.roster.length<MAXP?`<div class="empty">${MAXP-G.roster.length} open seat${MAXP-G.roster.length===1?"":"s"}. Friends join from Open lobbies.</div>`:"";
-  const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${G.roster.length>=MAXP?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need at least 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to start.</p>`;
-  return `<div class="top"><div class="rd">LOBBY</div><span class="sp"></span><button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>
-  <section class="panel" style="align-items:center;text-align:center"><div class="big">${esc(nameOf(G.host))}'s lobby</div><p class="note">${host?"Your lobby is listed under Open lobbies. Friends tap it to join.":"You're in. The host starts when everyone's here."}</p></section>
-  <section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2><div class="lob">${rows}${empty}</div></section>${actions}`;
+  const rows=G.roster.map(p=>`<div class="lp" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span>${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
+  const free=MAXP-G.roster.length;
+  const empty=free>0?`<div class="empty">${free} open seat${free===1?"":"s"}. Friends tap your lobby under Open lobbies.</div>`:"";
+  const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${free<=0?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to tap Start.</p>`;
+  return{
+    "s-top":topBar("LOBBY"),
+    "s-head":`<section class="panel center"><div class="big">${esc(nameOf(G.host))}'s lobby</div><p class="note">${host?"You're the host. Tap Start when everyone's in.":"You're in! Waiting for the host."}</p></section>`,
+    "s-list":`<section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2><div class="lob">${rows}${empty}</div></section>`,
+    "s-act":actions,
+    "s-emo":emoBar()
+  };
 }
-function overHTML(){
+function overParts(){
   const ranked=G.roster.slice().sort((a,b)=>(G.scores[b.id]||0)-(G.scores[a.id]||0));
   const top=G.scores[ranked[0].id]||0,winners=ranked.filter(p=>(G.scores[p.id]||0)===top);
-  const head=winners.length>1?"Tie game":`${esc(winners[0].name)} wins`;
-  const pl=["1st","2nd","3rd","4th","5th"];
+  const head=winners.length>1?"Tie game!":`${esc(winners[0].name)} wins!`;
+  const pl=["1st","2nd","3rd","4th","5th","6th"];
   let place=0,prev=null;
-  const rows=ranked.map((p,i)=>{const s=G.scores[p.id]||0;if(s!==prev){place=i;prev=s}return `<div class="rk${place===0?" first":""}"><span class="p">${pl[place]}</span><span class="n">${esc(p.name)}${p.id===me.pid?" (you)":""}</span><span class="s">${s}</span></div>`}).join("");
+  const rows=ranked.map((p,i)=>{const s=G.scores[p.id]||0;if(s!==prev){place=i;prev=s}return `<div class="rk${place===0?" first":""}" data-pid="${esc(p.id)}"><span class="p">${pl[place]}</span><span class="n">${esc(p.name)}${p.id===me.pid?" (you)":""}</span><span class="s">${s}</span></div>`}).join("");
   const facts=[];
-  if(G.stats.big)facts.push(`<div class="fact">Biggest haul: <b>${esc(nameOf(G.stats.big.id))}</b>, ${G.stats.big.n} coins in one round</div>`);
+  if(G.stats.big)facts.push(`<div class="fact">Biggest win: <b>${esc(nameOf(G.stats.big.id))}</b>, +${G.stats.big.n} in one round</div>`);
   const cr=Object.entries(G.stats.crash||{}).sort((a,b)=>b[1]-a[1])[0];
-  if(cr&&cr[1]>0)facts.push(`<div class="fact">Crash magnet: <b>${esc(nameOf(cr[0]))}</b>, ${cr[1]} crash${cr[1]===1?"":"es"}</div>`);
-  const can=isHost;
-  return `<div class="top"><div class="rd">GAME OVER</div><span class="sp"></span><button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button></div>
-  <div class="table"><div class="headline">${head}</div><div class="rank">${rows}</div>${facts.length?`<div class="facts">${facts.join("")}</div>`:""}</div>
-  <div class="actions">${can?`<button class="btn primary" data-act="again">Play again</button>`:`<p class="note grow">Waiting for the host to start another round.</p>`}<button class="btn ghost" data-act="leave">Leave</button></div>`;
+  if(cr&&cr[1]>0)facts.push(`<div class="fact">Most crashes: <b>${esc(nameOf(cr[0]))}</b>, ${cr[1]}</div>`);
+  const bm=Object.entries(G.stats.bomb||{}).sort((a,b)=>b[1]-a[1])[0];
+  if(bm&&bm[1]>0)facts.push(`<div class="fact">Bomb magnet: <b>${esc(nameOf(bm[0]))}</b></div>`);
+  return{
+    "s-top":topBar("GAME OVER"),
+    "s-table":`<div class="table"><div class="headline">${head}</div><div class="rank">${rows}</div>${facts.length?`<div class="facts">${facts.join("")}</div>`:""}</div>`,
+    "s-act":`<div class="actions">${isHost?`<button class="btn primary" data-act="again">Play again</button>`:`<p class="note grow">Waiting for the host to tap Play again.</p>`}</div>`,
+    "s-emo":emoBar()
+  };
 }
 
-function render(){
+function layout(v,ids){
   const root=$("#app");
-  if(screen==="menu"){
-    if(root.dataset.s!=="menu"){root.innerHTML=menuHTML();root.dataset.s="menu";root.dataset.v="";lastSig=""}
-    renderMenuBits();return;
-  }
-  const sig=JSON.stringify([screen,G&&G.gid,G&&G.v,G&&G.epoch,G&&G.phase,myPickValid()?myPick.c:null,muted,isHost,code]);
-  if(sig===lastSig)return;
-  lastSig=sig;root.dataset.s="room";
-  if(!G){root.dataset.v="";root.innerHTML=`<div class="top"><div class="rd">LOBBY</div><span class="sp"></span><button class="btn small ghost" data-act="leave">Leave</button></div><div class="table"><div class="headline">Connecting…</div><p class="sub">Getting the table from the host.</p></div>`;return}
-  if(G.phase==="lobby"){root.dataset.v="lobby";root.innerHTML=lobbyHTML();return}
-  if(G.phase==="over"){root.dataset.v="over";root.innerHTML=overHTML();return}
-  const key=G.gid+"-"+G.round+"-"+G.phase,anim=key!==lastAnim;lastAnim=key;
-  if(root.dataset.v!=="game"){
-    root.dataset.v="game";
-    root.innerHTML=`<div id="s-top"></div><div id="s-mod"></div><div class="timer"><i id="bar"></i></div><div id="s-chips"></div><div id="s-table" class="grow" style="display:flex;flex-direction:column"></div><div id="s-hand"></div>`;
-  }
-  part("s-top",topHTML());
-  part("s-mod",modHTML(anim&&G.phase==="pick"),anim);
-  part("s-chips",chipsHTML());
-  part("s-table",G.phase==="pick"?tablePick():tableReveal(anim),anim);
-  part("s-hand",handHTML());
-  frameOnce();
+  if(root.dataset.v===v)return;
+  root.dataset.v=v;root.dataset.s="room";
+  root.innerHTML=ids.map(id=>id==="timer"?`<div class="timer"><i id="bar"></i></div>`:`<div id="${id}"${id==="s-table"?` class="grow col"`:""}></div>`).join("");
 }
 function part(id,html,force){
   const el=document.getElementById(id);
   if(!el)return;
-  const k=html.replace(/ enter| anim/g,"");
+  const k=html.replace(/ enter"| anim"/g,'"');
   if(!force&&el.dataset.k===k)return;
   el.dataset.k=k;el.innerHTML=html;
+}
+function render(){
+  const root=$("#app");
+  if(screen==="menu"){
+    if(root.dataset.s!=="menu"){root.innerHTML=menuHTML();root.dataset.s="menu";root.dataset.v=""}
+    renderMenuBits();return;
+  }
+  if(!G){layout("wait",["s-top","s-table"]);part("s-top",topBar("LOBBY"));part("s-table",`<div class="table"><div class="headline">Connecting…</div><p class="sub">Getting the game from the host.</p></div>`);return}
+  if(G.phase==="lobby"){layout("lobby",["s-top","s-head","s-list","s-act","s-emo"]);const p=lobbyParts();for(const k in p)part(k,p[k]);return}
+  if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=overParts();for(const k in p)part(k,p[k]);return}
+  layout("game",["s-top","s-mod","timer","s-chips","s-table","s-hand","s-emo"]);
+  const key=G.gid+"-"+G.round+"-"+G.phase,anim=key!==lastAnim;lastAnim=key;
+  part("s-top",topBar(`ROUND <b>${G.round}</b>/${G.rounds}`));
+  part("s-mod",modHTML(anim&&G.phase==="pick"),anim);
+  part("s-chips",chipsHTML());
+  part("s-table",G.phase==="pick"?tablePick():tableReveal(anim),anim);
+  part("s-hand",handHTML());
+  part("s-emo",emoBar());
+  frameOnce();
 }
 function frameOnce(){
   if(screen!=="room"||!G)return;
   const bar=$("#bar");if(!bar)return;
-  const now=Date.now()-(isHost?0:offset),left=Math.max(0,G.t0+G.dur-now),pct=G.dur?left/G.dur:0;
+  const now=Date.now()-(isHost?0:offset),left=Math.max(0,G.t0+G.dur-now),pct=G.dur?Math.min(1,left/G.dur):0;
   bar.style.transform=`scaleX(${pct.toFixed(4)})`;
-  bar.classList.toggle("hot",G.phase==="pick"&&left<4000);
-  const s=$("#secs");if(s)s.textContent=G.phase==="pick"?Math.ceil(left/1000)+"s":"";
+  bar.classList.toggle("hot",G.phase==="pick"&&left<3000);
+  const s=$("#secs");if(s){const t=G.phase==="pick"?Math.ceil(left/1000)+"s":"";if(s.textContent!==t)s.textContent=t}
 }
 function frame(){frameOnce();requestAnimationFrame(frame)}
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b||b.disabled)return;
   const a=b.dataset.act;
-  if(a==="create")enter(newCode(),true);
+  if(a==="quick")quickPlay();
+  else if(a==="create")enter(newCode(),true);
   else if(a==="opengame")enter(b.dataset.code,false);
   else if(a==="practice")startPractice();
   else if(a==="leave")leave();
   else if(a==="addbot")addBot();
   else if(a==="rmbot")rmBot(b.dataset.id);
   else if(a==="start"||a==="again")startGame();
-  else if(a==="mute"){muted=!muted;ls.set("cp.mute",muted?"1":"0");if(!muted)tone(660,.08,"square",.03);lastSig="";render()}
+  else if(a==="x2")toggleX2();
+  else if(a==="emo")sendEmo(+b.dataset.i);
+  else if(a==="mute"){muted=!muted;ls.set("cp.mute",muted?"1":"0");if(!muted)tone(660,.08,"square",.03);render()}
 });
 document.addEventListener("pointerdown",e=>{
   const b=e.target.closest("[data-act=card]");if(!b||b.disabled)return;
   e.preventDefault();choose(+b.dataset.c);
 });
 document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
   const b=e.target.closest&&e.target.closest("[data-act=card]");
-  if(b&&!b.disabled&&(e.key==="Enter"||e.key===" ")){e.preventDefault();choose(+b.dataset.c)}
+  if(b&&!b.disabled&&(e.key==="Enter"||e.key===" ")){e.preventDefault();choose(+b.dataset.c);return}
+  if(screen==="room"&&G&&G.phase==="pick"){
+    if(/^[1-8]$/.test(e.key))choose(+e.key);
+    else if(e.key==="x"||e.key==="X")toggleX2();
+  }
 });
 document.addEventListener("input",e=>{
-  if(e.target.id==="nm"){const v=clean(e.target.value);if(v){me.name=v;ls.set("cp.name",v);lobbyPresence()}}
-});
-document.addEventListener("keydown",e=>{
-  if(screen==="room"&&G&&G.phase==="pick"&&/^[1-8]$/.test(e.key)&&e.target.tagName!=="INPUT")choose(+e.key);
+  if(e.target.id==="nm"){const v=clean(e.target.value);if(v){me.name=v;ls.set("cp.name",v)}}
 });
 
-setInterval(()=>{if(isHost)hostTick();else watchdog()},150);
+setInterval(()=>{if(isHost)hostTick();else watchdog()},120);
 render();
 requestAnimationFrame(frame);
 function loadScript(src){return new Promise(r=>{const s=document.createElement("script");s.src=src;s.onload=()=>r(true);s.onerror=()=>r(false);document.head.append(s)})}
@@ -1292,7 +1399,7 @@ function loadScript(src){return new Promise(r=>{const s=document.createElement("
   if(!window.Peer){netState="none";renderMenuBits();return}
   try{dir=await openPeerDirectory(PEER_OPTS,{browsing:()=>screen==="menu"})}catch(e){dir=null}
   netState=dir?"ok":"none";
-  if(dir){dir.onPeers(()=>{if(screen==="menu")renderMenuBits()});lobbyPresence()}
+  if(dir)dir.onPeers(()=>{if(screen==="menu")renderMenuBits()});
   render();renderMenuBits();
 })();
 window.addEventListener("pagehide",()=>{try{nr&&nr.leave()}catch(e){}});
