@@ -305,6 +305,57 @@ input:focus{border-color:var(--butter)}
 .mashstage{position:relative}
 .mashbtn.sm{width:100%;aspect-ratio:1;font-size:40px}
 .mashbtn.roam{position:absolute;width:120px;left:35%;top:40%;transition:left .12s,top .12s}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;width:100%}
+.role{appearance:none;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-align:center}
+.role.sel{border-color:var(--butter);background:var(--raise);box-shadow:0 0 0 3px var(--butter)}
+.role .ri{font-size:34px;line-height:1}
+.role b{font-family:var(--display);font-weight:400;font-size:16px}
+.role .rs{font-size:12px;color:var(--dim);font-weight:700}
+.role .rsp{font-size:12px;line-height:1.3;color:var(--ink)}
+.role .rsp.ar{font-family:"Cairo",var(--body);font-weight:700;color:var(--dim)}
+.table.bt,.table.ht{justify-content:flex-start}
+.arena{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;width:100%}
+.fighter{appearance:none;border:2px solid transparent;background:var(--bg);color:var(--ink);border-radius:14px;padding:10px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;cursor:default;font:inherit}
+.fighter.me{border-color:var(--line)}
+.fighter.dead{opacity:.35;filter:grayscale(1)}
+.fighter.pickable{cursor:pointer;border-color:var(--coral);animation:pulse 1s ease-in-out infinite}
+.fighter.tgt{border-color:var(--butter);box-shadow:0 0 0 3px var(--butter);animation:none}
+.fighter .fi{font-size:30px;line-height:1}
+.fighter .fn{font-weight:800;font-size:14px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fighter .fr{font-size:11px;color:var(--dim);font-weight:700}
+.hpbar{width:100%;height:8px;border-radius:999px;background:var(--raise);overflow:hidden}
+.hpbar i{display:block;height:100%;background:var(--mint);border-radius:999px;transition:width .6s}
+.hpn{font-family:var(--display);font-size:13px;font-variant-numeric:tabular-nums}
+.fst{position:absolute;top:6px;right:8px;font-size:11px;font-weight:800;color:var(--mint);text-transform:uppercase}
+.fst.minus{color:var(--coral);font-family:var(--display);font-size:16px}
+.fst.plus{color:var(--mint);font-family:var(--display);font-size:16px}
+.bacts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%}
+.bact{appearance:none;border:0;border-radius:14px;background:var(--butter);color:var(--cardink);font-weight:800;font-size:16px;padding:14px 8px;cursor:pointer;box-shadow:0 4px 0 var(--butter-d)}
+.bact.on{background:var(--coral);box-shadow:0 4px 0 var(--coral-d),0 0 0 3px var(--ink)}
+.bact[disabled]{opacity:.35;cursor:default;box-shadow:none}
+.blog{display:flex;flex-direction:column;gap:6px;width:100%;text-align:left}
+.bl{background:var(--bg);border-radius:10px;padding:8px 12px;font-weight:700;font-size:15px}
+.hban{display:flex;flex-direction:column;gap:2px;background:var(--mint);color:var(--cardink);border-radius:14px;padding:10px 14px;width:100%}
+.hban.seek{background:var(--coral)}
+.hban b{font-family:var(--display);font-weight:400;font-size:20px}
+.hban span{font-family:"Cairo",var(--body);font-weight:800}
+.hinfo{font-size:13px;color:var(--dim)}
+.hinfo b{color:var(--ink)}
+.noise{background:var(--cardink);color:var(--butter);border-radius:10px;padding:8px 12px;font-weight:800;font-size:14px;animation:pulse 1.2s ease-in-out infinite}
+.noise span{font-family:"Cairo",var(--body);color:var(--ink)}
+.hmap{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;max-width:420px}
+.spot{appearance:none;border:2px solid transparent;background:var(--bg);color:var(--ink);border-radius:12px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;cursor:default;padding:2px;font:inherit}
+.spot .se{font-size:clamp(22px,7vw,30px);line-height:1}
+.spot .sn{font-size:10px;font-weight:700;color:var(--dim)}
+.spot .sw3{position:absolute;bottom:2px;left:2px;right:2px;font-size:9px;font-weight:800;background:var(--butter);color:var(--cardink);border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spot.pickable{cursor:pointer;border-color:var(--line)}
+.spot.pickable:hover{border-color:var(--butter)}
+.spot.sel{border-color:var(--butter);background:var(--raise);box-shadow:0 0 0 2px var(--butter)}
+.spot.mine{border-color:var(--mint)}
+.spot.searched{opacity:.35}
+.spot.flash{animation:fade .5s both;background:var(--raise);opacity:1}
+.spot.found{background:var(--coral);opacity:1}
+.spot.found .sn{color:var(--cardink)}
 </style>
 </head>
 <body>
@@ -1298,6 +1349,8 @@ function startGame(){
   const ros=practice?G.roster:lobbyRoster();
   if(ros.length<2)return;
   if(G.mode==="cards"){cStart(ros);return}
+  if(G.mode==="brawl"){bStart(ros);return}
+  if(G.mode==="hide"){hStart(ros);return}
   G.gid=rid();G.roster=ros;G.list=makeList();G.k=0;G.total={};G.wins={};G.rec={};G.be={};G.res=null;G.x2used={};G.streak={};
   ros.forEach(p=>{G.total[p.id]=0;G.wins[p.id]=0});
   beginIntro();publish();
@@ -1403,7 +1456,7 @@ function botValue(g){
 function setOpt(k,v){
   if(!G||!isHost||G.phase!=="lobby")return;
   if(k==="speed"&&SPEED[v])G.speed=v;
-  if(k==="mode"&&["cards","party","single"].includes(v))G.mode=v;
+  if(k==="mode"&&["cards","brawl","hide","party","single"].includes(v))G.mode=v;
   if(k==="per"&&["1","2","3"].includes(v))G.per=+v;
   if(k==="srounds"&&["3","5","7"].includes(v))G.srounds=+v;
   if(k==="sgame"&&GAMES[v])G.single=v;
@@ -1695,12 +1748,394 @@ document.addEventListener("keydown",e=>{
   else if(e.key==="x"||e.key==="X")cToggleX2();
 });
 
+const ROLES={
+  fighter:{n:"Fighter",i:"🗡️",hp:10,atk:3,sp:"Power Slash",sd:"Attack with +3 damage.",sa:"ضربة قوية +٣.",tgt:true},
+  tank:{n:"Tank",i:"🛡️",hp:14,atk:2,sp:"Fortress",sd:"Parry everything and heal 2.",sa:"صد كل حاجة واشفي ٢.",tgt:false},
+  ninja:{n:"Ninja",i:"🥷",hp:8,atk:3,sp:"Shadow Strike",sd:"An attack that can't be parried.",sa:"ضربة محدش يقدر يصدها.",tgt:true},
+  healer:{n:"Healer",i:"💚",hp:9,atk:2,sp:"Heal",sd:"Heal yourself 4 HP.",sa:"اشفي نفسك ٤.",tgt:false},
+  berserk:{n:"Berserker",i:"🔥",hp:9,atk:4,sp:"Rage",sd:"Hit everyone for 2. Takes +1 damage from hits.",sa:"اضرب الكل ٢. بياخد ضربة زيادة ١.",tgt:false}
+};
+const ROLE_IDS=Object.keys(ROLES);
+const BSPEED={chill:{role:15000,turn:14000,rev:5500},normal:{role:12000,turn:10000,rev:4500},fast:{role:9000,turn:7000,rev:3500}};
+const SPOTS=[["🛋️","Couch","الكنبة"],["🚪","Door","الباب"],["🗄️","Closet","الدولاب"],["🛁","Bathtub","البانيو"],["🌳","Tree","الشجرة"],["📦","Box","الكرتونة"],["🚗","Car","العربية"],["🛏️","Bed","السرير"],["🧺","Basket","السبت"],["🪴","Plant","الزرعة"],["🎪","Tent","الخيمة"],["🗑️","Bin","الزبالة"],["🧊","Fridge","التلاجة"],["🎹","Piano","البيانو"],["📚","Shelf","المكتبة"],["🪣","Bucket","الجردل"]];
+const HSPEED={chill:{hide:14000,seek:13000,rev:5000,end:5500},normal:{hide:11000,seek:10000,rev:4200,end:4500},fast:{hide:8000,seek:7000,rev:3200,end:3500}};
+const adj=s=>{const r=Math.floor(s/4),c=s%4,o=[];if(r>0)o.push(s-4);if(r<3)o.push(s+4);if(c>0)o.push(s-1);if(c<3)o.push(s+1);return o};
+let myAct=null,bSel=null,hSel=[],hostHide={spots:{}},mAnim="";
+function turnKey(){return G.mode==="brawl"?(G.phase==="role"?"role":"t"+G.bt):G.phase==="hide"?"h"+G.hr:"s"+G.hr+"-"+G.st}
+function actOf(id){
+  const t=turnKey();
+  if(id===me.pid)return myAct&&myAct.g===G.gid&&myAct.t===t?myAct.a:null;
+  const p=G.roster.find(r=>r.id===id);
+  if(p&&p.bot)return H.bots[id]&&H.botAt[id]<=Date.now()?H.bots[id]:null;
+  if(!nr)return null;
+  for(const peer of nr.peers()){const pr=peer.presence||{},a=pr.act;if(pr.pid===id&&a&&a.g===G.gid&&a.t===t&&a.a&&typeof a.a==="object")return a.a}
+  return null;
+}
+function sendAct(a){
+  myAct={g:G.gid,t:turnKey(),a};
+  if(nr&&!practice)nr.presence({act:myAct}).catch(()=>{});
+  tone(660,.07,"square",.03);
+  if(isHost)hostTick();
+  render();
+}
+function myActNow(){return G&&myAct&&myAct.g===G.gid&&myAct.t===turnKey()?myAct.a:null}
+
+function bStart(ros){
+  G.gid=rid();G.roster=ros;G.list=[];G.k=0;G.be={};G.total={};G.wins={};G.rec={};
+  G.f={};ros.forEach(p=>G.f[p.id]={role:null,hp:0,max:0,chg:0,cd:0,lp:-5,alive:true,dt:0,dmg:0,kills:0});
+  G.bt=0;G.maxT=14;G.blog=[];G.lk=[];
+  G.phase="role";G.t0=Date.now();G.dur=(BSPEED[G.speed]||BSPEED.normal).role;H=freshH();
+  ros.forEach(p=>{if(p.bot){H.bots[p.id]={role:ROLE_IDS[ri(ROLE_IDS.length)]};H.botAt[p.id]=Date.now()+800+ri(4000)}});
+  myAct=null;publish();
+}
+function bAlive(){return G.roster.filter(p=>G.f[p.id]&&G.f[p.id].alive).map(p=>p.id)}
+function bValid(id,a){
+  const f=G.f[id];if(!f||!f.alive||!a)return null;
+  const k=a.k;
+  if(k==="parry")return f.lp===G.bt-1?null:{k};
+  if(k==="chg")return{k};
+  if(k==="sp"){if(f.cd>0)return null;const R=ROLES[f.role];if(R.tgt){if(!a.tg||a.tg===id||!G.f[a.tg]||!G.f[a.tg].alive)return null;return{k,tg:a.tg}}return{k}}
+  if(k==="atk"){if(!a.tg||a.tg===id||!G.f[a.tg]||!G.f[a.tg].alive)return null;return{k,tg:a.tg}}
+  return null;
+}
+function bBotAct(id){
+  const f=G.f[id],R=ROLES[f.role],others=bAlive().filter(x=>x!==id);
+  if(!others.length)return{k:"chg"};
+  const weak=others.slice().sort((a,b)=>G.f[a].hp-G.f[b].hp)[0];
+  const tg=Math.random()<.6?weak:others[ri(others.length)];
+  const r=Math.random(),lvl=G.botlvl||"normal";
+  if(f.cd<=0&&r<(lvl==="hard"?.45:.3)){if(f.role==="healer"&&f.hp>=f.max-1)return{k:"atk",tg};return R.tgt?{k:"sp",tg}:{k:"sp"}}
+  if(f.lp!==G.bt-1&&r<.5&&f.hp<=f.max/2)return{k:"parry"};
+  if(r<.62&&!f.chg)return{k:"chg"};
+  if(f.lp!==G.bt-1&&r<.75)return{k:"parry"};
+  return{k:"atk",tg};
+}
+function bBeginTurn(){
+  G.bt++;G.phase="turn";G.t0=Date.now();G.dur=(BSPEED[G.speed]||BSPEED.normal).turn;G.lk=[];H=freshH();
+  for(const id of bAlive()){const p=G.roster.find(r=>r.id===id);if(p.bot){H.bots[id]=bBotAct(id);H.botAt[id]=Date.now()+700+ri(Math.max(1500,G.dur-3500))}}
+}
+function bResolve(){
+  const alive=bAlive(),A={},lines=[],dmg={},heal={},hitBy={};
+  alive.forEach(id=>{A[id]=bValid(id,actOf(id));dmg[id]=0;heal[id]=0;hitBy[id]=[]});
+  const parry=new Set(alive.filter(id=>A[id]&&(A[id].k==="parry"||(A[id].k==="sp"&&G.f[id].role==="tank"))));
+  const hit=(a,t,amt,unblock,label)=>{
+    if(G.f[t].role==="berserk")amt+=1;
+    if(parry.has(t)&&!unblock){dmg[a]+=2;lines.push(`🛡 ${nm(t)} parried ${nm(a)}! ${nm(a)} −2`);return}
+    dmg[t]+=amt;hitBy[t].push(a);lines.push(`${label} ${nm(a)} → ${nm(t)} −${amt}`);
+  };
+  for(const id of alive){
+    const a=A[id],f=G.f[id],R=ROLES[f.role];
+    if(!a){lines.push(`😶 ${nm(id)} froze`);continue}
+    const bonus=f.chg?3:0;
+    if(a.k==="atk"){hit(id,a.tg,R.atk+bonus,false,"⚔️");f.chg=0}
+    else if(a.k==="chg"){f.chg=1;lines.push(`⚡ ${nm(id)} is charging up`)}
+    else if(a.k==="parry"){f.lp=G.bt}
+    else if(a.k==="sp"){
+      f.cd=3;
+      if(f.role==="fighter"){hit(id,a.tg,R.atk+3+bonus,false,"💥");f.chg=0}
+      else if(f.role==="ninja"){hit(id,a.tg,R.atk+bonus,true,"🥷");f.chg=0}
+      else if(f.role==="healer"){heal[id]+=4;lines.push(`💚 ${nm(id)} healed +4`)}
+      else if(f.role==="tank"){heal[id]+=2;f.lp=G.bt;lines.push(`🏰 ${nm(id)} built a fortress +2`)}
+      else if(f.role==="berserk"){for(const t of alive)if(t!==id)hit(id,t,2+bonus,false,"🔥");f.chg=0}
+    }
+  }
+  for(const id of alive)if(A[id]&&A[id].k==="parry"&&!lines.some(l=>l.startsWith(`🛡 ${nm(id)} parried`)))lines.push(`🛡 ${nm(id)} parried nothing`);
+  const died=[];
+  for(const id of alive){
+    const f=G.f[id];
+    f.hp=Math.min(f.max,f.hp+heal[id])-dmg[id];f.dmg=dmg[id]-heal[id];
+    if(f.cd>0&&!(A[id]&&A[id].k==="sp"))f.cd--;
+    if(f.hp<=0){f.hp=0;f.alive=false;f.dt=G.bt;died.push(id);for(const k of new Set(hitBy[id]))if(G.f[k])G.f[k].kills++}
+  }
+  died.forEach(id=>lines.push(`💀 ${nm(id)} is out!`));
+  G.blog=lines;G.bdied=died;
+}
+function bTick(now){
+  const sp=BSPEED[G.speed]||BSPEED.normal;
+  if(G.phase==="role"){
+    const lk=G.roster.filter(p=>{const a=actOf(p.id);return a&&ROLES[a.role]}).map(p=>p.id);
+    let ch=false;if(lk.join()!==G.lk.join()){G.lk=lk;ch=true}
+    if(lk.length===G.roster.length&&!H.allAt)H.allAt=now;
+    if((H.allAt&&now-H.allAt>500)||now>=G.t0+G.dur){
+      for(const p of G.roster){const a=actOf(p.id),role=a&&ROLES[a.role]?a.role:ROLE_IDS[ri(ROLE_IDS.length)],R=ROLES[role];Object.assign(G.f[p.id],{role,hp:R.hp,max:R.hp})}
+      bBeginTurn();return true;
+    }
+    return ch;
+  }
+  if(G.phase==="turn"){
+    const alive=bAlive(),lk=alive.filter(id=>bValid(id,actOf(id)));
+    let ch=false;if(lk.join()!==G.lk.join()){G.lk=lk;ch=true}
+    const all=lk.length===alive.length;
+    if(all&&!H.allAt)H.allAt=now;if(!all)H.allAt=0;
+    if((all&&now-H.allAt>500)||now>=G.t0+G.dur){bResolve();G.phase="breveal";G.t0=now;G.dur=sp.rev;bBotEmotes();return true}
+    return ch;
+  }
+  if(G.phase==="breveal"&&now>=G.t0+G.dur){
+    if(bAlive().length<=1||G.bt>=G.maxT){G.phase="over";G.t0=now;G.dur=0}else bBeginTurn();
+    return true;
+  }
+  return false;
+}
+function bBotEmotes(){
+  for(const p of G.roster){
+    if(!p.bot||Math.random()<.55)continue;
+    const f=G.f[p.id];let pool=f.alive?(f.dmg<0||G.bdied.length?[0,3,6,EMO.length+6]:[5,2]):[1,4,EMO.length+8,EMO.length];
+    if(!G.ff&&Math.random()<.5)pool=pool.filter(i=>i>=RUDE);
+    const ok=pool.filter(emoOk);if(!ok.length)continue;
+    const prev=G.be[p.id];G.be[p.id]={i:ok[ri(ok.length)],n:(prev?prev.n:0)+1};
+  }
+}
+function bRank(){
+  return G.roster.slice().sort((a,b)=>{const A=G.f[a.id],B=G.f[b.id];if(A.alive!==B.alive)return A.alive?-1:1;if(A.alive)return B.hp-A.hp;return B.dt-A.dt});
+}
+function bFighters(target){
+  const me_=G.f[me.pid];
+  return `<div class="arena">${G.roster.map(p=>{
+    const f=G.f[p.id],R=ROLES[f.role]||{i:"❔",n:"Picking…"},pct=f.max?Math.max(0,f.hp/f.max*100):100;
+    const sel=target&&f.alive&&p.id!==me.pid,tg=bSel&&bSel.tg===p.id;
+    const st=G.phase==="turn"?(f.alive?((G.lk||[]).includes(p.id)?"Ready":"…"):"OUT"):G.phase==="breveal"?(f.dmg>0?"−"+f.dmg:f.dmg<0?"+"+(-f.dmg):""):"";
+    return `<button class="fighter${f.alive?"":" dead"}${p.id===me.pid?" me":""}${sel?" pickable":""}${tg?" tgt":""}" data-act="${sel?"btg":"noop"}" data-id="${esc(p.id)}" data-pid="${esc(p.id)}" ${sel?"":"tabindex=\"-1\""}>
+      <span class="fi">${R.i}</span><span class="fn" style="color:${COLS[p.col%COLS.length]}">${esc(p.name)}</span><span class="fr">${esc(R.n)}${f.chg?" ⚡":""}${f.cd>0?` · ✨${f.cd}`:""}</span>
+      <span class="hpbar"><i style="width:${pct}%"></i></span><span class="hpn">${f.max?f.hp+"/"+f.max:""}</span>${st?`<span class="fst${G.phase==="breveal"?(f.dmg>0?" minus":" plus"):""}">${st}</span>`:""}</button>`;
+  }).join("")}</div>`;
+}
+function bRoleHTML(){
+  const mine=myActNow();
+  return `<div class="table"><div class="headline">Pick your fighter</div><p class="sub">اختار الشخصية بتاعتك</p><div class="roles">${ROLE_IDS.map(id=>{const R=ROLES[id];return `<button class="role${mine&&mine.role===id?" sel":""}" data-act="brole" data-r="${id}" ${inRoster()?"":"disabled"}><span class="ri">${R.i}</span><b>${R.n}</b><span class="rs">❤️ ${R.hp} · ⚔️ ${R.atk}</span><span class="rsp">✨ ${esc(R.sp)}: ${esc(R.sd)}</span><span class="rsp ar" dir="rtl" lang="ar">${esc(R.sa)}</span></button>`}).join("")}</div><div class="secs" id="secs"></div></div>`;
+}
+function bTurnHTML(){
+  const f=G.f[me.pid],a=myActNow(),R=f&&ROLES[f.role];
+  if(!f||!f.alive)return `<div class="table bt">${bFighters(false)}<p class="sub">${f?"You're out. Watch the chaos 👀":"You're watching."}</p><div class="secs" id="secs"></div></div>`;
+  const need=bSel&&(bSel.k==="atk"||(bSel.k==="sp"&&R.tgt));
+  const lab=a?(a.k==="atk"?`⚔️ Attack → ${nm(a.tg)}`:a.k==="parry"?"🛡 Parry":a.k==="chg"?"⚡ Charge":`✨ ${esc(R.sp)}${a.tg?" → "+nm(a.tg):""}`):"";
+  const btn=(k,t,dis)=>`<button class="bact${bSel&&bSel.k===k?" on":""}" data-act="bact" data-k="${k}" ${dis?"disabled":""}>${t}</button>`;
+  return `<div class="table bt">${bFighters(need)}<div class="secs" id="secs"></div>
+  <div class="bacts">${btn("atk","⚔️ Attack")}${btn("parry","🛡 Parry",f.lp===G.bt-1)}${btn("chg","⚡ Charge",!!f.chg)}${btn("sp",`✨ ${esc(R.sp)}${f.cd>0?" ("+f.cd+")":""}`,f.cd>0)}</div>
+  <p class="prompt">${need?"Tap who to hit 👆":a?`Locked: <b>${lab}</b>`:"Choose your move"}</p></div>`;
+}
+function bRevealHTML(anim){
+  return `<div class="table bt${anim?" anim":""}">${bFighters(false)}<div class="blog">${(G.blog||[]).map((l,i)=>`<div class="bl late" style="--n:${i/1.5}">${l}</div>`).join("")}</div></div>`;
+}
+function bRender(){
+  layout("brawl",["s-top","timer","s-table","s-emo"]);
+  const key=G.gid+"-"+G.bt+"-"+G.phase,anim=key!==mAnim;mAnim=key;
+  if(anim)bSel=null;
+  part("s-top",topBar(G.phase==="role"?"⚔️ BRAWL · PICK ROLE":`⚔️ TURN <b>${G.bt}</b> · ${bAlive().length} LEFT`));
+  part("s-table",G.phase==="role"?bRoleHTML():G.phase==="turn"?bTurnHTML():bRevealHTML(anim),anim);
+  part("s-emo",emoBar());
+  frameOnce();
+}
+function bOverParts(){
+  const ranked=bRank(),w=ranked[0],pl=["1st","2nd","3rd","4th","5th","6th"];
+  const rows=ranked.map((p,i)=>{const f=G.f[p.id];return `<div class="rk${i===0?" first":""}" data-pid="${esc(p.id)}"><span class="p">${pl[i]}</span><span class="n">${(ROLES[f.role]||{}).i||""} ${esc(p.name)}${p.id===me.pid?" (you)":""}</span><span class="s">${f.alive?"❤️"+f.hp:"💀"}</span></div>`}).join("");
+  const killer=G.roster.slice().sort((a,b)=>G.f[b.id].kills-G.f[a.id].kills)[0];
+  return{
+    "s-top":topBar("GAME OVER"),
+    "s-table":`<div class="table"><div class="headline">${G.f[w.id].alive?`${esc(w.name)} is the last one standing!`:"Nobody survived!"}</div><div class="rank">${rows}</div><div class="facts">${killer&&G.f[killer.id].kills?`<div class="fact">Most knockouts: <b>${esc(killer.name)}</b> (${G.f[killer.id].kills})</div>`:""}<div class="fact">Turns: <b>${G.bt}</b></div></div></div>`,
+    "s-act":`<div class="actions">${isHost?`<button class="btn primary" data-act="again">Play again</button>`:`<p class="note grow">Waiting for the host to tap Play again.</p>`}</div>`,
+    "s-emo":emoBar()
+  };
+}
+function bClick(a,b){
+  if(!G||G.mode!=="brawl")return;
+  if(a==="brole"&&G.phase==="role"&&inRoster()){sendAct({role:b.dataset.r});return}
+  if(G.phase!=="turn"||!G.f[me.pid]||!G.f[me.pid].alive)return;
+  const R=ROLES[G.f[me.pid].role];
+  if(a==="bact"){
+    const k=b.dataset.k;
+    if(k==="atk"||(k==="sp"&&R.tgt)){bSel={k};const others=bAlive().filter(x=>x!==me.pid);if(others.length===1)sendAct({k,tg:others[0]});else render();return}
+    bSel={k};sendAct({k});return;
+  }
+  if(a==="btg"&&bSel&&(bSel.k==="atk"||bSel.k==="sp")){const tg=b.dataset.id;bSel={k:bSel.k,tg};sendAct({k:bSel.k,tg})}
+}
+
+function hStart(ros){
+  G.gid=rid();G.roster=ros;G.list=[];G.k=0;G.be={};G.total={};G.wins={};G.rec={};
+  ros.forEach(p=>{G.total[p.id]=0});
+  G.hrounds=Math.min(ros.length,4);G.hr=0;G.hst={finds:{},saves:{}};
+  hBeginRound();publish();
+}
+function hBeginRound(){
+  const n=G.roster.length,ns=n>=5?2:1,order=G.roster.map(p=>p.id);
+  G.seekers=Array.from({length:ns},(_,i)=>order[(G.hr*ns+i)%n]);
+  G.hr++;G.st=0;G.searched=[];G.foundIds=[];G.hlast=null;G.lk=[];hostHide={spots:{}};
+  G.phase="hide";G.t0=Date.now();G.dur=(HSPEED[G.speed]||HSPEED.normal).hide;H=freshH();
+  for(const p of G.roster)if(p.bot&&!G.seekers.includes(p.id)){H.bots[p.id]={spot:ri(16)};H.botAt[p.id]=Date.now()+600+ri(3000)}
+  myAct=null;hSel=[];
+}
+function hHiders(){return G.roster.map(p=>p.id).filter(id=>!G.seekers.includes(id))}
+function hLeft(){return hHiders().filter(id=>!G.foundIds.includes(id))}
+function hPer(){return Math.min(4,1+Math.ceil(hLeft().length/G.seekers.length))}
+function hBeginSeek(){
+  G.st++;G.phase="seek";G.t0=Date.now();G.dur=(HSPEED[G.speed]||HSPEED.normal).seek;G.lk=[];H=freshH();
+  const per=hPer(),noise=G.hlast&&G.hlast.noise;
+  for(const p of G.roster){
+    if(!p.bot)continue;
+    if(G.seekers.includes(p.id)){
+      let pool=[...Array(16).keys()].filter(s=>!G.searched.includes(s));
+      if(noise&&noise.cols&&Math.random()<.75){const near=pool.filter(s=>noise.cols.includes(s%4));if(near.length)pool=near}
+      H.bots[p.id]={spots:shuffle(pool).slice(0,per)};
+    }else if(hLeft().includes(p.id)){
+      const cur=hostHide.spots[p.id];H.bots[p.id]={mv:Math.random()<.35?adj(cur)[ri(adj(cur).length)]:cur};
+    }else continue;
+    H.botAt[p.id]=Date.now()+700+ri(Math.max(1500,G.dur-3500));
+  }
+  hSel=[];
+}
+function hTick(now){
+  const sp=HSPEED[G.speed]||HSPEED.normal;
+  if(G.phase==="hide"){
+    const hid=hHiders(),lk=hid.filter(id=>{const a=actOf(id);return a&&Number.isInteger(a.spot)&&a.spot>=0&&a.spot<16});
+    let ch=false;if(lk.join()!==G.lk.join()){G.lk=lk;ch=true}
+    if(lk.length===hid.length&&!H.allAt)H.allAt=now;
+    if((H.allAt&&now-H.allAt>500)||now>=G.t0+G.dur){
+      for(const id of hid){const a=actOf(id);hostHide.spots[id]=a&&Number.isInteger(a.spot)&&a.spot>=0&&a.spot<16?a.spot:ri(16)}
+      hBeginSeek();return true;
+    }
+    return ch;
+  }
+  if(G.phase==="seek"){
+    const per=hPer(),act=G.roster.map(p=>p.id).filter(id=>G.seekers.includes(id)||hLeft().includes(id));
+    const okA=id=>{const a=actOf(id);if(!a)return false;if(G.seekers.includes(id))return Array.isArray(a.spots)&&a.spots.length>0;return Number.isInteger(a.mv)};
+    const lk=act.filter(okA);
+    let ch=false;if(lk.join()!==G.lk.join()){G.lk=lk;ch=true}
+    if(lk.length===act.length&&!H.allAt)H.allAt=now;
+    if((H.allAt&&now-H.allAt>500)||now>=G.t0+G.dur){hResolve(per);G.phase="hreveal";G.t0=now;G.dur=sp.rev;return true}
+    return ch;
+  }
+  if(G.phase==="hreveal"&&now>=G.t0+G.dur){
+    if(!hLeft().length||G.st>=3){
+      for(const id of hLeft()){G.total[id]+=5;G.hst.saves[id]=(G.hst.saves[id]||0)+1}
+      G.phase="hend";G.t0=now;G.dur=sp.end;G.hendSpots=hHiders().map(id=>({id,s:hostHide.spots[id]}));
+    }else hBeginSeek();
+    return true;
+  }
+  if(G.phase==="hend"&&now>=G.t0+G.dur){
+    if(G.hr>=G.hrounds){G.phase="over";G.t0=now;G.dur=0}else hBeginRound();
+    return true;
+  }
+  return false;
+}
+function hResolve(per){
+  const moved=[],dodged=[],found=[];
+  const search=new Set();
+  for(const sid of G.seekers){const a=actOf(sid);if(a&&Array.isArray(a.spots))a.spots.filter(s=>Number.isInteger(s)&&s>=0&&s<16&&!G.searched.includes(s)).slice(0,per).forEach(s=>search.add(s))}
+  for(const id of hLeft()){
+    const a=actOf(id),cur=hostHide.spots[id];
+    if(a&&Number.isInteger(a.mv)&&a.mv!==cur&&adj(cur).includes(a.mv)){if(search.has(cur)&&!search.has(a.mv))dodged.push(id);hostHide.spots[id]=a.mv;moved.push(a.mv)}
+  }
+  for(const id of hLeft())if(search.has(hostHide.spots[id]))found.push({id,s:hostHide.spots[id]});
+  found.forEach(x=>G.foundIds.push(x.id));
+  const pts=found.length*3;G.seekers.forEach(sid=>{G.total[sid]+=Math.round(pts/G.seekers.length);G.hst.finds[sid]=(G.hst.finds[sid]||0)+found.length});
+  G.searched=[...G.searched,...search];
+  let noise=null;
+  if(moved.length){const cols=[...new Set(moved.map(s=>s%4))],left=cols.some(c=>c<2),right=cols.some(c=>c>=2);noise={cols,txt:left&&right?"both sides":left?"the LEFT side":"the RIGHT side",ar:left&&right?"الناحيتين":left?"الناحية الشمال":"الناحية اليمين"}}
+  G.hlast={search:[...search],found,dodged,noise};
+}
+function hMapHTML(mode){
+  const isSeek=G.seekers.includes(me.pid),mySpot=hMySpot(),a=myActNow();
+  const opts=mode==="hide"?[...Array(16).keys()]:mode==="move"&&mySpot!=null?[mySpot,...adj(mySpot)]:[];
+  const last=G.hlast||{search:[],found:[]};
+  return `<div class="hmap">${SPOTS.map((s,i)=>{
+    const searched=G.searched.includes(i),justS=G.phase==="hreveal"&&last.search.includes(i),fnd=(G.phase==="hreveal"?last.found:[]).filter(x=>x.s===i);
+    const endH=G.phase==="hend"?(G.hendSpots||[]).filter(x=>x.s===i):[];
+    let cls="",act="noop";
+    if(mode==="seek"&&!searched){act="hsel";if(hSel.includes(i))cls+=" sel"}
+    if(opts.includes(i)){act=mode==="hide"?"hhide":"hmove";if(a&&(a.spot===i||a.mv===i))cls+=" sel"}
+    if(searched)cls+=" searched";if(justS)cls+=" flash";if(i===mySpot&&!isSeek)cls+=" mine";if(fnd.length)cls+=" found";
+    if(act!=="noop")cls+=" pickable";
+    const who=[...fnd,...endH].map(x=>esc(nameOf(x.id))).join(", ");
+    return `<button class="spot${cls}" data-act="${act}" data-s="${i}" ${act==="noop"?"tabindex=\"-1\"":""}><span class="se">${s[0]}</span><span class="sn">${s[1]}</span>${who?`<span class="sw3">${who}</span>`:i===mySpot&&!isSeek?`<span class="sw3">YOU</span>`:""}</button>`;
+  }).join("")}</div>`;
+}
+function hMySpot(){
+  if(G.seekers.includes(me.pid))return null;
+  const a=myActNow();
+  if(G.phase==="hide")return a&&Number.isInteger(a.spot)?a.spot:null;
+  if(hMyKnown!=null&&hMyKnown.g===G.gid&&hMyKnown.r===G.hr)return hMyKnown.s;
+  return null;
+}
+let hMyKnown=null;
+function hTrack(){
+  if(!G||G.mode!=="hide"||G.seekers.includes(me.pid))return;
+  if(G.phase==="hide"&&inRoster()&&!myActNow()&&localStart()+G.dur-Date.now()<1300)sendAct({spot:ri(16)});
+  if(G.phase==="hide"){const a=myActNow();if(a&&Number.isInteger(a.spot))hMyKnown={g:G.gid,r:G.hr,s:a.spot}}
+  if(G.phase==="seek"){const a=myActNow();if(a&&Number.isInteger(a.mv))hMyPend={g:G.gid,r:G.hr,st:G.st,s:a.mv}}
+  if(G.phase==="hreveal"&&hMyPend&&hMyPend.g===G.gid&&hMyPend.r===G.hr&&hMyPend.st===G.st&&hMyKnown){hMyKnown.s=hMyPend.s;hMyPend=null}
+}
+let hMyPend=null;
+function hBodyHTML(anim){
+  const isSeek=G.seekers.includes(me.pid),inR=inRoster(),out=G.foundIds.includes(me.pid);
+  const sk=G.seekers.map(id=>esc(nameOf(id))).join(" & "),left=hLeft().length,per=hPer();
+  let banner,mode="view",prompt="";
+  if(G.phase==="hide"){
+    banner=isSeek?`<b>You're the SEEKER 👀</b><span dir="rtl" lang="ar">انت اللي بتدور. غمض عينك!</span>`:`<b>HIDE! 🙈</b><span dir="rtl" lang="ar">استخبى! ${sk} بيدور عليك.</span>`;
+    if(isSeek)prompt="Eyes closed… hiders are picking spots.";else if(inR){mode="hide";prompt=myActNow()?"Hidden! Tap another spot to switch.":"Tap a spot to hide in."}
+  }else if(G.phase==="seek"){
+    banner=isSeek?`<b>SEARCH! 🔦 Pick ${per} spot${per===1?"":"s"}</b><span dir="rtl" lang="ar">اختار ${per} أماكن تدور فيهم.</span>`:out?`<b>You got found 😭</b><span dir="rtl" lang="ar">اتمسكت!</span>`:`<b>Stay or sneak? 🤫</b><span dir="rtl" lang="ar">اقعد مكانك ولا اتحرك جنبك؟ الحركة بتعمل صوت!</span>`;
+    if(isSeek){mode="seek";prompt=myActNow()?`Searching ${myActNow().spots.length} spot${myActNow().spots.length===1?"":"s"}. Tap to change.`:`Select up to ${per}, then tap Search.`}
+    else if(!out&&inR){mode="move";prompt=myActNow()?(myActNow().mv===hMySpot()?"Staying put.":"Sneaking over…"):"Tap your spot to stay, or a spot next to it to move."}
+  }else if(G.phase==="hreveal"){
+    const l=G.hlast;banner=l.found.length?`<b>FOUND ${l.found.map(x=>esc(nameOf(x.id))).join(", ")}! 🎯</b>`:`<b>Nobody there… 🤷</b>`;
+    prompt=l.dodged.length?`🏃 ${l.dodged.map(id=>esc(nameOf(id))).join(", ")} slipped away just in time!`:"";
+  }else{
+    banner=`<b>Round over!</b><span dir="rtl" lang="ar">الجولة خلصت!</span>`;prompt=left?`${hLeft().map(id=>esc(nameOf(id))).join(", ")} survived (+5)`:"Everyone got found!";
+  }
+  const noise=G.hlast&&G.hlast.noise&&(G.phase==="seek")?`<div class="noise">🔊 You heard something on ${G.hlast.noise.txt} <span dir="rtl" lang="ar">(في صوت ${G.hlast.noise.ar})</span></div>`:"";
+  const seekBtn=mode==="seek"?`<button class="btn primary" data-act="hgo" ${hSel.length?"":"disabled"}>Search ${hSel.length||""}</button>`:"";
+  return `<div class="table ht${anim?" anim":""}"><div class="hban${isSeek?" seek":""}">${banner}</div><div class="hinfo">Seeker: <b>${sk}</b> · Hiding: <b>${left}</b> · Search ${G.st}/3</div>${noise}${hMapHTML(mode)}<p class="prompt">${prompt}</p>${seekBtn}<div class="secs" id="secs"></div></div>`;
+}
+function hChips(){
+  return `<div class="players">${G.roster.map(p=>{
+    const role=G.seekers.includes(p.id)?"👀":G.foundIds.includes(p.id)?"😵":"🙈";
+    const st=G.phase==="hide"||G.phase==="seek"?((G.lk||[]).includes(p.id)?"Ready":G.foundIds.includes(p.id)?"Found":"…"):"";
+    return `<div class="chip${p.id===me.pid?" me":""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${role} ${esc(p.name)}</span><span class="sc">${G.total[p.id]||0}</span><span class="st${st==="Ready"?" ready":""}">${st}</span></div>`;
+  }).join("")}</div>`;
+}
+function hRender(){
+  hTrack();
+  layout("hide",["s-top","timer","s-chips","s-table","s-emo"]);
+  const key=G.gid+"-"+G.hr+"-"+G.st+"-"+G.phase,anim=key!==mAnim;mAnim=key;
+  part("s-top",topBar(`🙈 ROUND <b>${G.hr}</b>/${G.hrounds}`));
+  part("s-chips",hChips());
+  part("s-table",hBodyHTML(anim),anim);
+  part("s-emo",emoBar());
+  frameOnce();
+}
+function hOverParts(){
+  const ranked=G.roster.slice().sort((a,b)=>(G.total[b.id]||0)-(G.total[a.id]||0)),pl=["1st","2nd","3rd","4th","5th","6th"];
+  let place=0,prev=null;
+  const rows=ranked.map((p,i)=>{const s=G.total[p.id]||0;if(s!==prev){place=i;prev=s}return `<div class="rk${place===0?" first":""}" data-pid="${esc(p.id)}"><span class="p">${pl[place]}</span><span class="n">${esc(p.name)}${p.id===me.pid?" (you)":""}</span><span class="s">${s}</span></div>`}).join("");
+  const bf=Object.entries(G.hst.finds).sort((a,b)=>b[1]-a[1])[0],bs=Object.entries(G.hst.saves).sort((a,b)=>b[1]-a[1])[0];
+  return{
+    "s-top":topBar("GAME OVER"),
+    "s-table":`<div class="table"><div class="headline">${esc(ranked[0].name)} wins!</div><div class="rank">${rows}</div><div class="facts">${bf&&bf[1]?`<div class="fact">Best seeker: <b>${esc(nameOf(bf[0]))}</b> (${bf[1]} found)</div>`:""}${bs&&bs[1]?`<div class="fact">Best hider: <b>${esc(nameOf(bs[0]))}</b> (survived ${bs[1]})</div>`:""}</div></div>`,
+    "s-act":`<div class="actions">${isHost?`<button class="btn primary" data-act="again">Play again</button>`:`<p class="note grow">Waiting for the host to tap Play again.</p>`}</div>`,
+    "s-emo":emoBar()
+  };
+}
+function hClick(a,b){
+  if(!G||G.mode!=="hide"||!inRoster())return;
+  const s=+b.dataset.s;
+  if(a==="hhide"&&G.phase==="hide"&&!G.seekers.includes(me.pid)){sendAct({spot:s});return}
+  if(a==="hmove"&&G.phase==="seek"&&!G.foundIds.includes(me.pid)){sendAct({mv:s});return}
+  if(a==="hsel"&&G.phase==="seek"&&G.seekers.includes(me.pid)){
+    const per=hPer();if(hSel.includes(s))hSel=hSel.filter(x=>x!==s);else{hSel=[...hSel,s];if(hSel.length>per)hSel.shift()}
+    if(myActNow())sendAct({spots:hSel.slice()});else render();return;
+  }
+  if(a==="hgo"&&G.phase==="seek"&&G.seekers.includes(me.pid)&&hSel.length)sendAct({spots:hSel.slice()});
+}
+
 function hostTick(force){
   if(!G||!isHost)return;
   const now=Date.now();let ch=!!force;
   if(G.phase==="lobby"&&!practice){
     const r=lobbyRoster();
     if(JSON.stringify(r)!==JSON.stringify(G.roster)){G.roster=r;ch=true}
+  }else if(G.mode==="brawl"&&G.phase!=="lobby"&&G.phase!=="over"){
+    if(bTick(now))ch=true;
+  }else if(G.mode==="hide"&&G.phase!=="lobby"&&G.phase!=="over"){
+    if(hTick(now))ch=true;
   }else if(G.mode==="cards"&&(G.phase==="pick"||G.phase==="reveal")){
     if(cTick(now))ch=true;
   }else if(G.phase==="intro"){
@@ -1732,7 +2167,7 @@ function publish(){
 }
 function lobbyPresence(){
   if(!dir)return;
-  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase==="lobby"&&G.locked?"locked":G.phase,r:G.mode==="cards"?G.round:G.k+1,l:G.mode==="cards"?G.rounds:(G.list.length||G.len)}:null;
+  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase==="lobby"&&G.locked?"locked":G.phase,r:G.mode==="cards"?G.round:G.mode==="brawl"?G.bt:G.mode==="hide"?G.hr:G.k+1,l:G.mode==="cards"?G.rounds:G.mode==="brawl"?G.maxT:G.mode==="hide"?G.hrounds:(G.list.length||G.len)}:null;
   const s=JSON.stringify(listing);
   if(s!==lastLobby){lastLobby=s;Promise.resolve(dir.presence({listing})).catch(()=>{})}
 }
@@ -1920,13 +2355,13 @@ function startPractice(){
   practice=true;isHost=true;nr=null;code=null;mySub=null;
   G=newLobby();
   BOTN.slice().sort(()=>Math.random()-.5).slice(0,3).forEach((n,i)=>G.roster.push({id:"bot-"+rid(),name:n,col:(me.col+1+i)%COLS.length,bot:true}));
-  screen="room";startGame();
+  screen="room";publish();
 }
 async function leave(){
   stopStage();
   const r=nr;nr=null;
   if(r){try{await r.presence({g:null,res:null});await r.leave()}catch(e){}}
-  isHost=false;practice=false;G=null;code=null;mySub=null;cPick=null;armX2=false;armSh=false;pX2=null;chatLog=[];chatSig="";chatOpen=false;unread=0;
+  isHost=false;practice=false;G=null;code=null;mySub=null;cPick=null;armX2=false;armSh=false;pX2=null;myAct=null;bSel=null;hSel=[];hMyKnown=null;hMyPend=null;chatLog=[];chatSig="";chatOpen=false;unread=0;
   lobbyPresence();
   screen="menu";render();
 }
@@ -2032,8 +2467,8 @@ function optsHTML(host,lens){
   const seg=(k,opts,cur)=>opts.map(([v,l])=>`<button class="seg${cur===v?" on":""}" data-act="opt" data-k="${k}" data-v="${v}" ${dis}>${l}</button>`).join("");
   const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
-  <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["party","🎉 Party"],["single","🎯 One game"]],G.mode)}</div></div>
-  ${G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">Each round of a game adds a new twist.</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
+  <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["brawl","⚔️ Brawl"],["hide","🙈 Hide & Seek"],["party","🎉 Party"],["single","🎯 One game"]],G.mode)}</div></div>
+  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">Each round of a game adds a new twist.</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
   <div class="orow"><span class="ol">Lock lobby</span><button class="ffbtn${G.locked?" on":""}" data-act="opt" data-k="locked" ${dis}><span class="sw2"><i></i></span>${G.locked?"Locked":"Open"}</button></div>
@@ -2115,8 +2550,10 @@ function renderMain(){
   }
   if(!G){layout("wait",["s-top","s-table"]);part("s-top",topBar("LOBBY"));part("s-table",`<div class="table"><div class="headline">Connecting…</div><p class="sub">Getting the game from the host.</p></div>`);return}
   if(G.phase==="lobby"){layout("lobby",["s-top","s-head","s-list","s-act","s-opts","s-emo"]);const p=lobbyParts();for(const k in p)part(k,p[k]);return}
-  if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=G.mode==="cards"?cOverParts():overParts();for(const k in p)part(k,p[k]);return}
+  if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=G.mode==="cards"?cOverParts():G.mode==="brawl"?bOverParts():G.mode==="hide"?hOverParts():overParts();for(const k in p)part(k,p[k]);return}
   if(G.mode==="cards"){cRender();return}
+  if(G.mode==="brawl"){bRender();return}
+  if(G.mode==="hide"){hRender();return}
   layout("game",["s-top","timer","s-chips","s-stage","s-emo"]);
   part("s-top",topBar(G.mode==="single"?`${cur().i} ROUND <b>${G.k+1}</b>/${G.list.length}`:`STAGE <b>${G.k+1}</b>/${G.list.length}`));
   part("s-chips",chipsHTML());
@@ -2131,13 +2568,13 @@ function frameOnce(){
   const total=G.phase==="play"&&cur()?cur().play:G.dur;
   const left=Math.max(0,start+total-now),pct=total?Math.min(1,left/total):0;
   bar.style.transform=`scaleX(${pct.toFixed(4)})`;
-  bar.classList.toggle("hot",(G.phase==="play"||G.phase==="pick")&&left<3000);
-  const sc=$("#secs");if(sc){const t=G.phase==="pick"?Math.ceil(left/1000)+"s":"";if(sc.textContent!==t)sc.textContent=t}
+  bar.classList.toggle("hot",["play","pick","turn","role","hide","seek"].includes(G.phase)&&left<3000);
+  const sc=$("#secs");if(sc){const t=["pick","turn","role","hide","seek"].includes(G.phase)?Math.ceil(left/1000)+"s":"";if(sc.textContent!==t)sc.textContent=t}
   bar.classList.toggle("intro",G.phase==="intro");
   const cd=$("#cd");
   if(cd){const n=Math.ceil(left/1000);if(cd.textContent!==String(n)){cd.textContent=n;if(n!==lastCd&&n<=3&&n>0)tone(440,.06,"square",.03);lastCd=n}}
 }
-function frame(){frameOnce();requestAnimationFrame(frame)}
+function frame(){frameOnce();if(G&&G.mode==="hide"&&G.phase==="hide"&&screen==="room")hTrack();requestAnimationFrame(frame)}
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b||b.disabled)return;
@@ -2153,6 +2590,8 @@ document.addEventListener("click",e=>{
   else if(a==="opt")setOpt(b.dataset.k,b.dataset.v);
   else if(a==="x2")cToggleX2();
   else if(a==="px2")togglePX2();
+  else if(["brole","bact","btg"].includes(a))bClick(a,b);
+  else if(["hhide","hmove","hsel","hgo"].includes(a))hClick(a,b);
   else if(a==="chat"){if(!wide()){chatOpen=true;unread=0;renderChat();setTimeout(()=>{const i=$("#chatin");if(i)i.focus()},50)}else{const i=$("#chatin");if(i)i.focus()}}
   else if(a==="chatclose"){chatOpen=false;renderChat()}
   else if(a==="chatsend")sendChat();
