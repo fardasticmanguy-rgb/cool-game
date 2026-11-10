@@ -375,6 +375,138 @@ input:focus{border-color:var(--butter)}
 <button id="chatfab" class="chatfab" data-act="chat" hidden aria-label="Open chat">💬<b id="unread" hidden></b></button>
 
 <script>
+const BUS_TOP="crashpot6";
+const BUS_URLS=(()=>{const q=new URLSearchParams(location.search).get("mqtt");return q?q.split(","):["wss://broker.emqx.io:8084/mqtt","wss://broker.hivemq.com:8884/mqtt"]})();
+const BUS_ME="c"+Math.random().toString(36).slice(2,10);
+const busSubs=new Map(),busSeen=new Map();
+let busClients=[],busUp=0,busSeq=0,busReady=null;
+function busConnect(){
+  if(busReady)return busReady;
+  busReady=new Promise(resolve=>{
+    let done=false;const finish=v=>{if(!done){done=true;resolve(v)}};
+    if(!window.mqtt){finish(false);return}
+    for(const url of BUS_URLS){
+      let c;
+      try{c=window.mqtt.connect(url,{clientId:BUS_ME+"_"+Math.random().toString(36).slice(2,6),clean:true,keepalive:25,reconnectPeriod:2500,connectTimeout:9000,protocolVersion:4})}catch(e){continue}
+      c.__up=false;
+      c.on("connect",()=>{c.__up=true;busUp=busClients.filter(x=>x.__up).length;for(const t of busSubs.keys())c.subscribe(t,{qos:0});finish(true);busNotifyUp()});
+      c.on("close",()=>{c.__up=false;busUp=busClients.filter(x=>x.__up).length;busNotifyUp()});
+      c.on("error",()=>{});
+      c.on("message",(topic,buf)=>{
+        let m;try{m=JSON.parse(buf.toString())}catch(e){return}
+        if(!m||typeof m!=="object"||typeof m.from!=="string"||typeof m.s!=="number")return;
+        const k=topic+"|"+m.from+"|"+m.s;
+        if(busSeen.has(k))return;busSeen.set(k,Date.now());
+        if(busSeen.size>4000){const cut=Date.now()-20000;for(const [kk,t] of busSeen)if(t<cut)busSeen.delete(kk)}
+        const hs=busSubs.get(topic);if(hs)for(const h of [...hs])try{h(m,topic)}catch(e){}
+      });
+      busClients.push(c);
+    }
+    setTimeout(()=>finish(busUp>0),7000);
+  });
+  return busReady;
+}
+const busUpListeners=new Set();
+function busNotifyUp(){for(const f of [...busUpListeners])try{f(busUp>0)}catch(e){}}
+function busSub(topic,h){
+  if(!busSubs.has(topic)){busSubs.set(topic,new Set());for(const c of busClients)if(c.__up)c.subscribe(topic,{qos:0})}
+  busSubs.get(topic).add(h);
+  return()=>{const s=busSubs.get(topic);if(!s)return;s.delete(h);if(!s.size){busSubs.delete(topic);for(const c of busClients)if(c.__up)c.unsubscribe(topic)}};
+}
+function busPub(topic,obj){
+  const m={...obj,from:BUS_ME,s:++busSeq};
+  const txt=JSON.stringify(m);
+  for(const c of busClients)if(c.__up)try{c.publish(topic,txt,{qos:0})}catch(e){}
+  const k=topic+"|"+BUS_ME+"|"+m.s;busSeen.set(k,Date.now());
+}
+
+async function busOpenDirectory(_opts,{browsing=()=>true}={}){
+  const ok=await busConnect();
+  if(!ok)throw{code:"unavailable"};
+  const T=BUS_TOP+"/lobbies",PING=BUS_TOP+"/lobbies-ping";
+  const listings=new Map(),listeners=new Set();
+  let own=null,closed=false,startedAt=Date.now();
+  const snapshot=()=>{
+    const now=Date.now(),out=[];
+    for(const [code,e] of listings){if(now-e.at>11000){listings.delete(code);continue}out.push({sameTab:!!(own&&own.code===code),presence:{listing:e.l}})}
+    return out;
+  };
+  const notify=()=>{if(closed)return;const peers=snapshot();listeners.forEach(f=>{try{f({peers})}catch(e){}})};
+  const offL=busSub(T,m=>{
+    const l=m.l;
+    if(m.gone&&typeof m.code==="string"){if(listings.delete(m.code))notify();return}
+    if(!l||typeof l.code!=="string")return;
+    listings.set(l.code,{l,at:Date.now()});notify();
+  });
+  const offP=busSub(PING,()=>{if(own)busPub(T,{l:own})});
+  const beat=setInterval(()=>{if(own)busPub(T,{l:own});notify()},4000);
+  busPub(PING,{});
+  return{
+    peers:snapshot,
+    settled:()=>Date.now()-startedAt>2500||listings.size>0,
+    onPeers(f){listeners.add(f);return()=>listeners.delete(f)},
+    refresh(){listings.clear();notify();busPub(PING,{});startedAt=Date.now();setTimeout(notify,2600)},
+    async presence(patch){
+      if("listing" in patch){
+        const prev=own;own=patch.listing||null;
+        if(own)busPub(T,{l:own});else if(prev)busPub(T,{gone:1,code:prev.code});
+      }
+      notify();
+    },
+    async leave(){closed=true;clearInterval(beat);offL();offP();if(own)busPub(T,{gone:1,code:own.code})}
+  };
+}
+
+function busJoinRoom(hostId,role,{}={}){
+  return new Promise(async(resolve,reject)=>{
+    const ok=await busConnect();
+    if(!ok){reject({code:"unavailable"});return}
+    const T=BUS_TOP+"/room/"+hostId;
+    const others=new Map(),listeners=[];
+    let own={},closed=false,ended=false,sawHost=false,lastSent=0,sendTimer=null,snap=Object.freeze([]);
+    const build=()=>{
+      const now=Date.now(),list=[Object.freeze({peer:BUS_ME,sameTab:true,presence:Object.freeze({...own}),updatedAt:now})];
+      for(const [id,e] of others){if(now-e.at>10000){others.delete(id);continue}list.push(Object.freeze({peer:id,sameTab:false,presence:e.p,updatedAt:e.at}))}
+      snap=Object.freeze(list);return snap;
+    };
+    const notify=()=>{const peers=build();for(const f of listeners.slice())try{f({peers})}catch(e){}};
+    const send=(extra)=>{busPub(T,{p:own,...(extra||{})});lastSent=Date.now()};
+    const queue=()=>{if(sendTimer)return;const wait=Math.max(0,60-(Date.now()-lastSent));sendTimer=setTimeout(()=>{sendTimer=null;if(!closed)send()},wait)};
+    const off=busSub(T,m=>{
+      if(closed||m.from===BUS_ME)return;
+      if(m.bye){const had=others.get(m.from);others.delete(m.from);if(had&&had.p&&had.p.g)ended=true;notify();return}
+      if(!m.p||typeof m.p!=="object")return;
+      const isNew=!others.has(m.from);
+      if(m.p.g)sawHost=true;
+      others.set(m.from,{p:Object.freeze({...m.p}),at:Date.now()});
+      if(m.hello||isNew)queue();
+      notify();
+    });
+    const beat=setInterval(()=>{if(!closed){send();notify()}},3000);
+    const api={
+      hostId,
+      peers:()=>snap,
+      onPeers(f){listeners.push(f);setTimeout(()=>f({peers:snap}),0);return()=>{const i=listeners.indexOf(f);if(i>=0)listeners.splice(i,1)}},
+      async presence(patch){for(const k in patch){if(patch[k]===null)delete own[k];else own[k]=patch[k]}queue();notify()},
+      async leave(){if(closed)return;closed=true;clearInterval(beat);clearTimeout(sendTimer);busPub(T,{bye:1});setTimeout(off,300)},
+      ended:()=>ended||(sawHost&&![...others.values()].some(e=>e.p&&e.p.g&&Date.now()-e.at<10000)),
+      connected:()=>busUp>0
+    };
+    send({hello:1});
+    const t0=Date.now();
+    const check=setInterval(()=>{
+      const live=[...others.values()].filter(e=>Date.now()-e.at<10000);
+      if(role==="host"){
+        if(live.some(e=>e.p&&e.p.g&&e.p.g.host)){clearInterval(check);closed=true;clearInterval(beat);off();reject({code:"taken"});return}
+        if(Date.now()-t0>900){clearInterval(check);notify();resolve(api)}
+      }else{
+        if(live.some(e=>e.p&&e.p.g)){clearInterval(check);notify();resolve(api);return}
+        if(Date.now()-t0>(busUp>1?5000:7000)){clearInterval(check);closed=true;clearInterval(beat);off();reject({code:"not_found"})}
+      }
+    },150);
+  });
+}
+
 const BROADCAST_DELAY = 50;
 const HEARTBEAT_INTERVAL = 2000;
 const GUEST_TIMEOUT = 9000;
@@ -386,7 +518,7 @@ const RESUME_ATTEMPTS = 20;
 const FAREWELL_DELAY = 200;
 const NETWORK_ERRORS = new Set(["network", "server-error", "socket-error", "socket-closed"]);
 
-function joinPeerRoom(hostId, role, { resume = false, options = {} } = {}) {
+function pjJoinRoom(hostId, role, { resume = false, options = {} } = {}) {
   return new Promise((resolve, reject) => {
     const listeners = [];
     const presences = new Map();
@@ -930,7 +1062,7 @@ function createScanner(options, onChange) {
   };
 }
 
-async function openPeerDirectory(options, { browsing = () => true } = {}) {
+async function pjOpenDirectory(options, { browsing = () => true } = {}) {
   const listeners = new Set();
   let own = {};
   let closed = false;
@@ -989,6 +1121,9 @@ async function openPeerDirectory(options, { browsing = () => true } = {}) {
     },
   };
 }
+let NET="bus";
+function openPeerDirectory(o,h){return NET==="bus"?busOpenDirectory(o,h):pjOpenDirectory(o,h)}
+function joinPeerRoom(id,role,o){return NET==="bus"?busJoinRoom(id,role,o):pjJoinRoom(id,role,o)}
 </script>
 <script>
 const INTRO_MS=6000,RESULT_MS=4800,GRACE_MS=1300,MAXP=6,RP=[5,3,2,1];
@@ -2326,13 +2461,13 @@ function saveName(){
   ls.set("cp.name",me.name);
   if(el)el.value=me.name;
 }
-function newCode(){return String(100+ri(900))}
+function newCode(){const used=new Set(openList().map(g=>g.code));let c;for(let i=0;i<40;i++){c=String(10+ri(90));if(!used.has(c))break}return c}
 function openList(){
   if(!dir)return[];
   const list=[];
   for(const p of dir.peers()){
     const l=p.presence&&p.presence.listing;
-    if(p.sameTab||!l||typeof l.code!=="string"||!/^[a-z0-9]{3,12}$/.test(l.code))continue;
+    if(p.sameTab||!l||typeof l.code!=="string"||!/^[a-z0-9]{2,12}$/.test(l.code))continue;
     if(list.some(x=>x.code===l.code))continue;
     const n=Math.min(MAXP,Math.max(0,+l.n||0)),b=Math.min(MAXP,Math.max(0,+l.b||0));
     list.push({code:l.code,host:clean(l.host)||"Someone",n,b,st:String(l.st||""),r:+l.r||0,l:+l.l||0});
@@ -2346,7 +2481,7 @@ function quickPlay(){
 }
 async function enter(c,create){
   if(joining||screen!=="menu")return;
-  if(!window.Peer){menuNote="Online didn't load. Check your internet, or tap Practice.";renderMenuBits();return}
+  if(!netReady()){menuNote="Online didn't load. Check your internet, or tap Practice.";renderMenuBits();return}
   saveName();
   c=String(c||"").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,12);
   if(!c)return;
@@ -2355,7 +2490,7 @@ async function enter(c,create){
   while(!joined){
     try{joined=await joinPeerRoom("crashpot-g-"+c,create?"host":"guest",{options:PEER_OPTS})}
     catch(e){
-      if(create&&e&&e.code==="taken"&&tries++<3){c=newCode();continue}
+      if(create&&e&&e.code==="taken"&&tries++<6){c=newCode();continue}
       joining=false;
       menuNote=e&&e.code==="not_found"?"That lobby closed. Pick another one.":"Couldn't connect. Tap it again.";
       renderMenuBits();return;
@@ -2409,10 +2544,10 @@ function menuHTML(){
     <label for="nm">Your name</label>
     <input id="nm" maxlength="14" autocomplete="off" placeholder="Type a name" value="${esc(me.name)}">
     <div class="row"><button class="btn primary grow" data-act="quick" id="quickBtn">Quick play</button><button class="btn grow" data-act="create" id="createBtn">Host</button></div>
-    <div class="row"><input id="jcode" maxlength="3" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="123" aria-label="Lobby code"><button class="btn grow" data-act="jcode" id="jcodeBtn">Join with code</button></div>
+    <div class="row"><input id="jcode" maxlength="2" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="42" aria-label="Lobby code"><button class="btn grow" data-act="jcode" id="jcodeBtn">Join with code</button></div>
     <p id="netmsg" class="note"></p>
   </section>
-  <section class="panel"><div class="lhead"><h2>OPEN LOBBIES</h2><button class="btn small ghost" data-act="refresh" id="refreshBtn">↻ Refresh</button></div><div id="opens" class="opens"></div><p class="note">Don't see it? Tap Refresh, or ask for the 3-number code.</p><p class="note ar" dir="rtl" lang="ar">مش لاقي اللوبي؟ دوس Refresh، أو اطلب الكود.</p></section>
+  <section class="panel"><div class="lhead"><h2>OPEN LOBBIES</h2><button class="btn small ghost" data-act="refresh" id="refreshBtn">↻ Refresh</button></div><div id="opens" class="opens"></div><p class="note">Don't see it? Tap Refresh, or ask for the 2-number code.</p><p class="note ar" dir="rtl" lang="ar">مش لاقي اللوبي؟ دوس Refresh، أو اطلب الكود.</p></section>
   <button class="btn ghost" data-act="practice">Practice vs bots</button>
   <section class="rules">
     <h2>HOW TO PLAY</h2>
@@ -2445,7 +2580,7 @@ function renderMenuBits(){
   const msg=$("#netmsg"),opens=$("#opens");
   if(!msg||!opens)return;
   const off=!dir||joining;
-  $("#quickBtn").disabled=off;$("#createBtn").disabled=!window.Peer||joining;const jb=$("#jcodeBtn");if(jb)jb.disabled=!window.Peer||joining;
+  $("#quickBtn").disabled=off;$("#createBtn").disabled=!netReady()||joining;const jb=$("#jcodeBtn");if(jb)jb.disabled=!netReady()||joining;
   const warn=(menuNote&&!joining)||netState==="none";
   const text=menuNote||(netState==="wait"?"Connecting…":netState==="none"?"Online didn't load. Practice still works.":"Quick play joins an open lobby, or opens one for you.");
   if(msg.textContent!==text)msg.textContent=text;
@@ -2631,19 +2766,25 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="ffcode")tryCode()});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="jcode")joinCode()});
-function joinCode(){const i=$("#jcode");const c=(i?i.value:"").replace(/[^0-9]/g,"");if(c.length!==3){menuNote="Codes are 3 numbers.";renderMenuBits();return}enter(c,false)}
+function joinCode(){const i=$("#jcode");const c=(i?i.value:"").replace(/[^0-9]/g,"");if(c.length!==2){menuNote="Codes are 2 numbers.";renderMenuBits();return}enter(c,false)}
 document.addEventListener("input",e=>{
-  if(e.target.id==="jcode"){e.target.value=e.target.value.replace(/[^0-9]/g,"").slice(0,3);if(e.target.value.length===3)joinCode()}
+  if(e.target.id==="jcode"){e.target.value=e.target.value.replace(/[^0-9]/g,"").slice(0,2);if(e.target.value.length===2)joinCode()}
   if(e.target.id==="nm"){const v=clean(e.target.value);if(v){me.name=v;ls.set("cp.name",v)}}
 });
 
 setInterval(()=>{if(isHost)hostTick();else watchdog()},100);
 render();
 requestAnimationFrame(frame);
+function netReady(){return NET==="bus"?busUp>0||busClients.length>0:!!window.Peer}
 function loadScript(src){return new Promise(r=>{const s=document.createElement("script");s.src=src;s.onload=()=>r(true);s.onerror=()=>r(false);document.head.append(s)})}
 (async()=>{
-  for(const src of["https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js","https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"]){if(window.Peer)break;await loadScript(src)}
-  if(!window.Peer){netState="none";renderMenuBits();return}
+  for(const src of["https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js","https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"]){if(window.mqtt)break;await loadScript(src)}
+  const busOk=window.mqtt?await busConnect():false;
+  if(!busOk){
+    NET="peer";
+    for(const src of["https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js","https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"]){if(window.Peer)break;await loadScript(src)}
+  }
+  if(!busOk&&!window.Peer){netState="none";renderMenuBits();return}
   try{dir=await openPeerDirectory(PEER_OPTS,{browsing:()=>screen==="menu"})}catch(e){dir=null}
   netState=dir?"ok":"none";
   if(dir)dir.onPeers(()=>{if(screen==="menu")renderMenuBits()});
