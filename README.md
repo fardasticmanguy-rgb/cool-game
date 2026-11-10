@@ -18,7 +18,17 @@ A party of tiny games for 2 to 6 players. No talking needed.
 3. قبل كل لعبة، في مربع بيشرح القواعد وعداد. بعدها اللعبة تبدأ.
 4. اكسب الألعاب عشان تاخد نقط. اللي معاه أكتر نقط في الآخر يكسب.
 
-## The games
+## Modes
+
+| Mode | What it is |
+| --- | --- |
+| 🃏 Crash Cards | Pick a card nobody else picks. Twists, ×2, Shield, Peek |
+| ⚔️ Brawl | Pick a fighter. Attack, Parry, Charge or Special. Last one standing wins |
+| 🙈 Hide & Seek | Hide on the map, sneak around, or hunt as the seeker |
+| 🎉 Party | A mix of mini games, each with rounds and twists |
+| 🎯 One game | Play one mini game for several rounds |
+
+## The mini games
 
 | Game | What to do |
 | --- | --- |
