@@ -2326,13 +2326,13 @@ function saveName(){
   ls.set("cp.name",me.name);
   if(el)el.value=me.name;
 }
-function newCode(){const a="bcdfghjkmnpqrstvwxz";let s="";for(let i=0;i<4;i++)s+=a[ri(a.length)];return s}
+function newCode(){return String(100+ri(900))}
 function openList(){
   if(!dir)return[];
   const list=[];
   for(const p of dir.peers()){
     const l=p.presence&&p.presence.listing;
-    if(p.sameTab||!l||typeof l.code!=="string"||!/^[a-z0-9]{4,12}$/.test(l.code))continue;
+    if(p.sameTab||!l||typeof l.code!=="string"||!/^[a-z0-9]{3,12}$/.test(l.code))continue;
     if(list.some(x=>x.code===l.code))continue;
     const n=Math.min(MAXP,Math.max(0,+l.n||0)),b=Math.min(MAXP,Math.max(0,+l.b||0));
     list.push({code:l.code,host:clean(l.host)||"Someone",n,b,st:String(l.st||""),r:+l.r||0,l:+l.l||0});
@@ -2409,10 +2409,10 @@ function menuHTML(){
     <label for="nm">Your name</label>
     <input id="nm" maxlength="14" autocomplete="off" placeholder="Type a name" value="${esc(me.name)}">
     <div class="row"><button class="btn primary grow" data-act="quick" id="quickBtn">Quick play</button><button class="btn grow" data-act="create" id="createBtn">Host</button></div>
-    <div class="row"><input id="jcode" maxlength="4" autocomplete="off" placeholder="CODE" aria-label="Lobby code"><button class="btn grow" data-act="jcode" id="jcodeBtn">Join with code</button></div>
+    <div class="row"><input id="jcode" maxlength="3" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="123" aria-label="Lobby code"><button class="btn grow" data-act="jcode" id="jcodeBtn">Join with code</button></div>
     <p id="netmsg" class="note"></p>
   </section>
-  <section class="panel"><div class="lhead"><h2>OPEN LOBBIES</h2><button class="btn small ghost" data-act="refresh" id="refreshBtn">↻ Refresh</button></div><div id="opens" class="opens"></div><p class="note">Don't see it? Tap Refresh, or ask for the 4-letter code.</p><p class="note ar" dir="rtl" lang="ar">مش لاقي اللوبي؟ دوس Refresh، أو اطلب الكود.</p></section>
+  <section class="panel"><div class="lhead"><h2>OPEN LOBBIES</h2><button class="btn small ghost" data-act="refresh" id="refreshBtn">↻ Refresh</button></div><div id="opens" class="opens"></div><p class="note">Don't see it? Tap Refresh, or ask for the 3-number code.</p><p class="note ar" dir="rtl" lang="ar">مش لاقي اللوبي؟ دوس Refresh، أو اطلب الكود.</p></section>
   <button class="btn ghost" data-act="practice">Practice vs bots</button>
   <section class="rules">
     <h2>HOW TO PLAY</h2>
@@ -2631,9 +2631,9 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="ffcode")tryCode()});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="jcode")joinCode()});
-function joinCode(){const i=$("#jcode");const c=(i?i.value:"").toLowerCase().replace(/[^a-z]/g,"");if(c.length!==4){menuNote="Codes are 4 letters.";renderMenuBits();return}enter(c,false)}
+function joinCode(){const i=$("#jcode");const c=(i?i.value:"").replace(/[^0-9]/g,"");if(c.length!==3){menuNote="Codes are 3 numbers.";renderMenuBits();return}enter(c,false)}
 document.addEventListener("input",e=>{
-  if(e.target.id==="jcode")e.target.value=e.target.value.toUpperCase().replace(/[^A-Z]/g,"").slice(0,4);
+  if(e.target.id==="jcode"){e.target.value=e.target.value.replace(/[^0-9]/g,"").slice(0,3);if(e.target.value.length===3)joinCode()}
   if(e.target.id==="nm"){const v=clean(e.target.value);if(v){me.name=v;ls.set("cp.name",v)}}
 });
 
