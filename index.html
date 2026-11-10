@@ -189,6 +189,21 @@ input:focus{border-color:var(--butter)}
 .codebox{display:flex;flex-direction:column;align-items:center;gap:4px}
 .codebox b{font-family:var(--display);font-weight:400;font-size:28px;letter-spacing:.25em;color:var(--mint)}
 #jcode{font-family:var(--display);letter-spacing:.3em;text-transform:uppercase;text-align:center;max-width:140px}
+.clock{max-width:560px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:6px}
+body.haschat .clock{max-width:924px}
+.ckmain{appearance:none;border:0;width:100%;text-align:left;background:var(--panel);color:var(--ink);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:1px;cursor:pointer;font:inherit}
+.clock.math .ckmain{background:var(--mint);color:var(--cardink)}
+.ckm{font-weight:800;font-size:14px}
+.cks{font-size:12px;opacity:.8}
+.ckopts{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ckopts .seg{font-size:12px;padding:4px 10px}
+.cklist{display:flex;flex-direction:column;gap:3px;background:var(--panel);border-radius:12px;padding:8px}
+.ckrow{display:flex;gap:10px;font-size:13px;padding:4px 8px;border-radius:8px}
+.ckrow.math{color:var(--mint);font-weight:700}
+.ckrow.now{background:var(--butter);color:var(--cardink);font-weight:800}
+.ckt{min-width:62px;color:var(--dim);font-variant-numeric:tabular-nums}
+.ckrow.now .ckt{color:var(--cardink)}
+.ckmini{appearance:none;border:0;background:var(--panel);border-radius:999px;width:34px;height:34px;cursor:pointer;align-self:flex-end;font-size:16px}
 .big[data-act]{cursor:default;user-select:none;-webkit-user-select:none}
 @keyframes floatup{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}15%{opacity:1;transform:translate(-50%,-70%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-280%) scale(1)}}
 .emos{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
@@ -371,6 +386,7 @@ input:focus{border-color:var(--butter)}
 </style>
 </head>
 <body>
+<div id="clock" class="clock"></div>
 <div id="shell"><div id="app"></div><aside id="chat" class="chat" hidden></aside></div>
 <button id="chatfab" class="chatfab" data-act="chat" hidden aria-label="Open chat">💬<b id="unread" hidden></b></button>
 
@@ -2805,6 +2821,91 @@ function loadScript(src){return new Promise(r=>{const s=document.createElement("
   const rj=ss.get("cp.rejoin");if(rj&&screen==="menu"){menuNote="Rejoining…";enter(rj,false)}
 })();
 window.addEventListener("pagehide",()=>{try{nr&&nr.leave()}catch(e){}});
+const TT_TIMES=[["8:00","8:50"],["8:50","9:35"],["9:35","10:20"],["10:20","10:40"],["10:40","11:25"],["11:25","12:10"],["12:10","12:55"],["12:55","13:35"],["13:35","14:15"],["14:15","14:55"],["14:55","15:45"]];
+const TT_LABEL=["Period 1","Period 2","Period 3","Break","Period 4","Period 5","Period 6","Lunch","Period 8","Period 9","Period 10"];
+const TT={
+  intensive:{n:"Intensive",days:[
+    ["Periodic","Social Studies","Arabic","Booster Math / PE","English"],
+    ["Periodic","Arabic / French","French / Math","French / Science","Math"],
+    ["English","English","Math","Math","Math"],
+    ["Break","Break","Break","Break","Break"],
+    ["Arabic","Math","Egypt Social Studies","Arabic","Arabic"],
+    ["Math","English","English","Egypt Social Studies","Religion"],
+    ["Free","Free","Science","Arabic","Computing"],
+    ["Lunch","Lunch","Lunch","Lunch","Lunch"],
+    ["SLO / French","SLO / French","SLO","SLO / French","SLO"],
+    ["Science","Egypt Social Studies","Social Studies","Math CA","Sci/Eng CA"],
+    ["Advising / Booster Math","English","Religion","Free","PE"]
+  ]},
+  normal:{n:"Non-intensive",days:[
+    ["Periodic","Social Studies","Arabic","Booster Math / PE","English"],
+    ["Periodic","Arabic","Math","Science","Math"],
+    ["English","English / French","Math","Math","French / Math"],
+    ["Break","Break","Break","Break","Break"],
+    ["Arabic","Math","Egypt Social Studies","Arabic","Arabic"],
+    ["Math","English","English","Egypt Social Studies","Religion"],
+    ["French","French","Science","Arabic","Computing"],
+    ["Lunch","Lunch","Lunch","Lunch","Lunch"],
+    ["SLO","SLO","SLO","SLO","SLO"],
+    ["Science","Egypt Social Studies","Social Studies","Math CA","Sci/Eng CA"],
+    ["Advising / French / Booster Math","English","Religion","French","PE"]
+  ]}
+};
+const TT_DAY=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let ttWhich=ls.get("cp.tt")==="normal"?"normal":"intensive",ttOpen=false,ttHide=ls.get("cp.tthide")==="1",ttKey="";
+const ttMin=s=>{const [h,m]=s.split(":").map(Number);return h*60+m};
+const ttIcon=c=>/math/i.test(c)?"🧮":/lunch/i.test(c)?"🍔":/break/i.test(c)?"☕":/arabic/i.test(c)?"📖":/english/i.test(c)?"🇬🇧":/french/i.test(c)?"🇫🇷":/science|sci/i.test(c)?"🔬":/pe\b/i.test(c)?"⚽":/computing/i.test(c)?"💻":/religion/i.test(c)?"🕌":/social/i.test(c)?"🌍":/free/i.test(c)?"😴":"📚";
+const ttFmt=m=>{m=Math.max(0,Math.ceil(m));const h=Math.floor(m/60),mm=m%60;return h?`${h}h ${mm}m`:`${mm}m`};
+const tt12=s=>{let [h,m]=s.split(":").map(Number);const ap=h>=12?"pm":"am";h=h%12||12;return `${h}:${String(m).padStart(2,"0")}${ap}`};
+function ttNow(){
+  const d=new Date(),day=d.getDay(),mins=d.getHours()*60+d.getMinutes()+d.getSeconds()/60;
+  if(day>4)return{state:"weekend",day};
+  const T=TT[ttWhich].days;
+  for(let i=0;i<TT_TIMES.length;i++){
+    const a=ttMin(TT_TIMES[i][0]),b=ttMin(TT_TIMES[i][1]);
+    if(mins>=a&&mins<b)return{state:"in",day,i,cls:T[i][day],left:b-mins,next:i+1<T.length?T[i+1][day]:null,nextAt:TT_TIMES[i+1]&&TT_TIMES[i+1][0]};
+  }
+  if(mins<ttMin(TT_TIMES[0][0]))return{state:"before",day,left:ttMin(TT_TIMES[0][0])-mins,next:T[0][day]};
+  return{state:"after",day};
+}
+function ttMathNext(day,fromI){
+  if(day>4)return null;
+  const T=TT[ttWhich].days;
+  for(let i=fromI;i<T.length;i++)if(/math/i.test(T[i][day]))return{i,cls:T[i][day],at:TT_TIMES[i][0]};
+  return null;
+}
+function renderClock(){
+  const el=document.getElementById("clock");if(!el)return;
+  if(ttHide){const k="hidden";if(ttKey!==k){ttKey=k;el.innerHTML=`<button class="ckmini" data-act="ttshow" aria-label="Show class clock">🕒</button>`}return}
+  const n=ttNow();let main,sub,math=false;
+  if(n.state==="weekend"){main="🎉 Weekend";sub="No school today"}
+  else if(n.state==="after"){main="🏠 School's out";sub=`See you ${n.day===4?"Sunday":"tomorrow"}`}
+  else if(n.state==="before"){main=`⏰ School starts in ${ttFmt(n.left)}`;sub=`First: ${ttIcon(n.next)} ${n.next}`}
+  else{
+    math=/math/i.test(n.cls);
+    main=`${ttIcon(n.cls)} ${n.cls} · ${ttFmt(n.left)} left`;
+    const nm_=ttMathNext(n.day,n.i+1);
+    sub=n.next?`Next: ${ttIcon(n.next)} ${n.next} at ${tt12(n.nextAt)}`:"Last period!";
+    if(math)sub=`🤫 Math class: perfect time to play · ${sub}`;
+    else if(nm_)sub+=` · 🧮 Math at ${tt12(nm_.at)}`;
+  }
+  const day=n.day<=4?n.day:-1,cur=n.state==="in"?n.i:-1;
+  const list=ttOpen&&day>=0?`<div class="cklist">${TT[ttWhich].days.map((r,i)=>`<div class="ckrow${i===cur?" now":""}${/math/i.test(r[day])?" math":""}"><span class="ckt">${tt12(TT_TIMES[i][0])}</span><span>${ttIcon(r[day])} ${r[day]}</span></div>`).join("")}</div>`:ttOpen?`<div class="cklist"><div class="ckrow">No classes today.</div></div>`:"";
+  const k=[main,sub,ttOpen,ttWhich,cur,day].join("|");
+  if(k===ttKey)return;ttKey=k;
+  el.className="clock"+(math?" math":"");
+  el.innerHTML=`<button class="ckmain" data-act="ttopen" aria-expanded="${ttOpen}"><span class="ckm">${main}</span><span class="cks">${sub}</span></button>${ttOpen?`<div class="ckopts"><b>${day>=0?TT_DAY[day]:""}</b><span class="sp"></span><button class="seg${ttWhich==="intensive"?" on":""}" data-act="ttset" data-v="intensive">Intensive</button><button class="seg${ttWhich==="normal"?" on":""}" data-act="ttset" data-v="normal">Non-intensive</button><button class="seg" data-act="tthide">Hide</button></div>${list}`:""}`;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const a=b.dataset.act;
+  if(a==="ttopen"){ttOpen=!ttOpen;renderClock()}
+  else if(a==="ttset"){ttWhich=b.dataset.v==="normal"?"normal":"intensive";ls.set("cp.tt",ttWhich);renderClock()}
+  else if(a==="tthide"){ttHide=true;ttOpen=false;ls.set("cp.tthide","1");renderClock()}
+  else if(a==="ttshow"){ttHide=false;ls.set("cp.tthide","0");renderClock()}
+});
+setInterval(renderClock,1000);
+renderClock();
 </script>
 </body>
 </html>
