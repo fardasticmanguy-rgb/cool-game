@@ -1197,13 +1197,15 @@ function tone(f,d,type,v,delay){
 function phaseSound(){
   if(!G)return;
   if(G.phase==="intro")tone(523,.1,"square",.04);
+  if(G.phase==="pick"){tone(392,.08,"square",.04);tone(523,.1,"square",.04,.08)}
+  if(G.phase==="reveal"&&G.res&&G.res.cards){G.roster.forEach((p,i)=>tone(300+i*80,.07,"triangle",.05,i*.14));const n=G.roster.length*.14+.35;if(G.res.crashed.length)tone(110,.3,"sawtooth",.06,n);if(G.res.winners.length){tone(523,.08,"square",.04,n+.08);tone(784,.16,"square",.04,n+.2)}}
   if(G.phase==="play"){tone(784,.12,"square",.05);tone(1046,.16,"square",.05,.1)}
   if(G.phase==="result"){tone(659,.1,"triangle",.05);tone(880,.14,"triangle",.05,.1)}
   if(G.phase==="over")[523,659,784,1046].forEach((f,i)=>tone(f,.16,"square",.04,i*.1));
 }
 
 function newLobby(){
-  return{gid:rid(),host:me.pid,v:0,phase:"lobby",len:6,ff:true,games:GAME_IDS.slice(),speed:"normal",botlvl:"normal",locked:false,k:0,list:[],data:null,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],total:{},wins:{},rec:{},t0:0,dur:0,now:0,done:[],res:null,be:{}};
+  return{gid:rid(),host:me.pid,v:0,phase:"lobby",mode:"cards",rounds:6,len:6,ff:true,games:GAME_IDS.slice(),speed:"normal",botlvl:"normal",locked:false,k:0,list:[],data:null,roster:[{id:me.pid,name:me.name,col:me.col,bot:false}],total:{},wins:{},rec:{},t0:0,dur:0,now:0,done:[],res:null,be:{}};
 }
 function lobbyRoster(){
   const out=[],seen=new Set();
@@ -1223,6 +1225,7 @@ function makeList(len){
 function startGame(){
   const ros=practice?G.roster:lobbyRoster();
   if(ros.length<2)return;
+  if(G.mode==="cards"){cStart(ros);return}
   G.gid=rid();G.roster=ros;G.list=makeList(G.len||6);G.k=0;G.total={};G.wins={};G.rec={};G.be={};G.res=null;
   ros.forEach(p=>{G.total[p.id]=0;G.wins[p.id]=0});
   beginIntro();publish();
@@ -1307,6 +1310,8 @@ function botValue(g){
 function setOpt(k,v){
   if(!G||!isHost||G.phase!=="lobby")return;
   if(k==="speed"&&SPEED[v])G.speed=v;
+  if(k==="mode"&&(v==="cards"||v==="party"))G.mode=v;
+  if(k==="rounds"&&["6","8","10"].includes(v))G.rounds=+v;
   if(k==="botlvl"&&["easy","normal","hard"].includes(v))G.botlvl=v;
   if(k==="locked")G.locked=!G.locked;
   if(k==="game"&&GAMES[v]){const on=G.games.includes(v);if(on&&G.games.length<=1)return;G.games=on?G.games.filter(x=>x!==v):[...G.games,v]}
@@ -1315,12 +1320,260 @@ function setOpt(k,v){
 }
 function setLen(n){if(!G||!isHost||G.phase!=="lobby")return;G.len=n;publish()}
 
+const CSPEED={chill:{pick:15000,reveal:6200},normal:{pick:12000,reveal:5200},fast:{pick:8000,reveal:3800}};
+const MODS={
+  high:{n:"High Roller",d:"Biggest card wins.",a:"أكبر كارت يكسب."},
+  low:{n:"Lowball",d:"Smallest card wins.",a:"أصغر كارت يكسب."},
+  double:{n:"Double Up",d:"Biggest card wins double.",a:"أكبر كارت يكسب دبل."},
+  mine:{n:"Landmine",d:"Biggest card wins. One secret number is a bomb: −4.",a:"أكبر كارت يكسب. في رقم سري قنبلة: −٤."},
+  payday:{n:"Payday",d:"Everyone gets their card number in coins.",a:"كل واحد ياخد رقم كارته فلوس."},
+  heist:{n:"Heist",d:"Biggest card wins and steals 3 from 1st place.",a:"أكبر كارت يكسب ويسرق ٣ من اللي في الأول."},
+  copycat:{n:"Copycat",d:"Match someone to win! Matchers split the coins.",a:"اتطابق مع حد عشان تكسب! اللي اتطابقوا يقسموا الفلوس."},
+  bullseye:{n:"Bullseye",d:"Closest card to the target wins.",a:"أقرب كارت للرقم المطلوب يكسب."},
+  robin:{n:"Robin Hood",d:"Biggest card wins. If the last-place player wins, they get triple!",a:"أكبر كارت يكسب. لو اللي في الآخر كسب ياخد تلات أضعاف!"},
+  sudden:{n:"Sudden Death",d:"Smallest card loses 5. Biggest card wins.",a:"أصغر كارت يخسر ٥. أكبر كارت يكسب."}
+};
+let cPick=null,armX2=false,cAnim="";
+function cHand(){return Array.from({length:G.hand||8},(_,i)=>i+1)}
+function cHandOf(id){const u=(G.used&&G.used[id])||[];return cHand().filter(c=>!u.includes(c))}
+function cArmed(){return !!(G&&armX2===G.gid+"-"+G.round)}
+function cHasX2(id){return !!(G&&!(G.x2used||{})[id])}
+function cPickValid(){return !!(cPick&&G&&cPick.g===G.gid&&cPick.r===G.round)}
+function cMod(){
+  if(G.round===1)return"high";
+  if(G.final)return["high","low","mine","bullseye","robin"][ri(5)];
+  const keys=Object.keys(MODS).filter(k=>k!==G.mod);
+  return keys[ri(keys.length)];
+}
+function cSetupRound(){
+  const sp=CSPEED[G.speed]||CSPEED.normal;
+  G.final=G.round===G.rounds;G.mod=cMod();
+  G.target=G.mod==="bullseye"?1+ri(G.hand):0;
+  G.jackpot=G.carry||0;G.pot=G.jackpot+3+ri(6);G.carry=0;
+  G.phase="pick";G.t0=Date.now();G.dur=sp.pick;G.lk=[];G.res=null;H=freshH();
+}
+function cStart(ros){
+  G.gid=rid();G.roster=ros;G.list=[];G.k=0;G.rounds=G.rounds||6;G.hand=G.rounds+2;G.round=1;
+  G.scores={};G.used={};G.x2used={};G.streak={};G.be={};G.carry=0;G.mod="high";G.stats={crash:{},big:null,bomb:{}};G.total={};G.wins={};G.rec={};
+  ros.forEach(p=>{G.scores[p.id]=0;G.used[p.id]=[]});
+  cPick=null;armX2=false;cSetupRound();publish();
+}
+function cBotPick(id){
+  const hand=cHandOf(id),m=G.mod,mx=G.hand+1,lvl=G.botlvl||"normal";
+  if(lvl==="easy"&&Math.random()<.5)return hand[ri(hand.length)];
+  const w=hand.map(c=>1+(m==="low"?Math.pow(mx-c,1.6):m==="payday"?Math.pow(c,1.15)+3:m==="copycat"?4:m==="bullseye"?Math.pow(mx-Math.abs(c-G.target),2):Math.pow(c,1.45)));
+  if(lvl==="hard"&&m!=="copycat"){const taken=new Set();for(const p of G.roster)if(p.bot&&H.bots[p.id]&&H.bots[p.id].c)taken.add(H.bots[p.id].c);hand.forEach((c,i)=>{if(taken.has(c))w[i]*=.15})}
+  let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<hand.length;i++){r-=w[i];if(r<=0)return hand[i]}
+  return hand[hand.length-1];
+}
+function cBotX2(id){return cHasX2(id)&&(G.pot>=10||G.final||G.round===G.rounds-1)&&Math.random()<.55}
+function cCollect(now){
+  const picks={};
+  for(const p of G.roster){
+    if(p.bot){
+      if(!H.bots[p.id]){
+        if(!H.botAt[p.id])H.botAt[p.id]=now+700+ri(Math.max(1500,G.dur-5000));
+        if(now>=H.botAt[p.id])H.bots[p.id]={c:cBotPick(p.id),x:cBotX2(p.id)};
+      }
+      if(H.bots[p.id])picks[p.id]=H.bots[p.id];
+      continue;
+    }
+    if(p.id===me.pid){if(cPickValid()&&cHandOf(p.id).includes(cPick.c))picks[p.id]={c:cPick.c,x:!!cPick.x&&cHasX2(p.id)};continue}
+    if(!nr)continue;
+    for(const peer of nr.peers()){
+      const pr=peer.presence||{},k=pr.pick;
+      if(pr.pid!==p.id||!k||typeof k!=="object")continue;
+      if(k.g===G.gid&&k.r===G.round&&Number.isInteger(k.c)&&cHandOf(p.id).includes(k.c))picks[p.id]={c:k.c,x:!!k.x&&cHasX2(p.id)};
+    }
+  }
+  return picks;
+}
+function cResolve(P,auto){
+  const ids=G.roster.map(p=>p.id),cards={},cnt={},d={},x2={};
+  ids.forEach(id=>{cards[id]=P[id].c;x2[id]=!!P[id].x&&cHasX2(id);cnt[cards[id]]=(cnt[cards[id]]||0)+1;d[id]=0});
+  const solo=ids.filter(id=>cnt[cards[id]]===1),crashed=ids.filter(id=>cnt[cards[id]]>1);
+  const mult=(G.mod==="double"?2:1)*(G.final?2:1);
+  let winners=[],mine=null,stolen=null,carry=0,won=0,hit=[],loser=null,robin=false;
+  const split=list=>{won=Math.max(1,Math.floor(G.pot*mult/list.length));list.forEach(id=>d[id]+=won);winners=list};
+  if(G.mod==="mine"){mine=1+ri(G.hand);hit=ids.filter(id=>cards[id]===mine);hit.forEach(id=>d[id]-=4)}
+  if(G.mod==="payday"){solo.forEach(id=>d[id]+=cards[id]);winners=solo.slice();carry=G.pot}
+  else if(G.mod==="copycat"){if(crashed.length)split(crashed);else carry=G.pot}
+  else{
+    const pool=solo.filter(id=>cards[id]!==mine);
+    if(G.mod==="sudden"){const low=ids.slice().sort((a,b)=>cards[a]-cards[b])[0];const lows=ids.filter(id=>cards[id]===cards[low]);if(lows.length===1){loser=low;d[low]-=5}}
+    if(!pool.length)carry=G.pot;
+    else if(G.mod==="bullseye"){const best=Math.min(...pool.map(id=>Math.abs(cards[id]-G.target)));split(pool.filter(id=>Math.abs(cards[id]-G.target)===best))}
+    else split([pool.reduce((a,b)=>G.mod==="low"?(cards[b]<cards[a]?b:a):(cards[b]>cards[a]?b:a))]);
+    if(G.mod==="robin"&&winners.length===1){const w=winners[0],min=Math.min(...ids.map(id=>G.scores[id]||0));if((G.scores[w]||0)===min&&ids.some(id=>(G.scores[id]||0)>min)){d[w]+=won*2;robin=true}}
+  }
+  ids.forEach(id=>{if(x2[id]){d[id]*=2;G.x2used[id]=true}});
+  if(G.mod==="heist"&&winners.length===1){
+    const w=winners[0],sc=id=>(G.scores[id]||0)+d[id];
+    const rivals=ids.filter(id=>id!==w&&sc(id)>0).sort((a,b)=>sc(b)-sc(a));
+    if(rivals[0]){const n=Math.min(3,sc(rivals[0]));d[rivals[0]]-=n;d[w]+=n;stolen={from:rivals[0],n}}
+  }
+  ids.forEach(id=>{
+    G.used[id]=[...(G.used[id]||[]),cards[id]];
+    G.scores[id]=(G.scores[id]||0)+d[id];
+    G.streak[id]=winners.includes(id)&&d[id]>0?(G.streak[id]||0)+1:0;
+  });
+  if(G.mod!=="copycat")crashed.forEach(id=>{G.stats.crash[id]=(G.stats.crash[id]||0)+1});
+  hit.forEach(id=>{G.stats.bomb[id]=(G.stats.bomb[id]||0)+1});
+  winners.forEach(id=>{if(d[id]>((G.stats.big&&G.stats.big.n)||0))G.stats.big={id,n:d[id]}});
+  G.carry=carry;
+  return{cards,x2:ids.filter(id=>x2[id]),crashed,winners,won,mine,hit,stolen,carry,d,auto,loser,robin};
+}
+function cBotEmotes(){
+  const r=G.res;
+  for(const p of G.roster){
+    if(!p.bot||Math.random()<.45)continue;
+    let pool=[5];
+    if((r.d[p.id]||0)>0)pool=[0,3,6,7,EMO.length+6,EMO.length];
+    else if(r.hit.includes(p.id)||r.loser===p.id)pool=[4,2,EMO.length+8,EMO.length+4];
+    else if(r.crashed.includes(p.id)&&G.mod!=="copycat")pool=[1,2,4,EMO.length+1,EMO.length+10];
+    if(!G.ff&&Math.random()<.5)pool=pool.filter(i=>i>=RUDE);
+    const ok=pool.filter(emoOk);if(!ok.length)continue;
+    const prev=G.be[p.id];G.be[p.id]={i:ok[ri(ok.length)],n:(prev?prev.n:0)+1};
+  }
+}
+function cTick(now){
+  let ch=false;
+  if(G.phase==="pick"){
+    const picks=cCollect(now),ids=G.roster.map(p=>p.id);
+    const lk=ids.filter(id=>picks[id]);
+    if(lk.join()!==(G.lk||[]).join()){G.lk=lk;ch=true}
+    const all=lk.length===ids.length;
+    if(all&&!H.allAt)H.allAt=now;
+    if(!all)H.allAt=0;
+    if((all&&now-H.allAt>600)||now>=G.t0+G.dur){
+      const auto=[];
+      ids.forEach(id=>{if(!picks[id]){const h=cHandOf(id);picks[id]={c:h[ri(h.length)],x:false};auto.push(id)}});
+      G.res=cResolve(picks,auto);cBotEmotes();G.phase="reveal";G.t0=now;G.dur=(CSPEED[G.speed]||CSPEED.normal).reveal;ch=true;
+    }
+  }else if(G.phase==="reveal"&&now>=G.t0+G.dur){
+    if(G.round>=G.rounds){G.phase="over";G.t0=now;G.dur=0}
+    else{G.round++;cSetupRound()}
+    ch=true;
+  }
+  return ch;
+}
+function cSendPick(){if(nr&&!practice)nr.presence({pick:cPick}).catch(()=>{})}
+function cChoose(c){
+  if(!G||G.mode!=="cards"||G.phase!=="pick"||!inRoster())return;
+  if(!cHandOf(me.pid).includes(c))return;
+  if(cPickValid()&&cPick.c===c)return;
+  cPick={g:G.gid,r:G.round,c,x:cArmed()&&cHasX2(me.pid)};tone(660,.07,"square",.03);
+  cSendPick();if(isHost)hostTick();render();
+}
+function cToggleX2(){
+  if(!G||G.mode!=="cards"||G.phase!=="pick"||!inRoster()||!cHasX2(me.pid))return;
+  armX2=cArmed()?false:G.gid+"-"+G.round;
+  if(cPickValid()){cPick={...cPick,x:cArmed()};cSendPick();if(isHost)hostTick()}
+  tone(cArmed()?880:440,.08,"square",.03);render();
+}
+function cChips(){
+  return `<div class="players">${G.roster.map(p=>{
+    let st="",cls="";
+    if(G.phase==="pick"){const l=(G.lk||[]).includes(p.id);st=l?"Ready":"…";cls=l?"ready":""}
+    else if(G.phase==="reveal"&&G.res){const d=G.res.d[p.id]||0;st=d>0?"+"+d:d<0?String(d):"0";cls=(d>0?"plus":d<0?"minus":"")+" late"}
+    const tags=`${p.bot?"<small>BOT</small>":""}${p.id===me.pid?"<small>YOU</small>":""}${(G.streak[p.id]||0)>=2?`<small class="fire">🔥</small>`:""}${cHasX2(p.id)?`<small class="hasx">×2</small>`:""}`;
+    return `<div class="chip${p.id===me.pid?" me":""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${tags}</span><span class="sc">${G.scores[p.id]||0}</span><span class="st ${cls}" style="--n:${G.roster.length}">${st}</span></div>`;
+  }).join("")}</div>`;
+}
+function cModHTML(anim){
+  const m=MODS[G.mod]||MODS.high,fin=G.final&&G.mod!=="payday";
+  return `<div class="mod${G.final?" final":""}${anim?" enter":""}"><div class="mn">${G.final?"Last round · ":""}${esc(m.n)}</div><div class="md">${esc(m.d)}${fin?" Coins pay double.":""}</div><div class="md ar" dir="rtl" lang="ar">${esc(m.a)}${fin?" آخر دور: الفلوس دبل.":""}</div></div>`;
+}
+function cHandHTML(){
+  const used=(G.used&&G.used[me.pid])||[],can=G.phase==="pick"&&inRoster();
+  const x2=cHasX2(me.pid),on=cArmed()&&x2&&can,n=G.hand||8,cols=n<=8?n:Math.ceil(n/2);
+  const left=cHand().filter(c=>!used.includes(c)).length;
+  return `<div class="handwrap"><div class="handlbl"><span>Your cards · ${left} left</span>${inRoster()?`<button class="x2${on?" on":""}" data-act="x2" ${!x2||!can?"disabled":""}>${x2?(on?"×2 ON":"×2"):"×2 USED"}</button>`:""}</div><div class="hand" style="grid-template-columns:repeat(${cols},1fr)">${cHand().map(c=>{
+    const u=used.includes(c),sel=cPickValid()&&cPick.c===c&&G.phase==="pick";
+    return `<button class="card${u?" used":""}${sel?" sel":""}" data-act="card" data-c="${c}" ${u||!can?"disabled":""} aria-label="Card ${c}">${c}</button>`;
+  }).join("")}</div></div>`;
+}
+function cTablePick(){
+  const mult=(G.mod==="double"?2:1)*(G.final?2:1);
+  let prompt;
+  if(!inRoster())prompt="You're watching. You'll play next game.";
+  else if(cPickValid())prompt=`Locked in <b>${cPick.c}</b>${cPick.x?" with ×2":""}. Tap another card to switch.`;
+  else prompt="Pick a card!";
+  return `<div class="table">${G.mod==="bullseye"?`<span class="target">TARGET ${G.target}</span>`:""}<div class="potlbl">Coins</div><div class="potbig">${G.pot}${mult>1&&G.mod!=="payday"?`<small>×${mult}</small>`:""}</div>${G.jackpot>0?`<div class="jack">+${G.jackpot} rolled over</div>`:""}<div class="secs" id="secs"></div><div class="prompt">${prompt}</div></div>`;
+}
+function cTableReveal(anim){
+  const r=G.res,n=G.roster.length,names=ids=>ids.map(id=>esc(nameOf(id))).join(", ");
+  let head,bad=false;
+  if(G.mod==="payday"){head=r.winners.length?"Payday! Solo cards cash in":"Nobody got paid";bad=!r.winners.length}
+  else if(G.mod==="copycat"){head=r.winners.length?`${names(r.winners)} matched! +${r.won} each`:"Nobody matched. Coins roll over";bad=!r.winners.length}
+  else if(r.winners.length===1){const w=r.winners[0];head=`${esc(nameOf(w))} wins +${r.d[w]-(r.stolen?r.stolen.n:0)}`;if(r.stolen)head+=` and steals ${r.stolen.n} from ${esc(nameOf(r.stolen.from))}`;if(r.robin)head+=" (Robin Hood triple!)"}
+  else if(r.winners.length>1)head=`${names(r.winners)} tie! +${r.won} each`;
+  else{head="Everyone crashed! Coins roll over";bad=true}
+  const subs=[];
+  if(r.mine!=null)subs.push(r.hit.length?`<b>${names(r.hit)}</b> hit the bomb. −4`:"Nobody hit the bomb.");
+  if(r.loser)subs.push(`<b>${esc(nameOf(r.loser))}</b> had the smallest card. −5`);
+  if(r.x2.length)subs.push(`${names(r.x2)} used ×2.`);
+  if(r.auto.length)subs.push(`${names(r.auto)} ran out of time.`);
+  const cards=G.roster.map((p,i)=>{
+    const c=r.cards[p.id],crash=r.crashed.includes(p.id)&&G.mod!=="copycat",boom=r.mine!=null&&c===r.mine,win=r.winners.includes(p.id)&&(r.d[p.id]||0)>0,lose=r.loser===p.id;
+    const cls=boom||lose?"boom":crash?"crash":win?"win":"";
+    const stamp=boom?`<span class="stamp">BOMB</span>`:lose?`<span class="stamp">−5</span>`:crash?`<span class="stamp">CRASH</span>`:"";
+    return `<div class="rv" style="--i:${i}"><div class="rc ${cls}" style="--n:${n}">${c}${stamp}${win?`<span class="crown">WIN</span>`:""}${r.x2.includes(p.id)?`<span class="xb">×2</span>`:""}${r.auto.includes(p.id)?`<span class="auto">AUTO</span>`:""}</div><div class="who" style="color:${COLS[p.col%COLS.length]}">${esc(p.name)}</div></div>`;
+  }).join("");
+  return `<div class="table${anim?" anim":""}">${r.mine!=null?`<span class="minechip late" style="--n:${n}">BOMB WAS ${r.mine}</span>`:""}${G.mod==="bullseye"?`<span class="target">TARGET ${G.target}</span>`:""}<div class="reveal">${cards}</div><div class="headline late${bad?" crash":""}" style="--n:${n}">${head}</div>${subs.length?`<div class="sub late" style="--n:${n}">${subs.join(" ")}</div>`:""}</div>`;
+}
+function cOverParts(){
+  const ranked=G.roster.slice().sort((a,b)=>(G.scores[b.id]||0)-(G.scores[a.id]||0));
+  const top=G.scores[ranked[0].id]||0,winners=ranked.filter(p=>(G.scores[p.id]||0)===top);
+  const head=winners.length>1?"Tie game!":`${esc(winners[0].name)} wins!`;
+  const pl=["1st","2nd","3rd","4th","5th","6th"];
+  let place=0,prev=null;
+  const rows=ranked.map((p,i)=>{const s=G.scores[p.id]||0;if(s!==prev){place=i;prev=s}return `<div class="rk${place===0?" first":""}" data-pid="${esc(p.id)}"><span class="p">${pl[place]}</span><span class="n">${esc(p.name)}${p.id===me.pid?" (you)":""}</span><span class="s">${s}</span></div>`}).join("");
+  const facts=[];
+  if(G.stats.big)facts.push(`<div class="fact">Biggest win: <b>${esc(nameOf(G.stats.big.id))}</b>, +${G.stats.big.n} in one round</div>`);
+  const cr=Object.entries(G.stats.crash||{}).sort((a,b)=>b[1]-a[1])[0];
+  if(cr&&cr[1]>0)facts.push(`<div class="fact">Most crashes: <b>${esc(nameOf(cr[0]))}</b>, ${cr[1]}</div>`);
+  const bm=Object.entries(G.stats.bomb||{}).sort((a,b)=>b[1]-a[1])[0];
+  if(bm&&bm[1]>0)facts.push(`<div class="fact">Bomb magnet: <b>${esc(nameOf(bm[0]))}</b></div>`);
+  const hot=Object.entries(G.streak||{}).sort((a,b)=>b[1]-a[1])[0];
+  if(hot&&hot[1]>=2)facts.push(`<div class="fact">Ended on fire: <b>${esc(nameOf(hot[0]))}</b> 🔥</div>`);
+  return{
+    "s-top":topBar("GAME OVER"),
+    "s-table":`<div class="table"><div class="headline">${head}</div><div class="rank">${rows}</div>${facts.length?`<div class="facts">${facts.join("")}</div>`:""}</div>`,
+    "s-act":`<div class="actions">${isHost?`<button class="btn primary" data-act="again">Play again</button>`:`<p class="note grow">Waiting for the host to tap Play again.</p>`}</div>`,
+    "s-emo":emoBar()
+  };
+}
+function cRender(){
+  layout("cards",["s-top","s-mod","timer","s-chips","s-table","s-hand","s-emo"]);
+  const key=G.gid+"-"+G.round+"-"+G.phase,anim=key!==cAnim;cAnim=key;
+  part("s-top",topBar(`ROUND <b>${G.round}</b>/${G.rounds}`));
+  part("s-mod",cModHTML(anim&&G.phase==="pick"),anim);
+  part("s-chips",cChips());
+  part("s-table",G.phase==="pick"?cTablePick():cTableReveal(anim),anim);
+  part("s-hand",cHandHTML());
+  part("s-emo",emoBar());
+  frameOnce();
+}
+document.addEventListener("pointerdown",e=>{
+  const b=e.target.closest("[data-act=card]");if(!b||b.disabled)return;
+  e.preventDefault();cChoose(+b.dataset.c);
+});
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||!G||G.mode!=="cards"||G.phase!=="pick")return;
+  if(/^[1-9]$/.test(e.key))cChoose(+e.key);
+  else if(e.key==="x"||e.key==="X")cToggleX2();
+});
+
 function hostTick(force){
   if(!G||!isHost)return;
   const now=Date.now();let ch=!!force;
   if(G.phase==="lobby"&&!practice){
     const r=lobbyRoster();
     if(JSON.stringify(r)!==JSON.stringify(G.roster)){G.roster=r;ch=true}
+  }else if(G.mode==="cards"&&(G.phase==="pick"||G.phase==="reveal")){
+    if(cTick(now))ch=true;
   }else if(G.phase==="intro"){
     if(now>=G.t0+G.dur){beginPlay();ch=true}
   }else if(G.phase==="play"){
@@ -1350,7 +1603,7 @@ function publish(){
 }
 function lobbyPresence(){
   if(!dir)return;
-  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase==="lobby"&&G.locked?"locked":G.phase,r:G.k+1,l:G.list.length||G.len}:null;
+  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase==="lobby"&&G.locked?"locked":G.phase,r:G.mode==="cards"?G.round:G.k+1,l:G.mode==="cards"?G.rounds:(G.list.length||G.len)}:null;
   const s=JSON.stringify(listing);
   if(s!==lastLobby){lastLobby=s;Promise.resolve(dir.presence({listing})).catch(()=>{})}
 }
@@ -1367,6 +1620,7 @@ function adopt(g){
   if(G&&g.gid===G.gid&&g.v===G.v)return;
   G=JSON.parse(JSON.stringify(g));
   offset=Date.now()-(+g.now||Date.now());
+  if(!cPickValid())cPick=null;
   afterState();
 }
 function sync(){
@@ -1477,7 +1731,7 @@ async function leave(){
   stopStage();
   const r=nr;nr=null;
   if(r){try{await r.presence({g:null,res:null});await r.leave()}catch(e){}}
-  isHost=false;practice=false;G=null;code=null;mySub=null;
+  isHost=false;practice=false;G=null;code=null;mySub=null;cPick=null;armX2=false;
   lobbyPresence();
   screen="menu";render();
 }
@@ -1502,7 +1756,7 @@ function topBar(label){return `<div class="top"><div class="rd">${label}</div><s
 
 function menuHTML(){
   return `
-  <header class="brand"><h1>CRASH<span>POT</span></h1><p class="tag">${GAME_IDS.length} tiny games. One winner. No talking needed.</p><p class="tag ar" dir="rtl" lang="ar">${GAME_IDS.length} ألعاب صغيرة. فايز واحد. من غير ولا كلمة.</p></header>
+  <header class="brand"><h1>CRASH<span>POT</span></h1><p class="tag">Pick a card nobody else picks. Take the pot.</p><p class="tag ar" dir="rtl" lang="ar">اختار كارت محدش تاني اختاره، وخد الفلوس.</p></header>
   <section class="panel">
     <label for="nm">Your name</label>
     <input id="nm" maxlength="14" autocomplete="off" placeholder="Type a name" value="${esc(me.name)}">
@@ -1512,9 +1766,25 @@ function menuHTML(){
   <section class="panel"><h2>OPEN LOBBIES</h2><div id="opens" class="opens"></div></section>
   <button class="btn ghost" data-act="practice">Practice vs bots</button>
   <section class="rules">
-    <h2>THE GAMES</h2>
+    <h2>HOW TO PLAY</h2>
+    <div class="rule"><i>1</i><div>Pick a card. Each card works once.</div></div>
+    <div class="rule"><i>2</i><div>Same card as someone? You both <b>crash</b> and get 0.</div></div>
+    <div class="rule"><i>3</i><div>Biggest card nobody else picked wins the coins. Nobody wins? The pot rolls over.</div></div>
+    <div class="rule"><i>4</i><div>The red box changes the rule every round. Last round pays double.</div></div>
+    <div class="rule"><i>×2</i><div>Once per game, tap ×2 to double your round.</div></div>
+  </section>
+  <section class="rules ar" dir="rtl" lang="ar">
+    <h2>إزاي تلعب</h2>
+    <div class="rule"><i>١</i><div>اختار كارت. كل كارت تلعبه مرة واحدة بس.</div></div>
+    <div class="rule"><i>٢</i><div>نفس كارت حد تاني؟ انتو الاتنين <b>تتكرشوا</b> وتاخدوا صفر.</div></div>
+    <div class="rule"><i>٣</i><div>أكبر كارت محدش اختاره ياخد الفلوس. محدش كسب؟ الفلوس بتتنقل للدور اللي بعده.</div></div>
+    <div class="rule"><i>٤</i><div>المربع الأحمر بيغير القاعدة كل دور. آخر دور الفلوس دبل.</div></div>
+    <div class="rule"><i>×٢</i><div>مرة واحدة في الجيم، دوس ×2 عشان تضاعف الدور.</div></div>
+  </section>
+  <section class="rules">
+    <h2>ALSO: MINI PARTY MODE</h2>
     <div class="glist">${GAME_IDS.map(id=>`<div class="gi"><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</div>`).join("")}</div>
-    <p class="note">Every game explains itself before it starts. Win games to get points. Most points at the end wins.</p>
+    <p class="note">The host can switch to Mini Party in Lobby options: ${GAME_IDS.length} quick games that each explain themselves before they start.</p>
     <p class="note ar" dir="rtl" lang="ar">كل لعبة بتشرح نفسها قبل ما تبدأ. اكسب عشان تاخد نقط. اللي معاه أكتر نقط في الآخر يكسب.</p>
   </section>`;
 }
@@ -1564,12 +1834,12 @@ function optsHTML(host,lens){
   const seg=(k,opts,cur)=>opts.map(([v,l])=>`<button class="seg${cur===v?" on":""}" data-act="opt" data-k="${k}" data-v="${v}" ${dis}>${l}</button>`).join("");
   const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
-  <div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div>
+  <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Crash Cards"],["party","🎉 Mini Party"]],G.mode)}</div></div>
+  ${G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div>`}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
   <div class="orow"><span class="ol">Lock lobby</span><button class="ffbtn${G.locked?" on":""}" data-act="opt" data-k="locked" ${dis}><span class="sw2"><i></i></span>${G.locked?"Locked":"Open"}</button></div>
-  <div class="ol">Which games ${host?`<button class="linkbtn" data-act="opt" data-k="allgames" ${dis}>All on</button>`:""}</div>
-  <div class="gtogs">${games}</div></section>`;
+  ${G.mode==="cards"?"":`<div class="ol">Which games ${host?`<button class="linkbtn" data-act="opt" data-k="allgames" ${dis}>All on</button>`:""}</div><div class="gtogs">${games}</div>`}</section>`;
 }
 function lobbyParts(){
   const host=isHost;
@@ -1644,7 +1914,8 @@ function render(){
   }
   if(!G){layout("wait",["s-top","s-table"]);part("s-top",topBar("LOBBY"));part("s-table",`<div class="table"><div class="headline">Connecting…</div><p class="sub">Getting the game from the host.</p></div>`);return}
   if(G.phase==="lobby"){layout("lobby",["s-top","s-head","s-list","s-act","s-opts","s-emo"]);const p=lobbyParts();for(const k in p)part(k,p[k]);return}
-  if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=overParts();for(const k in p)part(k,p[k]);return}
+  if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=G.mode==="cards"?cOverParts():overParts();for(const k in p)part(k,p[k]);return}
+  if(G.mode==="cards"){cRender();return}
   layout("game",["s-top","timer","s-chips","s-stage","s-emo"]);
   part("s-top",topBar(`GAME <b>${G.k+1}</b>/${G.list.length}`));
   part("s-chips",chipsHTML());
@@ -1659,7 +1930,8 @@ function frameOnce(){
   const total=G.phase==="play"&&cur()?cur().play:G.dur;
   const left=Math.max(0,start+total-now),pct=total?Math.min(1,left/total):0;
   bar.style.transform=`scaleX(${pct.toFixed(4)})`;
-  bar.classList.toggle("hot",G.phase==="play"&&left<2500);
+  bar.classList.toggle("hot",(G.phase==="play"||G.phase==="pick")&&left<3000);
+  const sc=$("#secs");if(sc){const t=G.phase==="pick"?Math.ceil(left/1000)+"s":"";if(sc.textContent!==t)sc.textContent=t}
   bar.classList.toggle("intro",G.phase==="intro");
   const cd=$("#cd");
   if(cd){const n=Math.ceil(left/1000);if(cd.textContent!==String(n)){cd.textContent=n;if(n!==lastCd&&n<=3&&n>0)tone(440,.06,"square",.03);lastCd=n}}
@@ -1678,6 +1950,7 @@ document.addEventListener("click",e=>{
   else if(a==="rmbot")rmBot(b.dataset.id);
   else if(a==="len")setLen(+b.dataset.n);
   else if(a==="opt")setOpt(b.dataset.k,b.dataset.v);
+  else if(a==="x2")cToggleX2();
   else if(a==="ff")toggleFF();
   else if(a==="secret")secretTap();
   else if(a==="ffcode")tryCode();
