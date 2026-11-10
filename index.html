@@ -2479,7 +2479,7 @@ function quickPlay(){
   const open=openList().filter(g=>g.st==="lobby"&&g.n<MAXP);
   if(open[0])enter(open[0].code,false);else enter(newCode(),true);
 }
-async function enter(c,create){
+async function enter(c,create,fixed){
   if(joining||screen!=="menu")return;
   if(!netReady()){menuNote="Online didn't load. Check your internet, or tap Practice.";renderMenuBits();return}
   saveName();
@@ -2490,7 +2490,9 @@ async function enter(c,create){
   while(!joined){
     try{joined=await joinPeerRoom("crashpot-g-"+c,create?"host":"guest",{options:PEER_OPTS})}
     catch(e){
-      if(create&&e&&e.code==="taken"&&tries++<6){c=newCode();continue}
+      if(fixed&&create&&e&&e.code==="taken"&&tries++<4){create=false;continue}
+      if(fixed&&!create&&e&&e.code==="not_found"&&tries++<4){create=true;continue}
+      if(!fixed&&create&&e&&e.code==="taken"&&tries++<6){c=newCode();continue}
       joining=false;
       menuNote=e&&e.code==="not_found"?"That lobby closed. Pick another one.":"Couldn't connect. Tap it again.";
       renderMenuBits();return;
@@ -2775,6 +2777,16 @@ document.addEventListener("input",e=>{
 setInterval(()=>{if(isHost)hostTick();else watchdog()},100);
 render();
 requestAnimationFrame(frame);
+async function playLink(){
+  const q=new URLSearchParams(location.search),c=String(q.get("play")||"").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,12);
+  if(c.length<2||screen!=="menu")return false;
+  const nm=clean(q.get("name"));if(nm){me.name=nm;ls.set("cp.name",nm);const el=$("#nm");if(el)el.value=nm}
+  const md=q.get("mode");
+  try{history.replaceState(null,"",location.pathname)}catch(e){}
+  await enter(c,q.get("h")==="1",true);
+  if(isHost&&md)setOpt("mode",md);
+  return true;
+}
 function netReady(){return NET==="bus"?busUp>0||busClients.length>0:!!window.Peer}
 function loadScript(src){return new Promise(r=>{const s=document.createElement("script");s.src=src;s.onload=()=>r(true);s.onerror=()=>r(false);document.head.append(s)})}
 (async()=>{
@@ -2789,6 +2801,7 @@ function loadScript(src){return new Promise(r=>{const s=document.createElement("
   netState=dir?"ok":"none";
   if(dir)dir.onPeers(()=>{if(screen==="menu")renderMenuBits()});
   render();renderMenuBits();
+  if(await playLink())return;
   const rj=ss.get("cp.rejoin");if(rj&&screen==="menu"){menuNote="Rejoining…";enter(rj,false)}
 })();
 window.addEventListener("pagehide",()=>{try{nr&&nr.leave()}catch(e){}});
