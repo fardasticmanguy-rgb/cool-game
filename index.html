@@ -6,7 +6,7 @@
 <title>Crashpot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Cairo:wght@600;800&family=Rubik:wght@400;500;700;800&display=swap">
 <style>
 :root{
   --bg:#1a1140;
@@ -69,6 +69,9 @@ input:focus{border-color:var(--butter)}
 .rules{display:grid;gap:10px;padding:4px 2px}
 .rules h2{font-family:var(--display);font-weight:400;font-size:15px;letter-spacing:.06em;color:var(--dim)}
 .rule{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;font-size:14px}
+.ar{font-family:"Cairo",var(--body)}
+.rules.ar h2{font-family:"Cairo",var(--body);font-weight:800;font-size:16px;letter-spacing:0}
+.mod .md.ar{font-weight:700;opacity:.85}
 .rule i{font-style:normal;font-family:var(--display);font-size:14px;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--panel);color:var(--butter)}
 .top{display:flex;align-items:center;gap:10px}
 .top .rd{font-family:var(--display);font-size:14px;letter-spacing:.06em;color:var(--dim)}
@@ -777,12 +780,12 @@ const PICK_MS=12000,REVEAL_MS=5600,ROUNDS=6,HAND=[1,2,3,4,5,6,7,8],MAXP=5;
 const COLS=["#ff6b57","#ffd43b","#4be3b0","#6fb6ff","#ff8ad8","#c3a6ff"];
 const BOTN=["Bolt","Mochi","Pixel","Ziggy","Nugget","Waffles","Turbo","Pickle"];
 const MODS={
-  high:{n:"High Roller",d:"Highest solo card takes the pot."},
-  low:{n:"Lowball",d:"Lowest solo card takes the pot."},
-  double:{n:"Double Up",d:"Highest solo card takes double the pot."},
-  mine:{n:"Landmine",d:"Highest solo card wins. One secret number is mined: play it and lose 4."},
-  payday:{n:"Payday",d:"Every solo card pays its own number. The pot rolls over."},
-  heist:{n:"Heist",d:"Highest solo card takes the pot and steals 3 from the leader."}
+  high:{n:"High Roller",d:"Highest card wins the pot.",a:"أعلى كارت يكسب الفلوس."},
+  low:{n:"Lowball",d:"Lowest card wins the pot.",a:"أقل كارت يكسب الفلوس."},
+  double:{n:"Double Up",d:"Highest card wins double the pot.",a:"أعلى كارت ياخد الفلوس دبل."},
+  mine:{n:"Landmine",d:"Highest card wins. One secret number is a bomb: play it and lose 4.",a:"أعلى كارت يكسب. في رقم سري ملغوم، لو لعبته تخسر ٤."},
+  payday:{n:"Payday",d:"Everyone gets their card's number in coins.",a:"كل واحد ياخد رقم كارته فلوس."},
+  heist:{n:"Heist",d:"Highest card wins the pot and steals 3 from whoever is in 1st.",a:"أعلى كارت يكسب ويسرق ٣ من اللي في الأول."}
 };
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -1087,7 +1090,7 @@ function choose(c){
 
 function menuHTML(){
   return `
-  <header class="brand"><h1>CRASH<span>POT</span></h1><p class="tag">Pick a card. Don't match anyone. Take the pot.</p></header>
+  <header class="brand"><h1>CRASH<span>POT</span></h1><p class="tag">Pick a card. Don't match anyone. Take the pot.</p><p class="tag ar" dir="rtl" lang="ar">اختار كارت، متتطابقش مع حد، وخد الفلوس.</p></header>
   <section class="panel">
     <label for="nm">Your name</label>
     <input id="nm" maxlength="14" autocomplete="off" placeholder="Type a name" value="${esc(me.name)}">
@@ -1098,10 +1101,17 @@ function menuHTML(){
   <button class="btn ghost" data-act="practice">Practice vs bots</button>
   <section class="rules">
     <h2>HOW TO PLAY</h2>
-    <div class="rule"><i>1</i><div>Everyone holds cards 1 to 8. Each card works once. Six rounds, 12 seconds each.</div></div>
-    <div class="rule"><i>2</i><div>Everyone picks at the same time. If your card matches someone else's, you both <b>crash</b> and score nothing.</div></div>
-    <div class="rule"><i>3</i><div>The best solo card takes the pot. If everyone crashes, the pot rolls into the next round.</div></div>
-    <div class="rule"><i>4</i><div>Every round has a twist. Lowball, Landmine, Heist and more. The last round pays double.</div></div>
+    <div class="rule"><i>1</i><div>Everyone picks a card at the same time.</div></div>
+    <div class="rule"><i>2</i><div>Same card as someone else? You both <b>crash</b> and get 0.</div></div>
+    <div class="rule"><i>3</i><div>Highest card nobody else picked wins the pot.</div></div>
+    <div class="rule"><i>4</i><div>Each card works once. Every round has a twist, so read the red box.</div></div>
+  </section>
+  <section class="rules ar" dir="rtl" lang="ar">
+    <h2>إزاي تلعب</h2>
+    <div class="rule"><i>١</i><div>كله بيختار كارت في نفس الوقت.</div></div>
+    <div class="rule"><i>٢</i><div>لو اخترت نفس كارت حد تاني، انتو الاتنين <b>تتكرشوا</b> وتاخدوا صفر.</div></div>
+    <div class="rule"><i>٣</i><div>أعلى كارت محدش اختاره غيرك ياخد الفلوس.</div></div>
+    <div class="rule"><i>٤</i><div>كل كارت تلعبه مرة واحدة بس. وكل دور فيه قاعدة جديدة، اقرا المربع الأحمر.</div></div>
   </section>`;
 }
 function renderMenuBits(){
@@ -1141,7 +1151,7 @@ function topHTML(){
 }
 function modHTML(anim){
   const m=MODS[G.mod]||MODS.high;
-  return `<div class="mod${G.final?" final":""}${anim?" enter":""}"><div class="mn">${G.final?"Final round · ":""}${esc(m.n)}</div><div class="md">${esc(m.d)}${G.final&&G.mod!=="payday"?" Pot pays double.":""}</div></div>`;
+  return `<div class="mod${G.final?" final":""}${anim?" enter":""}"><div class="mn">${G.final?"Final round · ":""}${esc(m.n)}</div><div class="md">${esc(m.d)}${G.final&&G.mod!=="payday"?" Pot pays double.":""}</div><div class="md ar" dir="rtl" lang="ar">${esc(m.a)}${G.final&&G.mod!=="payday"?" آخر دور: الفلوس دبل.":""}</div></div>`;
 }
 function handHTML(){
   const used=(G.used&&G.used[me.pid])||[];

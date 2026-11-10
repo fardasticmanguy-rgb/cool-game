@@ -1,25 +1,23 @@
 # Crashpot
 
-A fast party card game for 2 to 5 players. Rounds take about 10 seconds and a full game takes about 2 minutes.
+A quick card game for 2 to 5 players. One game takes about 2 minutes.
 
 **Play:** https://fardasticmanguy-rgb.github.io/cool-game/
 
 ## How to play
 
-- Everyone holds cards 1 to 8. Each card works once. Six rounds.
-- Everyone picks a card at the same time. If your card matches someone else's, you both crash and score nothing.
-- The best solo card takes the pot. If everyone crashes, the pot rolls into the next round.
-- Every round has a twist:
-  - **High Roller**: highest solo card takes the pot
-  - **Lowball**: lowest solo card takes the pot
-  - **Double Up**: highest solo card takes double the pot
-  - **Landmine**: one secret number is mined; play it and lose 4
-  - **Payday**: every solo card pays its own number
-  - **Heist**: the winner also steals 3 from the leader
-- The last round pays double.
+1. Everyone picks a card at the same time.
+2. Same card as someone else? You both crash and get 0.
+3. Highest card nobody else picked wins the pot.
+4. Each card works once. Every round has a twist, so read the red box.
 
-## Online play
+## إزاي تلعب
 
-Host a lobby and it shows up under **Open lobbies** for everyone who has the page open. Tap a lobby to join, no codes needed. The host can fill empty seats with bots. **Practice vs bots** works offline.
+1. كله بيختار كارت في نفس الوقت.
+2. لو اخترت نفس كارت حد تاني، انتو الاتنين تتكرشوا وتاخدوا صفر.
+3. أعلى كارت محدش اختاره غيرك ياخد الفلوس.
+4. كل كارت تلعبه مرة واحدة بس. وكل دور فيه قاعدة جديدة، اقرا المربع الأحمر.
 
-Multiplayer runs peer to peer over WebRTC using PeerJS. The host's browser runs the game and everyone else syncs from it.
+## Lobbies
+
+Tap **Host a lobby** and it shows up under **Open lobbies** for everyone with the page open. Tap a lobby to join. The host can add bots. **Practice vs bots** works offline.
