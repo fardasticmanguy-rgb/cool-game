@@ -207,6 +207,8 @@ input:focus{border-color:var(--butter)}
 .invt .m b{font-weight:800}
 .invt .m small{display:block;font-size:12px;opacity:.8}
 .invt .btn.primary{background:var(--cardink);color:var(--butter);box-shadow:none}
+.jt{position:fixed;left:12px;right:12px;bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 84px));margin:0 auto;max-width:320px;z-index:79;text-align:center;background:var(--mint);color:var(--cardink);font-weight:800;border-radius:999px;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.4);pointer-events:none}
+.jt.show{animation:fade .25s}
 .invt .x{appearance:none;border:0;background:transparent;font-size:24px;line-height:1;cursor:pointer;color:var(--cardink);padding:0 4px}
 .codebox{display:flex;flex-direction:column;align-items:center;gap:4px}
 .codebox b{font-family:var(--display);font-weight:400;font-size:28px;letter-spacing:.25em;color:var(--mint)}
@@ -514,6 +516,7 @@ body.haschat .clock{max-width:924px}
 <body>
 <div id="clock" class="clock"></div>
 <div id="invt" class="invt" hidden></div>
+<div id="jt" class="jt" hidden></div>
 <div id="shell"><div id="app"></div><aside id="chat" class="chat" hidden></aside></div>
 <button id="chatfab" class="chatfab" data-act="chat" hidden aria-label="Open chat">💬<b id="unread" hidden></b></button>
 
@@ -2365,7 +2368,7 @@ function cHandHTML(){
 function cTablePick(){
   const mult=(G.mod==="double"?2:1)*(G.final?2:1);
   let prompt;
-  if(!inRoster())prompt="You're watching. You'll play next game.";
+  if(!inRoster())prompt=lateMsg(true);
   else if(cPickValid())prompt=`Locked in <b>${cPick.c}</b>${cPick.x?" with ×2":""}. Tap another card to switch.`;
   else prompt="Pick a card!";
   const pk=G.peek&&G.peek[me.pid];
@@ -2595,7 +2598,7 @@ function bRoleHTML(){
 }
 function bTurnHTML(){
   const f=G.f[me.pid],a=myActNow(),R=f&&ROLES[f.role];
-  if(!f||!f.alive)return `<div class="table bt">${bFighters(false)}<p class="sub">${f?"You're out. Watch the chaos 👀 · خرجت، اتفرج 👀":"You're watching. · بتتفرج"}</p><div class="secs" id="secs"></div></div>`;
+  if(!f||!f.alive)return `<div class="table bt">${bFighters(false)}<p class="sub">${f?"You're out. Watch the chaos 👀 · خرجت، اتفرج 👀":lateMsg(true)}</p><div class="secs" id="secs"></div></div>`;
   const need=bSel&&(bSel.k==="atk"||(bSel.k==="sp"&&R.tgt));
   const lab=a?(a.k==="atk"?`⚔️ Attack → ${nm(a.tg)}`:a.k==="parry"?"🛡 Parry":a.k==="chg"?"⚡ Charge":`✨ ${esc(R.sp)}${a.tg?" → "+nm(a.tg):""}`):"";
   const btn=(k,t,dis)=>`<button class="bact${bSel&&bSel.k===k?" on":""}" data-act="bact" data-k="${k}" ${dis?"disabled":""}>${t}</button>`;
@@ -2772,6 +2775,7 @@ function hBodyHTML(anim){
   }else{
     banner=`<b>Round over!</b><span dir="rtl" lang="ar">الجولة خلصت!</span>`;prompt=left?`${hLeft().map(id=>esc(nameOf(id))).join(", ")} survived (+5)<span class=ar dir=rtl lang=ar>نجوا ومحدش لقاهم (+٥)</span>`:"Everyone got found!<span class=ar dir=rtl lang=ar>كله اتمسك!</span>";
   }
+  if(!inR)prompt=lateMsg(true);
   const noise=G.hlast&&G.hlast.noise&&(G.phase==="seek")?`<div class="noise">🔊 You heard something on ${G.hlast.noise.txt} <span dir="rtl" lang="ar">(في صوت ${G.hlast.noise.ar})</span></div>`:"";
   const seekBtn=mode==="seek"?`<button class="btn primary" data-act="hgo" ${hSel.length?"":"disabled"}>Search ${hSel.length||""}</button>`:"";
   return `<div class="table ht${anim?" anim":""}"><div class="hban${isSeek?" seek":""}">${banner}</div><div class="hinfo">Seeker: <b>${sk}</b> · Hiding: <b>${left}</b> · Search ${G.st}/3<span dir="rtl" lang="ar"> · بيدور: ${sk} · مستخبيين: ${left}</span></div>${noise}${hMapHTML(mode)}<p class="prompt">${prompt}</p>${seekBtn}<div class="secs" id="secs"></div></div>`;
@@ -2817,9 +2821,72 @@ function hClick(a,b){
   if(a==="hgo"&&G.phase==="seek"&&G.seekers.includes(me.pid)&&hSel.length)sendAct({spots:hSel.slice()});
 }
 
+function lateMsg(html){
+  const full=G&&G.roster.length>=MAXP&&(G.mode==="brawl"||G.mode==="hide"||!G.roster.some(r=>r.bot));
+  const t=practice?["You're watching.","بتتفرج."]:G&&G.locked?["The lobby is locked, so you're watching this game.","اللوبي مقفول، فانت بتتفرج على الجيم ده."]:full?["The game is full, so you're watching. You'll play next game.","الجيم مليان، فانت بتتفرج. هتلعب الجيم الجاي."]:["You'll jump in at the next round! 🏃","هتدخل اللعب في الجولة الجاية! 🏃"];
+  return html?`${t[0]}<span class=ar dir=rtl lang=ar>${t[1]}</span>`:t[0];
+}
+function lateJoiners(){
+  if(!nr||practice||!G||G.locked)return[];
+  const have=new Set(G.roster.map(r=>r.id)),out=[];
+  for(const p of nr.peers()){
+    const pr=p.presence||{};
+    if(p.sameTab||typeof pr.pid!=="string"||!pr.pid)continue;
+    const id=pr.pid.slice(0,16);
+    if(have.has(id)||out.some(x=>x.id===id))continue;
+    out.push({id,name:clean(pr.name)||"Player",col:(Math.abs(+pr.col)||0)%COLS.length,bot:false});
+  }
+  return out;
+}
+function lateSafe(){
+  const m=G.mode,ph=G.phase,left=G.t0+G.dur-Date.now();
+  if(m==="cards")return ph==="pick"&&left>5000;
+  if(m==="brawl")return(ph==="role"&&left>3000)||(ph==="breveal"&&bAlive().length>=2);
+  if(m==="hide")return(ph==="hide"&&left>3000)||ph==="hend";
+  return ph==="intro"&&left>1500;
+}
+function lateAdd(j){
+  const lo=o=>{const v=G.roster.map(p=>(o&&o[p.id])||0);return v.length?Math.min(...v):0};
+  if(G.mode==="cards"){G.scores[j.id]=lo(G.scores);G.used[j.id]=[]}
+  else if(G.mode==="brawl"){
+    const alive=bAlive(),avg=alive.length?Math.round(alive.reduce((a,id)=>a+G.f[id].hp,0)/alive.length):0;
+    const f={role:null,hp:0,max:0,chg:0,cd:0,lp:-5,alive:true,dt:0,dmg:0,kills:0};
+    if(G.phase!=="role"){const role=ROLE_IDS[ri(ROLE_IDS.length)],R=ROLES[role];Object.assign(f,{role,max:R.hp,hp:Math.max(2,Math.min(R.hp,avg))})}
+    G.f[j.id]=f;G.total[j.id]=0;
+  }
+  else if(G.mode==="hide")G.total[j.id]=lo(G.total);
+  else{G.total[j.id]=G.mode==="casino"?1000:lo(G.total);G.wins[j.id]=0;G.streak[j.id]=0}
+  G.roster.push(j);
+  G.jn={k:((G.jn&&G.jn.k)||0)+1,name:j.name};
+}
+function lateTick(){
+  if(G.phase==="lobby"||G.phase==="over"||practice||G.locked)return false;
+  const js=lateJoiners();
+  if(!js.length||!lateSafe())return false;
+  let ch=false;
+  for(const j of js){
+    if(G.roster.length>=MAXP){
+      const bi=G.mode==="brawl"||G.mode==="hide"?-1:G.roster.map(r=>r.bot).lastIndexOf(true);
+      if(bi<0)break;
+      G.roster.splice(bi,1);
+    }
+    lateAdd(j);ch=true;
+  }
+  return ch;
+}
+let jnSeen=0,jnTimer=0;
+function renderJoinToast(){
+  const el=$("#jt");if(!el)return;
+  const j=G&&screen==="room"?G.jn:null;
+  if(!j||j.k===jnSeen)return;
+  jnSeen=j.k;
+  el.textContent=`👋 ${j.name} jumped in!`;el.hidden=false;el.classList.remove("show");void el.offsetWidth;el.classList.add("show");
+  clearTimeout(jnTimer);jnTimer=setTimeout(()=>{el.hidden=true},3500);
+}
 function hostTick(force){
   if(!G||!isHost)return;
   const now=Date.now();let ch=!!force;
+  if(lateTick())ch=true;
   if(G.phase==="lobby"&&!practice){
     const r=lobbyRoster();
     if(JSON.stringify(r)!==JSON.stringify(G.roster)){G.roster=r;ch=true}
@@ -2858,7 +2925,7 @@ function publish(){
 }
 function lobbyPresence(){
   if(!dir)return;
-  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.phase==="lobby"&&G.locked?"locked":G.phase,r:G.mode==="cards"?G.round:G.mode==="brawl"?G.bt:G.mode==="hide"?G.hr:G.k+1,l:G.mode==="cards"?G.rounds:G.mode==="brawl"?G.maxT:G.mode==="hide"?G.hrounds:(G.list.length||G.len)}:null;
+  const listing=isHost&&!practice&&code&&G?{code,host:me.name,n:G.roster.filter(r=>!r.bot).length,b:G.roster.filter(r=>r.bot).length,st:G.locked?"locked":G.phase,r:G.mode==="cards"?G.round:G.mode==="brawl"?G.bt:G.mode==="hide"?G.hr:G.k+1,l:G.mode==="cards"?G.rounds:G.mode==="brawl"?G.maxT:G.mode==="hide"?G.hrounds:(G.list.length||G.len)}:null;
   const s=JSON.stringify(listing);
   if(s!==lastLobby){lastLobby=s;Promise.resolve(dir.presence({listing})).catch(()=>{})}
 }
@@ -3012,9 +3079,10 @@ function openList(){
   const rank=g=>(g.st==="lobby"&&g.n+g.b<MAXP?0:g.st==="locked"?2:1);
   return list.sort((a,b)=>rank(a)-rank(b)||b.n-a.n||a.code.localeCompare(b.code));
 }
+function canLate(g){return !["lobby","locked","over"].includes(g.st)&&(g.n+g.b<MAXP||(g.b>0&&g.n<MAXP))}
 function quickPlay(){
-  const open=openList().filter(g=>g.st==="lobby"&&g.n<MAXP);
-  if(open[0])enter(open[0].code,false);else enter(newCode(),true);
+  const list=openList(),open=list.filter(g=>g.st==="lobby"&&g.n<MAXP),late=list.filter(canLate);
+  if(open[0])enter(open[0].code,false);else if(late[0])enter(late[0].code,false);else enter(newCode(),true);
 }
 async function enter(c,create,fixed){
   if(joining||screen!=="menu")return;
@@ -3137,8 +3205,8 @@ function renderMenuBits(){
     const list=openList();
     if(!list.length)html=`<div class="empty">${dir.settled&&!dir.settled()?"Looking for lobbies…":"No lobbies yet. Tap Quick play to open one."}</div>`;
     else html=list.map(g=>{
-      const total=g.n+g.b,open=g.st==="lobby"&&total<MAXP;
-      const badge=g.st==="locked"?"🔒 Locked":g.st==="lobby"?(open?"Join":"Full"):g.st==="over"?"Ending":`Game ${g.r}/${g.l}`;
+      const total=g.n+g.b,open=(g.st==="lobby"&&total<MAXP)||canLate(g);
+      const badge=g.st==="locked"?"🔒 Locked":g.st==="lobby"?(open?"Join":"Full"):g.st==="over"?"Ending":open?`Jump in · ${g.r}/${g.l}`:`Watch · ${g.r}/${g.l}`;
       return `<button class="open" data-act="opengame" data-code="${g.code}" ${joining?"disabled":""}><span class="dot" style="background:${COLS[hash(g.code)%COLS.length]}"></span><span class="om"><b>${esc(g.host)}'s lobby</b><br>${g.n} player${g.n===1?"":"s"}${g.b?` + ${g.b} bot${g.b===1?"":"s"}`:""}</span><span class="ob${open?"":" busy"}">${badge}</span></button>`;
     }).join("");
   }
@@ -3237,7 +3305,7 @@ function renderStage(){
   if(G.phase==="play"){
     if(stageKey===key)return;
     stopStage();stageKey=key;el.dataset.k="";
-    if(!inRoster()){el.innerHTML=`<div class="table"><div class="headline">You're watching</div><p class="sub">You'll play next round.</p></div>`;return}
+    if(!inRoster()){el.innerHTML=`<div class="table"><div class="headline">You're watching 👀</div><p class="sub">${lateMsg(true)}</p></div>`;return}
     const g=cur(),start=localStart();
     const ctx={data:G.data,start,end:start+g.play,submit,done:()=>!!(mySub&&mySub.g===G.gid&&mySub.k===G.k)||!G||G.phase!=="play"};
     el.innerHTML="";
@@ -3250,7 +3318,7 @@ function renderStage(){
   part("s-stage",G.phase==="intro"?introHTML():resultHTML());
 }
 function render(){
-  try{renderMain()}finally{renderChat();onlineBeat()}
+  try{renderMain()}finally{renderChat();onlineBeat();renderJoinToast()}
 }
 function renderMain(){
   const root=$("#app");
@@ -3406,7 +3474,7 @@ function renderOnline(){
   let html;
   if(!ON.on)html=`<div class="empty">${netState==="wait"?"Checking who's online…":"The online list needs the live connection."}</div>`;
   else if(!list.length)html=`<div class="empty">Nobody else is online right now. Share the link in the chat!</div>`;
-  else html=list.map(u=>{const can=u.at==="lobby"&&u.code&&u.n<MAXP;return `<div class="onr"><span class="live${u.at==="menu"?"":" busy"}"></span><span class="dot" style="background:${COLS[u.col]}"></span><span class="n">${esc(u.name)}<small>${onStatus(u)}</small></span>${can?`<button class="btn small primary" data-act="opengame" data-code="${esc(u.code)}" ${joining?"disabled":""}>Join</button>`:""}</div>`}).join("");
+  else html=list.map(u=>{const can=(u.at==="lobby"||u.at==="playing")&&u.code&&u.n<MAXP;return `<div class="onr"><span class="live${u.at==="menu"?"":" busy"}"></span><span class="dot" style="background:${COLS[u.col]}"></span><span class="n">${esc(u.name)}<small>${onStatus(u)}</small></span>${can?`<button class="btn small primary" data-act="opengame" data-code="${esc(u.code)}" ${joining?"disabled":""}>${u.at==="playing"?"Jump in":"Join"}</button>`:""}</div>`}).join("");
   if(el.dataset.k!==html){el.dataset.k=html;el.innerHTML=html}
 }
 function inviteHTML(){
