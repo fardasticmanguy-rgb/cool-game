@@ -41,6 +41,12 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🎨 Color Trap | Tap the color, not the word |
 | 🤝 Grab or Share | Share with everyone, or grab it all |
 | ⚖️ Pick a Side | The smaller side wins |
+| 🚀 Rocket Cash | Cash out before the rocket explodes |
+| 💎 Gem Mines | Dig up gems, dodge the bombs, bank in time |
+| ☝️ Steady Finger | Keep your finger in a moving, shrinking circle |
+| 🧠 Copy Cat | Repeat a color pattern that keeps growing |
+| 🎯 Sharpshooter | Fire when the line hits the bullseye |
+| 🔨 Whack-a-Mole | Smack the moles, not the bombs |
 
 ## Extras
 
@@ -48,3 +54,10 @@ A party of tiny games for 2 to 6 players. No talking needed.
 - **Family friendly** mode is on by default
 - Bots can fill empty seats
 - **Practice vs bots** works offline
+- **Online now** shows who else has the game open, and which lobby they're in
+- **Invite** anyone online from your lobby, or tap **Share link** to paste it in the chat
+- Fonts ship with the game, so they work on school Wi-Fi, Firefox and tablets
+
+## Play links
+
+`?play=<code>` opens or joins that lobby. Add `&mode=cards|brawl|hide|party|single`, or `&game=rocket` (any mini game) to start in One game mode with it. `&games=rocket,mines,whack` picks the Party games.
