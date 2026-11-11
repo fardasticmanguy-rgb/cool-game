@@ -55,8 +55,17 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | ♛ Safe Square | Find the square no chess piece can attack |
 | ✊ Rock Paper Scissors | Beat as many players as you can. Twists: Reverse, 🧨 Dynamite |
 | 🎴 Memory Pairs | Flip cards and find the matching pairs |
+| 🪢 Tug of War | Teams mash PULL. Small teams pull just as hard |
+| 🚦 Red Light, Green Light | Hold RUN on green, freeze on red |
+| 🌉 Shaky Bridge | Take turns picking left or right. One panel breaks |
+| 🥔 Hot Potato | Pass the potato before it blows up |
+| 🍽️ Wobbly Waiter | Keep the tray of drinks from tipping over |
+| 🤔 Most Likely To… | Vote who's most likely to trip over nothing |
+| 🤷 Would You Rather | Silly choices. The side most people pick wins |
 
-Tap **⭐ All** next to the number of games and every game comes up once, so you can try them all.
+Tug of War, Red Light Green Light, Shaky Bridge and Hot Potato are live: you see everyone move in real time.
+
+Tap **⭐ Try every game** in the Mode row, or **⭐ All** next to the number of games, and every game comes up once, so you can try them all.
 
 ## 🎰 Casino (side mode, fake chips)
 
@@ -77,6 +86,7 @@ Everyone starts with 1,000 chips. Most chips at the end wins. Go broke and the h
 - Emoji reactions to trash-talk without talking
 - **Family friendly** mode is on by default
 - Bots can fill empty seats
+- Funny awards at the end: 🔥 hottest streak, 🤡 clown of the day, 🥄 wooden spoon
 - Every game shows a one-line "how to play" in English and Arabic, on the intro and while you play
 - Works great with just 2 players: the loser of a round gets 0, so every round counts
 - **Practice vs bots** works offline
