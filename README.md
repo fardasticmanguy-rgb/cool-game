@@ -61,7 +61,8 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🥔 Hot Potato | Pass the potato before it blows up |
 | 🍽️ Wobbly Waiter | Keep the tray of drinks from tipping over |
 | 🤔 Most Likely To… | Vote who's most likely to trip over nothing |
-| 🤷 Would You Rather | Silly choices. The side most people pick wins |
+| 🤷 Would You Rather | Pick a silly side, then the two sides fight it out by mashing ARGUE |
+| ⚡ Micro Madness | 13 tiny 3 second games in a row: swat the fly, catch the toast, don't press it… 3 lives, faster every time |
 
 Tug of War, Red Light Green Light, Shaky Bridge and Hot Potato are live: you see everyone move in real time.
 
@@ -86,7 +87,7 @@ Everyone starts with 1,000 chips. Most chips at the end wins. Go broke and the h
 - Emoji reactions to trash-talk without talking
 - **Family friendly** mode is on by default
 - Bots can fill empty seats
-- Funny awards at the end: 🔥 hottest streak, 🤡 clown of the day, 🥄 wooden spoon
+- **Teams**: turn Teams on in Lobby options (Party, One game, Casino), tap 🔴 Join Red or 🔵 Join Blue. The team with the best average wins
 - Every game shows a one-line "how to play" in English and Arabic, on the intro and while you play
 - Works great with just 2 players: the loser of a round gets 0, so every round counts
 - **Practice vs bots** works offline
