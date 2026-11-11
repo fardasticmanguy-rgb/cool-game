@@ -557,6 +557,56 @@ body.haschat .clock{max-width:924px}
 .mlv{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;width:100%}
 .mlb{background:var(--c);font-size:16px;padding:16px 6px}
 .wyrb{font-size:15px}
+.tscore{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--display);font-size:15px;margin-bottom:6px}
+.tscore .t1{color:#ff6b57}
+.tscore .t2{color:#6fb6ff}
+.tscore small{font-family:var(--body);font-size:11px;color:var(--dim)}
+.chip.tm1{box-shadow:inset 4px 0 0 #ff6b57}
+.chip.tm2{box-shadow:inset 4px 0 0 #6fb6ff}
+.lp.tm1{box-shadow:inset 4px 0 0 #ff6b57}
+.lp.tm2{box-shadow:inset 4px 0 0 #6fb6ff}
+.lp .tb{font-size:14px}
+.tpick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.btn.tpk.t1{border:2px solid #ff6b57}
+.btn.tpk.t2{border:2px solid #6fb6ff}
+.btn.tpk.t1.on{background:#ff6b57;color:var(--cardink)}
+.btn.tpk.t2.on{background:#6fb6ff;color:var(--cardink)}
+.tfinal{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.tfinal div{border-radius:14px;padding:10px;background:var(--bg);display:flex;flex-direction:column;gap:2px;border:2px solid transparent}
+.tfinal .t1 b{color:#ff6b57}
+.tfinal .t2 b{color:#6fb6ff}
+.tfinal span{font-family:var(--display);font-size:24px}
+.tfinal small{color:var(--dim);font-size:12px}
+.tfinal .win{border-color:var(--butter);box-shadow:0 0 18px rgba(255,212,59,.35)}
+.tteam b{font-size:26px}
+.wyrf{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px}
+.wyrf[hidden]{display:none}
+.mmst{justify-content:flex-start;gap:10px}
+.mmtop{display:flex;justify-content:space-between;width:100%;font-size:20px}
+.mmsc{font-family:var(--display);color:var(--mint)}
+.mmcmd{font-family:var(--display);font-size:clamp(22px,7vw,32px);line-height:1.1;color:var(--butter);display:flex;flex-direction:column;gap:2px;min-height:62px;justify-content:center}
+.mmcmd small{font-family:"Cairo",var(--body);font-weight:800;font-size:15px;color:var(--ink)}
+.mmcmd.ok{color:var(--mint)}
+.mmcmd.bad{color:var(--coral)}
+.mmarea{position:relative;width:100%;max-width:360px;height:250px;background:var(--bg);border-radius:16px;overflow:hidden;touch-action:none;display:grid;place-items:center}
+.mmarea.mmhold{cursor:pointer}
+.mmarea.mmhold.on{background:#1f5c45}
+.mmi{position:absolute;appearance:none;border:0;background:none;font-size:46px;line-height:1;cursor:pointer;padding:6px;transform:translate(-50%,-50%);transition:left .2s,top .2s}
+.mmi.mmc{left:50%;top:50%;transition:font-size .08s}
+.mmi.mmrow{font-size:56px}
+.mmbig{font-size:80px;line-height:1;pointer-events:none}
+.mmbig.mmq{font-family:var(--display);font-size:46px;color:var(--ink);margin-bottom:60px}
+.mmredbtn{appearance:none;border:0;width:150px;height:150px;border-radius:50%;background:#ff3b30;color:#fff;font-family:var(--display);font-size:26px;box-shadow:0 10px 0 #a3201a;cursor:pointer}
+.mmsheep{position:absolute;font-size:34px;transform:translate(-50%,0)}
+.mmopts{position:absolute;bottom:12px;left:0;right:0;display:flex;gap:10px;justify-content:center}
+.mmopt{appearance:none;border:0;min-width:70px;padding:12px 16px;border-radius:12px;background:var(--butter);color:var(--cardink);font-family:var(--display);font-size:24px;cursor:pointer;box-shadow:0 4px 0 var(--butter-d)}
+.mmmeter{position:absolute;bottom:14px;left:15%;right:15%;height:12px;border-radius:999px;background:var(--raise);overflow:hidden}
+.mmmeter i{display:block;height:100%;width:0;background:var(--mint)}
+.mmrope{position:absolute;left:50%;top:0;height:55%;width:6px;transform:translateX(-50%);background:repeating-linear-gradient(#c98b4a 0 8px,#a86c34 8px 16px)}
+.mmrope.cut{height:20%}
+.mmpiano{position:absolute;top:50%;left:50%;transform:translate(-50%,-10%)}
+.mmbar{width:100%;max-width:360px;height:8px;border-radius:999px;background:var(--bg);overflow:hidden}
+.mmbar i{display:block;height:100%;width:100%;background:var(--butter);transform-origin:left}
 .roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;width:100%}
 .role{appearance:none;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-align:center}
 .role.sel{border-color:var(--butter);background:var(--raise);box-shadow:0 0 0 3px var(--butter)}
@@ -2148,7 +2198,7 @@ Object.assign(GAMES,{
     setup:v=>({v,goal:v===1?38:26}),
     bot:()=>null,fmt:v=>(Math.floor(v/10)===1?"🔴 Red":"🔵 Blue")+(v%10?" · won":" · lost"),
     live:{
-      init(d,ros){const ids=shuffle(ros.map(r=>r.id)),A=[],B=[];ids.forEach((id,i)=>(i%2?B:A).push(id));const tap={};ids.forEach(id=>tap[id]=0);return{A,B,tap,rope:0,off:0,lt:0,end:false,win:0}},
+      init(d,ros){const ids=shuffle(ros.map(r=>r.id));let A=[],B=[];ids.forEach((id,i)=>(i%2?B:A).push(id));if(G.teams){const a=ros.filter(r=>r.tm===1).map(r=>r.id),b=ros.filter(r=>r.tm===2).map(r=>r.id);if(a.length&&b.length){A=a;B=b}}const tap={};ids.forEach(id=>tap[id]=0);return{A,B,tap,rope:0,off:0,lt:0,end:false,win:0}},
       step(st,acts,t,d,ros){
         if(st.end||t<0)return false;
         const dt=Math.max(0,(t-st.lt)/1000);st.lt=t;
@@ -2375,29 +2425,114 @@ Object.assign(GAMES,{
     }
   },
   wyr:{
-    n:"Would You Rather",i:"🤷",play:10000,early:true,
-    en:()=>"Pick what you'd rather do. The side MORE people pick wins! With 2 players, you both score if you match.",
-    ar:()=>"اختار تفضل تعمل إيه. الاختيار اللي ناس أكتر تختاره يكسب! لو انتو اتنين، الاتنين ياخدوا نقط لو اخترتوا نفس الحاجة.",
-    how:()=>TW("🤷 Pick one. The side most people pick wins","🤷 اختار واحدة. الاختيار اللي أغلب الناس تختاره يكسب"),
-    tw:[null,TW("New question!","سؤال جديد!"),TW("Another one!","كمان واحد!")],
-    setup:v=>({v,q:ri(WYR.length)}),
-    mount(el,ctx){
-      const q=WYR[ctx.data.q];
-      el.innerHTML=`<div class="stage"><div class="mlq">Would you rather…</div><div class="duo">${q.map((o,k)=>`<button class="pick side${k} wyrb" data-v="${k}"><span>${o[0]}</span>${esc(o[1])}<small dir="rtl" lang="ar">${o[2]}</small></button>`).join("")}</div><p class="prompt" data-p>Pick one!</p></div>`;
-      el.querySelector(".duo").addEventListener("pointerdown",e=>{const b=e.target.closest(".pick");if(!b)return;e.preventDefault();if(ctx.done())return;b.classList.add("sel");el.querySelectorAll(".pick").forEach(x=>x.disabled=true);el.querySelector("[data-p]").textContent="Locked! Let's see who agrees…";tone(660,.06,"square",.04);ctx.submit(+b.dataset.v)});
-      return()=>{};
+    n:"Would You Rather",i:"🤷",play:16000,
+    en:()=>"Pick a side in 5 seconds. Then the two sides FIGHT: mash ARGUE to drag the rope to your side! Each side pulls with its average, so a small side can still win. If everyone agrees, there's no fight.",
+    ar:()=>"اختار جنب في ٥ ثواني. وبعدين الجنبين يتخانقوا: دوس ARGUE بسرعة عشان تسحب الحبل لجنبك! كل جنب بيشد بالمتوسط، فالجنب الصغير ممكن يكسب. لو كله اتفق، مفيش خناقة.",
+    how:()=>TW("🤷 Pick a side, then mash ARGUE to win the fight","🤷 اختار جنب، وبعدين دوس ARGUE بسرعة عشان تكسب الخناقة"),
+    tw:[null,TW("New question, new fight!","سؤال جديد، خناقة جديدة!"),TW("Another one!","كمان واحد!")],
+    setup:v=>({v,q:ri(WYR.length),pick:5000,goal:22}),
+    bot:()=>null,
+    fmt:(v,d)=>{const o=d&&WYR[d.q]&&WYR[d.q][Math.floor(v/10)];return(o?o[0]+" ":"")+(v%10===3?"agreed":v%10?"won":"lost")},
+    live:{
+      init(d,ros){const tap={};ros.forEach(r=>tap[r.id]=0);return{pk:{},tap,bp:{},rope:0,lt:0,fight:false,end:false,win:-1,agree:false}},
+      step(st,acts,t,d,ros){
+        if(st.end||t<0)return false;
+        const dt=Math.max(0,(t-st.lt)/1000);st.lt=t;
+        for(const p of ros){
+          const id=p.id;if(st.tap[id]==null)continue;
+          if(p.bot){if(st.bp[id]==null)st.bp[id]=800+ri(3200);if(!st.fight&&st.pk[id]==null&&t>=st.bp[id])st.pk[id]=ri(2);if(st.fight)st.tap[id]=Math.round((st.tap[id]+({easy:4.5,normal:6,hard:7.5}[G.botlvl]||6)*dt*(.6+Math.random()*.8))*10)/10}
+          else{const a=acts[id];if(a){if(!st.fight&&(a.c===0||a.c===1))st.pk[id]=a.c;if(st.fight&&+a.n>st.tap[id])st.tap[id]=Math.min(+a.n,st.tap[id]+Math.max(1,dt*25))}}
+        }
+        if(!st.fight){
+          if(t<d.pick)return true;
+          for(const p of ros)if(st.tap[p.id]!=null&&st.pk[p.id]==null)st.pk[p.id]=ri(2);
+          st.fight=true;
+          const s0=ros.filter(p=>st.pk[p.id]===0).length,s1=ros.filter(p=>st.pk[p.id]===1).length;
+          if(!s0||!s1){st.end=true;st.agree=true;st.win=s0?0:1}
+          return true;
+        }
+        const avg=c=>{const m=ros.filter(p=>st.pk[p.id]===c);return m.reduce((s,p)=>s+(st.tap[p.id]||0),0)/Math.max(1,m.length)};
+        st.rope=Math.round((avg(1)-avg(0))*10)/10;
+        if(Math.abs(st.rope)>=d.goal){st.end=true;st.win=st.rope>0?1:0}
+        return true;
+      },
+      result(st){const w=st.win>=0?st.win:st.rope>1?1:st.rope<-1?0:-1,V={};for(const id in st.pk)V[id]=st.pk[id]*10+(st.agree?3:w===st.pk[id]?1:0);return V}
     },
-    bot:()=>ri(2),
-    fmt:(v,d)=>{const o=d&&WYR[d.q]&&WYR[d.q][v];return o?o[0]+" "+o[1]:"?"},
+    mount(el,ctx){
+      const d=ctx.data,q=WYR[d.q];let st=ctx.live(),n=0,fightOn=false;
+      el.innerHTML=`<div class="stage"><div class="mlq" data-h>Would you rather…</div><div class="duo" data-o>${q.map((o,k)=>`<button class="pick side${k} wyrb" data-v="${k}"><span>${o[0]}</span>${esc(o[1])}<small dir="rtl" lang="ar">${o[2]}</small></button>`).join("")}</div><div class="wyrf" data-f hidden><div class="tugf"><div class="tteam t1" data-l></div><div class="rope"><b class="gl"></b><b class="gr"></b><b class="mid"></b><i class="knot" data-k>💢</i></div><div class="tteam t2" data-r></div></div><button class="mashbtn tugbtn" data-m>ARGUE!</button></div><p class="prompt" data-p>Pick one! The fight starts soon…</p></div>`;
+      const ob=el.querySelector("[data-o]"),fb=el.querySelector("[data-f]"),kn=el.querySelector("[data-k]"),mb=el.querySelector("[data-m]"),p=el.querySelector("[data-p]"),h=el.querySelector("[data-h]");
+      ob.addEventListener("pointerdown",e=>{const b=e.target.closest(".wyrb");if(!b)return;e.preventDefault();if(!st||st.fight)return;ob.querySelectorAll(".wyrb").forEach(x=>x.classList.toggle("sel",x===b));ctx.send({c:+b.dataset.v});tone(660,.06,"square",.04)});
+      mb.addEventListener("pointerdown",e=>{e.preventDefault();if(!st||!st.fight||st.end)return;n++;mb.classList.remove("hit");void mb.offsetWidth;mb.classList.add("hit");ctx.send({n})});
+      const side=c=>Object.keys(st.pk).filter(id=>st.pk[id]===c).map(id=>`<span>${esc(nameOf(id))}${id===me.pid?" (you)":""}</span>`).join("");
+      const upd=s=>{
+        st=s;const mine=st.pk[me.pid];
+        if(st.fight&&!fightOn){fightOn=true;ob.hidden=true;fb.hidden=false;el.querySelector("[data-l]").innerHTML=`<b>${q[0][0]}</b>`+side(0);el.querySelector("[data-r]").innerHTML=`<b>${q[1][0]}</b>`+side(1);if(mine!=null){mb.className=`mashbtn tugbtn t${mine+1}`;h.textContent=`FIGHT for ${q[mine][0]} ${q[mine][1]}!`}tone(220,.2,"sawtooth",.05)}
+        if(st.fight)kn.style.left=(50+Math.max(-46,Math.min(46,st.rope/d.goal*44)))+"%";
+        if(st.end){mb.disabled=true;p.textContent=st.agree?"🤝 Everyone agrees! No fight needed.":st.win===mine?"YOUR SIDE WON THE ARGUMENT! 💪":"Your side lost the argument 🫠"}
+        else if(st.fight)p.textContent=mine==null?"Watch the fight!":Math.sign(st.rope)===(mine?1:-1)?"You're winning! Keep arguing!":"You're losing! ARGUE HARDER!";
+      };
+      ctx.onLive(upd);upd(st);
+      return timedLoop(el,ctx,now=>{if(!st.fight){const left=Math.max(0,Math.ceil((d.pick-(now-ctx.start))/1000));p.textContent=`Pick one! The fight starts in ${left}…`}});
+    },
     award(V,d){
-      const ids=Object.keys(V).filter(id=>V[id]===0||V[id]===1),a=ids.filter(id=>V[id]===0),b=ids.filter(id=>V[id]===1),pts={},q=WYR[d.q];
-      if(!ids.length)return{pts,head:"Nobody picked 🤐"};
-      if(a.length===b.length)return{pts,head:ids.length===2?"Total opposites! 🙃":"Perfect split! Nobody wins 🤝"};
-      const w=a.length>b.length?0:1;(w?b:a).forEach(id=>pts[id]=3);
-      return{pts,head:(w?b:a).length===ids.length?`Everyone would rather ${q[w][0]} ${esc(q[w][1])}!`:`Most people would rather ${q[w][0]} ${esc(q[w][1])}!`};
+      const q=WYR[d.q],pts={},lab={};let ws=-1,agree=false;
+      for(const id in V){const c=Math.floor(V[id]/10),r=V[id]%10;lab[id]=`${q[c][0]} ${r===3?"agreed":r?"won":"lost"}`;if(r===3){pts[id]=2;agree=true;ws=c}else if(r===1){pts[id]=5;ws=c}}
+      return{pts,lab,head:ws<0?"The fight was a draw 🤝":agree?`🤝 Everyone would rather ${q[ws][0]} ${esc(q[ws][1])}!`:`${q[ws][0]} "${esc(q[ws][1])}" wins the fight! 💪`};
     }
+  },
+  micro:{
+    n:"Micro Madness",i:"⚡",play:55000,early:true,
+    en:d=>`A crazy chain of tiny games, about 3 seconds each! Read the order, do it FAST. Mess up and you lose a life. It gets faster and faster. You have ${d.lives} ${d.lives>1?"lives":"life"}. Survive the most!`,
+    ar:d=>`سلسلة مجنونة من ألعاب صغيرة، كل واحدة حوالي ٣ ثواني! اقرا الأمر واعمله بسرعة. لو غلطت تخسر روح. بتبقى أسرع وأسرع. معاك ${d.lives} ${d.lives>1?"أرواح":"روح"}. اللي يعدي أكتر يكسب!`,
+    how:()=>TW("⚡ Do what it says, FAST!","⚡ اعمل اللي مكتوب، بسرعة!"),
+    tw:[null,TW("Turbo: faster from the start.","تيربو: سريع من الأول."),TW("One life. No pressure 😬","روح واحدة بس. ولا يهمك 😬")],
+    setup:v=>({v,lives:v===2?1:3,sp:v===1?.8:1}),
+    mount(el,ctx){
+      const d=ctx.data;let lives=d.lives,score=0,speed=d.sp,over=false,done=true,cur=null,clean=null,to=null,timer=0,t0=0,dur=0,bag=[];const ts=[];
+      el.innerHTML=`<div class="stage mmst"><div class="mmtop"><span data-l></span><span class="mmsc" data-s>0 ✅</span></div><div class="mmcmd" data-c>GET READY…</div><div class="mmarea" data-a></div><div class="mmbar"><i data-b></i></div><p class="prompt" data-p></p></div>`;
+      const A=el.querySelector("[data-a]"),C=el.querySelector("[data-c]"),B=el.querySelector("[data-b]"),L=el.querySelector("[data-l]"),S=el.querySelector("[data-s]"),P=el.querySelector("[data-p]");
+      const hearts=()=>{L.textContent="❤️".repeat(lives)+"🖤".repeat(Math.max(0,d.lives-lives))};hearts();
+      const finish=r=>{if(clean){try{clean()}catch(e){}clean=null}clearTimeout(timer);done=true;r()};
+      const win=()=>{if(done||over)return;finish(()=>{score++;S.textContent=score+" ✅";speed*=.94;C.textContent="✅ NICE!";C.className="mmcmd ok";tone(988,.08,"square",.04);ts.push(setTimeout(next,550))})};
+      const lose=msg=>{if(done||over)return;finish(()=>{lives--;hearts();C.textContent="💀 DEAD";C.className="mmcmd bad";P.textContent=msg||cur.f;tone(110,.35,"sawtooth",.06);A.innerHTML=`<div class="mmbig">💀</div>`;if(lives<=0){end(`Game over! You survived ${score}.`);return}ts.push(setTimeout(next,1300))})};
+      const end=msg=>{if(over)return;over=true;done=true;clearTimeout(timer);if(clean){try{clean()}catch(e){}clean=null}C.className="mmcmd";C.textContent=`🏁 ${score} survived`;P.textContent=msg;ctx.submit(score)};
+      const next=()=>{
+        if(over||ctx.done())return;
+        if(!bag.length)bag=shuffle(MICRO.map((_,i)=>i));
+        cur=MICRO[bag.pop()];A.innerHTML="";A.className="mmarea";P.textContent="";
+        C.className="mmcmd";C.innerHTML=`${cur.t}<small dir="rtl" lang="ar">${cur.a}</small>`;
+        dur=Math.max(1500,3300*speed);t0=performance.now();done=false;
+        const r=cur.mk(A,win,lose,dur);clean=typeof r==="function"?r:r&&r.c;to=r&&r.to;
+        timer=setTimeout(()=>{if(done)return;if(to&&to())win();else lose()},dur);
+      };
+      ts.push(setTimeout(next,900));
+      const stop=timedLoop(el,ctx,now=>{if(!done&&!over)B.style.transform=`scaleX(${Math.max(0,1-(performance.now()-t0)/dur)})`;if(now>=ctx.end&&!over)end(`Time! You survived ${score}.`)});
+      return()=>{stop();over=true;clearTimeout(timer);ts.forEach(clearTimeout);if(clean)try{clean()}catch(e){}};
+    },
+    bot:d=>Math.max(1,3+ri(10)-d.v*2),
+    fmt:v=>v+" survived",
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`⚡ ${nm(r.order[0])} survived ${V[r.order[0]]} micro games!`:"Everyone died instantly 💀"}},
+    rec:{lower:false,valid:v=>v>0,label:"Survivor"}
   }
 });
+function mmEl(A,cls,txt){const e=document.createElement("button");e.className=cls;e.textContent=txt;A.appendChild(e);return e}
+function mmPos(e){e.style.left=(8+ri(76))+"%";e.style.top=(8+ri(70))+"%"}
+const MICRO=[
+  {t:"SWAT THE FLY!",a:"اضرب الدبانة!",f:"🪰 The fly won. It runs your house now.",mk(A,win){const f=mmEl(A,"mmi","🪰");mmPos(f);const iv=setInterval(()=>mmPos(f),480);f.addEventListener("pointerdown",e=>{e.preventDefault();f.textContent="💥";win()});return()=>clearInterval(iv)}},
+  {t:"POP THEM ALL!",a:"فرقعهم كلهم!",f:"🎈 The balloons floated away with your dignity.",mk(A,win){let left=4;for(let i=0;i<4;i++){const b=mmEl(A,"mmi","🎈");mmPos(b);b.addEventListener("pointerdown",e=>{e.preventDefault();if(b.textContent!=="🎈")return;b.textContent="💥";tone(500+left*80,.05,"square",.03);if(--left===0)win()})}}},
+  {t:"PUT OUT THE FIRE!",a:"اطفي النار!",f:"🔥 Everything is on fire. This is fine.",mk(A,win){let n=6;const f=mmEl(A,"mmi mmc","🔥");f.style.fontSize="96px";f.addEventListener("pointerdown",e=>{e.preventDefault();n--;f.style.fontSize=(40+n*10)+"px";tone(300+n*40,.04,"square",.03);if(n<=0){f.textContent="💨";win()}})}},
+  {t:"DON'T PRESS IT!",a:"متدوسش عليه!",f:"",mk(A,win,lose){const b=mmEl(A,"mmredbtn","DON'T");b.addEventListener("pointerdown",e=>{e.preventDefault();lose("🔴 You pressed it. Of course you did.")});return{c:()=>{},to:()=>true}}},
+  {t:"HOLD YOUR FINGER DOWN!",a:"دوس وخليك دايس!",f:"✋ You never held on.",mk(A,win,lose){let held=false;A.classList.add("mmhold");A.innerHTML=`<div class="mmbig">👇</div>`;const dn=e=>{e.preventDefault();held=true;A.classList.add("on");A.innerHTML=`<div class="mmbig">😬</div>`};const up=()=>{if(held)lose("✋ You let go. Gravity wins.")};A.addEventListener("pointerdown",dn);A.addEventListener("pointerup",up);A.addEventListener("pointercancel",up);A.addEventListener("pointerleave",up);return{c:()=>{A.removeEventListener("pointerdown",dn);A.removeEventListener("pointerup",up);A.removeEventListener("pointercancel",up);A.removeEventListener("pointerleave",up);A.classList.remove("mmhold","on")},to:()=>held}}},
+  {t:"GRAB THE APPLE!",a:"امسك التفاحة!",f:"🍎 Too slow. Someone else ate it.",mk(A,win,lose){const k=ri(3);[0,1,2].forEach(i=>{const b=mmEl(A,"mmi mmrow",i===k?"🍎":"🐍");b.style.left=(18+i*32)+"%";b.style.top="40%";b.addEventListener("pointerdown",e=>{e.preventDefault();if(i===k)win();else lose("🐍 You grabbed the snake. Bold move.")})})}},
+  {t:"HOW MANY SHEEP?",a:"كام خروف؟",f:"🐑 The sheep are disappointed in you.",mk(A,win,lose){const n=3+ri(5);for(let i=0;i<n;i++){const s=document.createElement("span");s.className="mmsheep";s.textContent="🐑";mmPos(s);s.style.top=(5+ri(45))+"%";A.appendChild(s)}const row=document.createElement("div");row.className="mmopts";shuffle([n-1,n,n+1]).forEach(v=>{const b=document.createElement("button");b.className="mmopt";b.textContent=v;b.addEventListener("pointerdown",e=>{e.preventDefault();if(v===n)win();else lose("🐑 The sheep are disappointed in you.")});row.appendChild(b)});A.appendChild(row)}},
+  {t:"SWIPE THAT WAY!",a:"اسحب في الاتجاه ده!",f:"↩️ Wrong way! You walked into a wall.",mk(A,win,lose){const D=[["⬆️",0,-1],["⬇️",0,1],["⬅️",-1,0],["➡️",1,0]][ri(4)];A.innerHTML=`<div class="mmbig">${D[0]}</div>`;A.classList.add("mmhold");let sx=null,sy=null;const dn=e=>{e.preventDefault();sx=e.clientX;sy=e.clientY};const up=e=>{if(sx==null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;if(Math.hypot(dx,dy)<35)return;const h=Math.abs(dx)>Math.abs(dy);if((h&&Math.sign(dx)===D[1]&&D[1])||(!h&&Math.sign(dy)===D[2]&&D[2]))win();else lose("↩️ Wrong way! You walked into a wall.")};A.addEventListener("pointerdown",dn);A.addEventListener("pointerup",up);return()=>{A.removeEventListener("pointerdown",dn);A.removeEventListener("pointerup",up);A.classList.remove("mmhold")}}},
+  {t:"SCRUB THE TEETH!",a:"اغسل السنان!",f:"🦷 Your teeth packed their bags and left.",mk(A,win){let down=false,lx=0,ly=0,dist=0;A.classList.add("mmhold");A.innerHTML=`<div class="mmbig">🦷</div><div class="mmmeter"><i></i></div>`;const m=A.querySelector(".mmmeter i");const dn=e=>{e.preventDefault();down=true;lx=e.clientX;ly=e.clientY};const mv=e=>{if(!down)return;dist+=Math.hypot(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;m.style.width=Math.min(100,dist/7)+"%";if(dist>=700){down=false;A.querySelector(".mmbig").textContent="✨";win()}};const up=()=>{down=false};A.addEventListener("pointerdown",dn);A.addEventListener("pointermove",mv);A.addEventListener("pointerup",up);return()=>{A.removeEventListener("pointerdown",dn);A.removeEventListener("pointermove",mv);A.removeEventListener("pointerup",up);A.classList.remove("mmhold")}}},
+  {t:"CATCH THE TOAST!",a:"امسك التوست!",f:"🍞 Toast on the floor. Five second rule!",mk(A,win,lose,dur){const b=mmEl(A,"mmi","🍞");b.style.left=(10+ri(70))+"%";b.style.top="-10%";const t0=performance.now();let raf=0;const fall=()=>{const f=(performance.now()-t0)/(dur*.85);b.style.top=(-10+f*95)+"%";if(f>=1){lose();return}raf=requestAnimationFrame(fall)};raf=requestAnimationFrame(fall);b.addEventListener("pointerdown",e=>{e.preventDefault();cancelAnimationFrame(raf);b.textContent="😋";win()});return()=>cancelAnimationFrame(raf)}},
+  {t:"CUT THE ROPE!",a:"اقطع الحبل!",f:"✂️ You missed the rope. The piano fell on the cake.",mk(A,win){A.classList.add("mmhold");A.innerHTML=`<div class="mmrope"></div><div class="mmbig mmpiano">🎹</div>`;let down=false,side=0;const sd=e=>{const r=A.getBoundingClientRect();return e.clientX<r.left+r.width/2?-1:1};const dn=e=>{e.preventDefault();down=true;side=sd(e)};const mv=e=>{if(!down)return;const s=sd(e);if(s!==side){down=false;A.querySelector(".mmrope").classList.add("cut");win()}};const up=()=>{down=false};A.addEventListener("pointerdown",dn);A.addEventListener("pointermove",mv);A.addEventListener("pointerup",up);return()=>{A.removeEventListener("pointerdown",dn);A.removeEventListener("pointermove",mv);A.removeEventListener("pointerup",up);A.classList.remove("mmhold")}}},
+  {t:"QUICK MATH!",a:"حساب بسرعة!",f:"🧮 Your math teacher felt that.",mk(A,win,lose){const a=2+ri(8),b=2+ri(8),ans=a+b,wr=ans+(ri(2)?1:-1)*(1+ri(2));A.innerHTML=`<div class="mmbig mmq">${a} + ${b}</div>`;const row=document.createElement("div");row.className="mmopts";shuffle([ans,wr]).forEach(v=>{const x=document.createElement("button");x.className="mmopt";x.textContent=v;x.addEventListener("pointerdown",e=>{e.preventDefault();if(v===ans)win();else lose("🧮 Your math teacher felt that.")});row.appendChild(x)});A.appendChild(row)}},
+  {t:"WAKE UP!",a:"اصحى!",f:"😴 You slept through the whole thing. Again.",mk(A,win){let n=7;const f=mmEl(A,"mmi mmc","😴");f.style.fontSize="90px";f.addEventListener("pointerdown",e=>{e.preventDefault();n--;f.classList.remove("shake");void f.offsetWidth;f.classList.add("shake");tone(400+n*50,.04,"square",.03);if(n<=0){f.textContent="😳";win()}})}}
+];
 const HOW={
   crash:()=>TW("👆 Pick a number nobody else picks","👆 اختار رقم محدش تاني يختاره"),
   react:()=>TW("🟢 Wait for GREEN, then tap","🟢 استنى الأخضر وبعدين دوس"),
@@ -2578,7 +2713,7 @@ Object.assign(GAMES,{
 const GAME_IDS=Object.keys(GAMES).filter(id=>!GAMES[id].casino);
 const CASINO_IDS=Object.keys(GAMES).filter(id=>GAMES[id].casino);
 
-const me={pid:ss.get("cp.tab")||rid(),name:clean(ls.get("cp.name")||""),col:0};
+const me={pid:ss.get("cp.tab")||rid(),name:clean(ls.get("cp.name")||""),col:0,tm:0};
 ss.set("cp.tab",me.pid);
 me.col=hash(me.pid)%COLS.length;
 
@@ -2623,11 +2758,11 @@ function newLobby(){
 }
 function lobbyRoster(){
   const out=[],seen=new Set();
-  const add=(id,name,col,bot)=>{if(seen.has(id)||out.length>=MAXP)return;seen.add(id);out.push({id,name:clean(name)||"Player",col:(Math.abs(+col)||0)%COLS.length,bot:!!bot})};
-  add(me.pid,me.name,me.col,false);
+  const add=(id,name,col,bot,tm)=>{if(seen.has(id)||out.length>=MAXP)return;seen.add(id);out.push({id,name:clean(name)||"Player",col:(Math.abs(+col)||0)%COLS.length,bot:!!bot,tm:tm===1||tm===2?tm:0})};
+  add(me.pid,me.name,me.col,false,me.tm);
   const known=new Set(((G&&G.roster)||[]).map(r=>r.id));
-  if(nr)for(const p of nr.peers()){const pr=p.presence||{};if(!p.sameTab&&typeof pr.pid==="string"&&pr.pid&&(!(G&&G.locked)||known.has(pr.pid.slice(0,16))))add(pr.pid.slice(0,16),pr.name,pr.col,false)}
-  for(const b of((G&&G.roster)||[]).filter(r=>r.bot))add(b.id,b.name,b.col,true);
+  if(nr)for(const p of nr.peers()){const pr=p.presence||{};if(!p.sameTab&&typeof pr.pid==="string"&&pr.pid&&(!(G&&G.locked)||known.has(pr.pid.slice(0,16))))add(pr.pid.slice(0,16),pr.name,pr.col,false,+pr.tm)}
+  for(const b of((G&&G.roster)||[]).filter(r=>r.bot))add(b.id,b.name,b.col,true,b.tm);
   return out;
 }
 function makeList(){
@@ -2653,6 +2788,7 @@ function startGame(){
   if(G.mode==="cards"){cStart(ros);return}
   if(G.mode==="brawl"){bStart(ros);return}
   if(G.mode==="hide"){hStart(ros);return}
+  if(G.teams)teamBalance(ros);
   G.gid=rid();G.roster=ros;G.list=makeList();G.k=0;G.total={};G.wins={};G.rec={};G.be={};G.res=null;G.x2used={};G.streak={};G.cbig=null;G.bail=[];G.zero={};G.bs={};
   ros.forEach(p=>{G.total[p.id]=G.mode==="casino"?1000:0;G.wins[p.id]=0});
   beginIntro();publish();
@@ -2775,6 +2911,7 @@ function setOpt(k,v){
   if(k==="locked")G.locked=!G.locked;
   if(k==="game"&&GAMES[v]){const on=G.games.includes(v);if(on&&G.games.length<=1)return;G.games=on?G.games.filter(x=>x!==v):[...G.games,v]}
   if(k==="allgames")G.games=GAME_IDS.slice();
+  if(k==="teams")G.teams=!G.teams;
   if(k==="tryall"){G.mode="party";G.games=GAME_IDS.slice();G.len="all";G.per=1}
   publish();
 }
@@ -3475,7 +3612,31 @@ function lateSafe(){
   if(m==="hide")return(ph==="hide"&&left>3000)||ph==="hend";
   return ph==="intro"&&left>1500;
 }
+function teamBalance(ros){
+  for(const r of ros)if(r.tm!==1&&r.tm!==2){const a=ros.filter(x=>x.tm===1).length,b=ros.filter(x=>x.tm===2).length;r.tm=a<=b?1:2}
+  if(ros.length>1&&ros.every(r=>r.tm===ros[0].tm)){const bot=ros.filter(r=>r.bot).pop()||ros[ros.length-1];bot.tm=ros[0].tm===1?2:1}
+}
+function teamModeOn(){return !!(G&&G.teams&&["party","single","casino"].includes(G.mode))}
+function teamScores(){
+  const t={1:{s:0,n:0},2:{s:0,n:0}};
+  for(const p of G.roster)if(t[p.tm]){t[p.tm].s+=G.total[p.id]||0;t[p.tm].n++}
+  return{1:t[1].n?Math.round(t[1].s/t[1].n):0,2:t[2].n?Math.round(t[2].s/t[2].n):0,n1:t[1].n,n2:t[2].n};
+}
+function setTeam(v){
+  if(!G||G.phase!=="lobby"||(v!==1&&v!==2))return;
+  me.tm=v;
+  if(practice){const r=G.roster.find(x=>x.id===me.pid);if(r)r.tm=v;publish();return}
+  if(nr)nr.presence({tm:v}).catch(()=>{});
+  if(isHost)hostTick(true);
+  render();
+}
+function botTeam(id){
+  if(!G||!isHost||G.phase!=="lobby")return;
+  const r=G.roster.find(x=>x.id===id&&x.bot);if(!r)return;
+  r.tm=r.tm===1?2:1;publish();
+}
 function lateAdd(j){
+  if(G.teams&&j.tm!==1&&j.tm!==2){const a=G.roster.filter(x=>x.tm===1).length,b=G.roster.filter(x=>x.tm===2).length;j.tm=a<=b?1:2}
   const lo=o=>{const v=G.roster.map(p=>(o&&o[p.id])||0);return v.length?Math.min(...v):0};
   if(G.mode==="cards"){G.scores[j.id]=lo(G.scores);G.used[j.id]=[]}
   else if(G.mode==="brawl"){
@@ -3741,7 +3902,7 @@ async function enter(c,create,fixed){
   joining=false;menuNote="";
   if(!create)ss.set("cp.rejoin",c);else ss.set("cp.rejoin","");
   nr=joined;code=c;practice=false;G=null;mySub=null;isHost=false;enteredAt=Date.now();lostSince=0;
-  nr.presence({pid:me.pid,name:me.name,col:me.col,res:null,g:null}).catch(()=>{});
+  nr.presence({pid:me.pid,name:me.name,col:me.col,tm:me.tm||0,res:null,g:null}).catch(()=>{});
   nr.onPeers(()=>sync());
   if(create){isHost=true;G=newLobby();hostTick(true)}
   screen="room";render();
@@ -3850,12 +4011,13 @@ function renderMenuBits(){
 }
 
 function chipsHTML(){
-  return `<div class="players">${G.roster.map(p=>{
+  const ts=teamModeOn()?teamScores():null,cas=G.mode==="casino";
+  return `${ts?`<div class="tscore"><span class="t1">🔴 RED ${cas?fmtc(ts[1]):ts[1]}</span><small>team average</small><span class="t2">${cas?fmtc(ts[2]):ts[2]} BLUE 🔵</span></div>`:""}<div class="players">${G.roster.map(p=>{
     let st="",cls="";
     if(G.phase==="play"){const d=(G.done||[]).includes(p.id);st=d?"Done":"…";cls=d?"ready":""}
     else if(G.phase==="result"&&G.res){const d=G.res.pts[p.id]||0;st=d>0?"+"+fmtc(d):d<0?"−"+fmtc(-d):"0";cls=d>0?"plus":d<0?"minus":""}
     const tags=`${p.bot?"<small>BOT</small>":""}${p.id===me.pid?"<small>YOU</small>":""}${((G.streak||{})[p.id]||0)>=2?`<small class="fire">🔥</small>`:""}${G.mode!=="casino"&&!(G.x2used||{})[p.id]?`<small class="hasx">×2</small>`:""}`;
-    return `<div class="chip${p.id===me.pid?" me":""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${tags}</span><span class="sc">${G.mode==="casino"?fmtc(G.total[p.id]||0):G.total[p.id]||0}</span><span class="st ${cls}">${st}</span></div>`;
+    return `<div class="chip${p.id===me.pid?" me":""}${teamModeOn()&&p.tm?" tm"+p.tm:""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${tags}</span><span class="sc">${G.mode==="casino"?fmtc(G.total[p.id]||0):G.total[p.id]||0}</span><span class="st ${cls}">${st}</span></div>`;
   }).join("")}</div>`;
 }
 function introHTML(){
@@ -3877,6 +4039,7 @@ function optsHTML(host,lens){
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
   <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["brawl","⚔️ Brawl"],["hide","🙈 Hide & Seek"],["party","🎉 Party"],["single","🎯 One game"],["casino","🎰 Casino"]],G.mode)}<button class="seg tryall${G.mode==="party"&&G.len==="all"&&(G.games||[]).length>=GAME_IDS.length?" on":""}" data-act="opt" data-k="tryall" ${dis}>⭐ Try every game</button></div></div>
   ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">🪙 Fake chips only, no real money. Everyone starts with 1,000 chips. Roulette, Dice, Slots, Blackjack and Higher or Lower. Most chips at the end wins. Go broke and the house gives you 100.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كل واحد بيبدأ بـ ١٠٠٠. اللي معاه أكتر فيش في الآخر يكسب. لو فلّست البيت هيديك ١٠٠.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
+  ${["party","single","casino"].includes(G.mode)?`<div class="orow"><span class="ol">Teams</span><button class="ffbtn${G.teams?" on":""}" data-act="opt" data-k="teams" ${dis}><span class="sw2"><i></i></span>${G.teams?"🔴 vs 🔵 On":"Off"}</button></div>`:""}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
   <div class="orow"><span class="ol">Lock lobby</span><button class="ffbtn${G.locked?" on":""}" data-act="opt" data-k="locked" ${dis}><span class="sw2"><i></i></span>${G.locked?"Locked":"Open"}</button></div>
@@ -3884,7 +4047,8 @@ function optsHTML(host,lens){
 }
 function lobbyParts(){
   const host=isHost;
-  const rows=G.roster.map(p=>`<div class="lp" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span>${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
+  const tOn=teamModeOn(),myTm=((G.roster.find(r=>r.id===me.pid)||{}).tm)||0;
+  const rows=G.roster.map(p=>`<div class="lp${tOn&&p.tm?" tm"+p.tm:""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span>${tOn?`<span class="tb">${p.tm===1?"🔴":p.tm===2?"🔵":"⚪"}</span>`:""}<span class="n">${esc(p.name)}</span>${tOn&&p.bot&&host?`<button class="x" data-act="bteam" data-id="${esc(p.id)}" aria-label="Switch team">⇄</button>`:""}${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
   const free=MAXP-G.roster.length;
   const empty=free>0?`<div class="empty">${free} open seat${free===1?"":"s"}. Friends tap your lobby under Open lobbies.</div>`:"";
   const allN=G.mode==="casino"?CASINO_IDS.length:(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAME_IDS.includes(id)).length;
@@ -3894,7 +4058,7 @@ function lobbyParts(){
     "s-top":topBar("LOBBY"),
     "s-head":`<section class="panel center"><div class="big" data-act="secret">${esc(nameOf(G.host))}'s lobby</div>${code&&!practice?`<div class="codebox">Code: <b>${esc(code.toUpperCase())}</b><span class="note">Friends can type this if your lobby doesn't show up.<br><span dir="rtl" lang="ar">لو اللوبي مش ظاهر عند صحابك، يكتبوا الكود ده.</span></span></div>`:""}${G.locked?`<p class="note warn">🔒 Lobby locked. New people can't join.</p>`:""}${G.ff?"":`<button class="ffbtn" data-act="ff" ${host?"":"disabled"}><span class="sw2"><i></i></span>Family friendly OFF</button>`}${host&&showCode&&G.ff?`<div class="coderow"><input id="ffcode" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Code" aria-label="Code"><button class="btn small" data-act="ffcode">OK</button></div>`:""}${ffMsg&&G.ff?`<p class="note warn">${esc(ffMsg)}`:!G.ff?`<p class="note">Rude reactions are ON 😈 Tap the switch to turn them off.`:`<p class="note">`}</p></section>`,
     "s-opts":optsHTML(host,lens),
-    "s-list":`<section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2><div class="lob">${rows}${empty}</div></section>`,
+    "s-list":`<section class="panel"><h2>PLAYERS ${G.roster.length}/${MAXP}</h2>${tOn?`<div class="tpick"><button class="btn tpk t1${myTm===1?" on":""}" data-act="team" data-v="1">🔴 Join Red</button><button class="btn tpk t2${myTm===2?" on":""}" data-act="team" data-v="2">🔵 Join Blue</button></div><p class="note">Pick your team! Anyone who doesn't pick gets put on the smaller team.${host?" Tap ⇄ to move a bot.":""}</p>`:""}<div class="lob">${rows}${empty}</div></section>`,
     "s-inv":inviteHTML(),
     "s-act":actions,
     "s-emo":emoBar()
@@ -3911,16 +4075,16 @@ function overParts(){
   if(cas&&G.cbig)facts.push(`<div class="fact">💰 Biggest win: <b>${esc(nameOf(G.cbig.id))}</b>, +${fmtc(G.cbig.v)} chips</div>`);
   if(cas)facts.push(`<div class="fact">🪙 Fake chips only. No real money was used.</div>`);
   const by=o=>ranked.slice().sort((a,b)=>((o||{})[b.id]||0)-((o||{})[a.id]||0))[0];
-  const zz=by(G.zero),sk=by(G.bs),lastP=ranked[ranked.length-1];
+  const sk=by(G.bs);
+  let tHead="",tRows="";
+  if(teamModeOn()){const ts=teamScores(),w=ts[1]>ts[2]?1:ts[2]>ts[1]?2:0,f=v=>cas?"💰"+fmtc(v):v;tHead=w?`${w===1?"🔴 RED":"🔵 BLUE"} TEAM WINS!`:"Teams tied!";tRows=`<div class="tfinal"><div class="t1${w===1?" win":""}"><b>🔴 Red</b><span>${f(ts[1])}</span><small>${G.roster.filter(p=>p.tm===1).map(p=>esc(p.name)).join(", ")}</small></div><div class="t2${w===2?" win":""}"><b>🔵 Blue</b><span>${f(ts[2])}</span><small>${G.roster.filter(p=>p.tm===2).map(p=>esc(p.name)).join(", ")}</small></div></div>`}
   if(sk&&(G.bs||{})[sk.id]>=2)facts.push(`<div class="fact">🔥 Hottest streak: <b>${esc(sk.name)}</b>, ${G.bs[sk.id]} wins in a row</div>`);
-  if(zz&&(G.zero||{})[zz.id]>=2)facts.push(`<div class="fact">🤡 Clown of the day: <b>${esc(zz.name)}</b>, scored nothing ${G.zero[zz.id]} times</div>`);
-  if(ranked.length>1&&lastP&&!winners.includes(lastP))facts.push(`<div class="fact">🥄 Wooden spoon: <b>${esc(lastP.name)}</b>. Better luck next time 😭</div>`);
   const mw=ranked.slice().sort((a,b)=>(G.wins[b.id]||0)-(G.wins[a.id]||0))[0];
   if(mw&&G.wins[mw.id])facts.push(`<div class="fact">Most games won: <b>${esc(mw.name)}</b> (${G.wins[mw.id]})</div>`);
   for(const id in G.rec){const g=GAMES[id],r=G.rec[id];if(g&&g.rec)facts.push(`<div class="fact">${g.i} ${esc(g.rec.label)}: <b>${esc(nameOf(r.id))}</b>, ${esc((g.rec.fmt||g.fmt)(r.v,{}))}</div>`)}
   return{
     "s-top":topBar("GAME OVER"),
-    "s-table":`<div class="table"><div class="headline">${head}</div><div class="rank">${rows}</div>${facts.length?`<div class="facts">${facts.join("")}</div>`:""}</div>`,
+    "s-table":`<div class="table"><div class="headline">${tHead||head}</div>${tRows}<div class="rank">${rows}</div>${facts.length?`<div class="facts">${facts.join("")}</div>`:""}</div>`,
     "s-act":`<div class="actions">${isHost?`<button class="btn primary" data-act="again">Play again</button>`:`<p class="note grow">Waiting for the host to tap Play again.</p>`}</div>`,
     "s-emo":emoBar()
   };
@@ -4007,6 +4171,8 @@ document.addEventListener("click",e=>{
   else if(a==="opengame")enter(b.dataset.code,false);
   else if(a==="practice")startPractice();
   else if(a==="leave")leave();
+  else if(a==="team")setTeam(+b.dataset.v);
+  else if(a==="bteam")botTeam(b.dataset.id);
   else if(a==="share")shareLink();
   else if(a==="invite")sendInvite(b.dataset.id);
   else if(a==="invjoin")joinInvite();
