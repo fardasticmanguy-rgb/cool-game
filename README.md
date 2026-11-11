@@ -71,6 +71,7 @@ Everyone starts with 1,000 chips. Most chips at the end wins. Go broke and the h
 - Every game shows a one-line "how to play" in English and Arabic, on the intro and while you play
 - Works great with just 2 players: the loser of a round gets 0, so every round counts
 - **Practice vs bots** works offline
+- **Jump in mid-game**: open a lobby that is already playing (or tap Jump in) and you join at the next round. Late joiners start with the lowest score (1,000 chips in Casino). If the room is full, a bot gives up its seat. Locked lobbies stay locked
 - **Online now** shows who else has the game open, and which lobby they're in
 - **Invite** anyone online from your lobby, or tap **Share link** to paste it in the chat
 - Fonts ship with the game, so they work on school Wi-Fi, Firefox and tablets
