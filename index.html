@@ -452,6 +452,42 @@ body.haschat .clock{max-width:924px}
 .ladder{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
 .ladder i{font-style:normal;font-family:var(--display);font-size:12px;padding:3px 7px;border-radius:999px;background:var(--bg);color:var(--dim)}
 .ladder i.on{background:var(--mint);color:var(--cardink)}
+.stk{position:relative;width:100%;max-width:320px;height:262px;overflow:hidden;border-radius:14px;background:var(--bg)}
+.stb{position:absolute;height:24px;border-radius:6px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.2)}
+.stb.base{background:var(--raise)}
+.fla{position:relative;width:100%;max-width:340px;height:340px;overflow:hidden;border-radius:16px;background:linear-gradient(#6fb6ff,#c3e3ff);touch-action:none;cursor:pointer}
+.bird{position:absolute;left:25%;top:45%;font-size:30px;line-height:1;transform:translate(-50%,-50%);z-index:2;pointer-events:none}
+.pp{position:absolute;width:12%;background:#3fdc8f;border:3px solid #1f9a73;box-sizing:border-box;pointer-events:none}
+.pp.top{top:0;border-top:0;border-radius:0 0 6px 6px}
+.pp.bot{bottom:0;border-bottom:0;border-radius:6px 6px 0 0}
+.flmsg{position:absolute;left:50%;top:65%;transform:translateX(-50%);background:var(--cardink);color:var(--ink);font-weight:800;padding:8px 14px;border-radius:999px;white-space:nowrap;pointer-events:none}
+.dga{position:relative;width:100%;max-width:340px;height:340px;overflow:hidden;border-radius:16px;background:radial-gradient(circle at 30% 20%,#30236f,#0e0828);touch-action:none}
+.met{position:absolute;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffb26b,#ff6b57 55%,#7a2a20);box-shadow:0 0 12px #ff6b57;display:none}
+.ship{position:absolute;left:50%;top:88%;transform:translate(-50%,-50%);font-size:34px;line-height:1;pointer-events:none}
+.chess{display:grid;gap:0;width:100%;max-width:330px;border-radius:10px;overflow:hidden;border:3px solid var(--cardink)}
+.sq{appearance:none;border:0;aspect-ratio:1;background:#f1dcb4;color:#1b1430;font-size:clamp(22px,7.5vw,34px);cursor:pointer;padding:0;display:grid;place-items:center;position:relative}
+.sq.dk{background:#b5835a}
+.sq b{font-weight:400;line-height:1}
+.sq.hint::after{content:"";position:absolute;width:26%;height:26%;border-radius:50%;background:rgba(42,22,80,.45)}
+.sq.bad{animation:shake .3s;background:#ff6b57}
+.sq.atk{background:#ff8a7d}
+.sq.atk.dk{background:#e0574a}
+.sq.safe{background:#4be3b0}
+.legend{font-size:13px;font-weight:700;color:var(--dim)}
+.rpsg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.rpsg.four{grid-template-columns:repeat(2,1fr)}
+.rpsb{font-size:15px;padding:16px 4px}
+.rpsb span{font-size:46px}
+.rpsb.rp0{background:var(--coral)}
+.rpsb.rp1{background:var(--butter)}
+.rpsb.rp2{background:var(--mint)}
+.rpsb.rp3{background:#c3a6ff}
+.memg{display:grid;gap:8px;width:100%;max-width:340px}
+.mc{appearance:none;border:0;aspect-ratio:1;border-radius:12px;background:var(--coral);cursor:pointer;padding:0;display:grid;place-items:center;box-shadow:0 4px 0 var(--coral-d);transition:background .12s}
+.mc span{font-size:clamp(24px,8vw,34px);opacity:0;transition:opacity .12s}
+.mc.up{background:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.mc.up span{opacity:1}
+.mc.got{background:var(--mint);box-shadow:none}
 .roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;width:100%}
 .role{appearance:none;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-align:center}
 .role.sel{border-color:var(--butter);background:var(--raise);box-shadow:0 0 0 3px var(--butter)}
@@ -1787,6 +1823,249 @@ const GAMES={
     rec:{lower:false,valid:v=>v>0,label:"Mole smasher",fmt:v=>v+" pts"}
   }
 };
+const KMOV=[[1,2],[2,1],[-1,2],[-2,1],[1,-2],[2,-1],[-1,-2],[-2,-1]],RPS=["✊","✋","✌️","🧨"],RPS_N=["Rock","Paper","Scissors","Dynamite"];
+const triw=u=>{const f=u-Math.floor(u/2)*2;return f<1?f:2-f};
+Object.assign(GAMES,{
+  stack:{
+    n:"Tower Stack",i:"🧱",play:20000,early:true,
+    en:()=>"A block slides back and forth. Tap to drop it on the tower. Only the part that lands on the block below stays. Miss completely and your tower is done. Tallest tower wins!",
+    ar:()=>"في بلوك بيتحرك يمين وشمال. دوس عشان تنزله على البرج. الحتة اللي مش فوق البلوك اللي تحته بتقع. لو فوته خالص البرج يخلص. أعلى برج يكسب!",
+    how:()=>TW("🧱 Tap to drop the block right on top","🧱 دوس عشان تنزل البلوك فوق اللي قبله بالظبط"),
+    tw:[null,TW("Faster: blocks slide quicker.","أسرع: البلوكات بتتحرك أسرع."),TW("Thin: you start with a narrow block.","رفيع: بتبدأ ببلوك ضيق.")],
+    setup:v=>({v,w:v===2?42:60,sp:v===1?.95:.65}),
+    mount(el,ctx){
+      const d=ctx.data,bl=[{x:(100-d.w)/2,w:d.w}];let w=d.w,t0=performance.now(),over=false;
+      el.innerHTML=`<div class="stage"><div class="score" data-s>0 floors</div><div class="stk" data-k></div><p class="prompt" data-p>Tap anywhere to drop!</p></div>`;
+      const k=el.querySelector("[data-k]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]"),mv=document.createElement("div");
+      mv.className="stb";k.appendChild(mv);
+      const col=i=>`hsl(${(i*29)%360} 85% 62%)`;
+      const draw=()=>{
+        const off=Math.max(0,bl.length-9);
+        k.querySelectorAll(".stb.st").forEach(x=>x.remove());
+        bl.forEach((b,i)=>{if(i<off)return;const e=document.createElement("div");e.className="stb st"+(i===0?" base":"");e.style.left=b.x+"%";e.style.width=b.w+"%";e.style.bottom=(i-off)*26+"px";if(i)e.style.background=col(i);k.appendChild(e)});
+        mv.style.bottom=(bl.length-off)*26+"px";mv.style.width=w+"%";mv.style.background=col(bl.length);
+      };
+      const xNow=()=>triw((performance.now()-t0)/1000*d.sp*(1+(bl.length-1)*.07))*(100-w);
+      const end=msg=>{if(over)return;over=true;mv.remove();p.textContent=msg;ctx.submit(bl.length-1)};
+      el.querySelector(".stage").addEventListener("pointerdown",e=>{
+        e.preventDefault();if(over||ctx.done()||Date.now()>ctx.end)return;
+        const x=xNow(),pr=bl[bl.length-1];let l=Math.max(x,pr.x),r=Math.min(x+w,pr.x+pr.w);
+        if(Math.abs(x-pr.x)<2){l=pr.x;r=pr.x+pr.w;p.textContent="PERFECT! ✨";tone(1046,.08,"square",.05)}else{p.textContent="Nice!";tone(480+bl.length*30,.06,"triangle",.04)}
+        if(r-l<=.5){tone(110,.35,"sawtooth",.06);end(`Missed! Your tower: ${bl.length-1} floors`);return}
+        bl.push({x:l,w:r-l});w=r-l;t0=performance.now()-ri(900);s.textContent=(bl.length-1)+" floors";draw();
+      });
+      draw();
+      return timedLoop(el,ctx,now=>{if(over)return;mv.style.left=xNow()+"%";if(now>=ctx.end)end(`Time! Your tower: ${bl.length-1} floors`)});
+    },
+    bot:d=>Math.max(1,4+ri(12)-d.v*2),
+    fmt:v=>v+" floors",
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} built ${V[r.order[0]]} floors!`:"Every tower fell 🫠"}},
+    rec:{lower:false,valid:v=>v>0,label:"Master builder"}
+  },
+  flap:{
+    n:"Flap Dash",i:"🐤",play:22000,early:true,
+    en:()=>"Tap to flap and fly through the gaps between the pipes. Touch a pipe or the floor and you're out. Most pipes wins!",
+    ar:()=>"دوس عشان العصفورة تطير وتعدي من الفتحات بين المواسير. لو لمست ماسورة أو الأرض تخسر. أكتر مواسير يكسب!",
+    how:()=>TW("🐤 Tap to flap through the gaps","🐤 دوس عشان تطير من الفتحات"),
+    tw:[null,TW("Faster: the pipes come quicker.","أسرع: المواسير بتيجي أسرع."),TW("Tight: smaller gaps.","ضيق: الفتحات أصغر.")],
+    setup:v=>({v,seed:ri(1e9),sp:v===1?33:25,gap:v===2?29:36}),
+    mount(el,ctx){
+      const d=ctx.data,r=rng(d.seed),pipes=Array.from({length:40},(_,i)=>({x:75+i*44,c:d.gap/2+8+r()*(100-d.gap-16)}));
+      let y=45,vy=0,last=0,started=false,over=false,score=0,dist=0;
+      el.innerHTML=`<div class="stage"><div class="score" data-s>0 pipes</div><div class="fla" data-a>${pipes.map(()=>`<div class="pp top"></div><div class="pp bot"></div>`).join("")}<div class="bird" data-b>🐤</div><div class="flmsg" data-m>Tap to start flying!</div></div><p class="prompt" data-p></p></div>`;
+      const a=el.querySelector("[data-a]"),bd=el.querySelector("[data-b]"),s=el.querySelector("[data-s]"),m=el.querySelector("[data-m]"),p=el.querySelector("[data-p]"),tops=[...a.querySelectorAll(".pp.top")],bots=[...a.querySelectorAll(".pp.bot")];
+      pipes.forEach((q,i)=>{tops[i].style.height=(q.c-d.gap/2)+"%";bots[i].style.height=(100-q.c-d.gap/2)+"%";tops[i].style.display=bots[i].style.display="none"});
+      a.addEventListener("pointerdown",e=>{e.preventDefault();if(over||ctx.done()||Date.now()>ctx.end)return;if(!started){started=true;m.remove()}vy=-60;tone(700,.04,"square",.03)});
+      const end=msg=>{if(over)return;over=true;bd.textContent="💥";p.textContent=msg;ctx.submit(score)};
+      return timedLoop(el,ctx,now=>{
+        const pn=performance.now(),dt=last?Math.min(.05,(pn-last)/1000):0;last=pn;
+        if(over)return;
+        if(now>=ctx.end){end(`Time! ${score} pipes`);return}
+        if(started){vy+=165*dt;y+=vy*dt;dist+=d.sp*dt;if(y<2){y=2;vy=0}}
+        bd.style.top=y+"%";bd.style.transform=`translate(-50%,-50%) rotate(${Math.max(-25,Math.min(70,vy))}deg)`;
+        let sc=0,hit=false;
+        pipes.forEach((q,i)=>{
+          const x=q.x-dist,vis=x>-14&&x<104;
+          tops[i].style.display=bots[i].style.display=vis?"":"none";
+          if(vis)tops[i].style.left=bots[i].style.left=x+"%";
+          if(x+12<22)sc++;
+          if(x<28&&x+12>22&&(y-3<q.c-d.gap/2||y+3>q.c+d.gap/2))hit=true;
+        });
+        if(sc!==score){score=sc;s.textContent=score+" pipes";tone(880,.05,"triangle",.04)}
+        if(hit||y>97){tone(110,.35,"sawtooth",.06);end(`Crashed! ${score} pipes`)}
+      });
+    },
+    bot:d=>Math.max(0,2+ri(10)-d.v*2),
+    fmt:v=>v+" pipes",
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} flew through ${V[r.order[0]]} pipes!`:"Everyone crashed 🐤💥"}},
+    rec:{lower:false,valid:v=>v>0,label:"Sky pilot"}
+  },
+  dodge:{
+    n:"Meteor Dodge",i:"☄️",play:20000,early:true,
+    en:()=>"Meteors are falling! Drag your finger left and right to move your ship and dodge them. One hit and you're out. Survive the longest!",
+    ar:()=>"في نيازك بتقع! حرك صباعك يمين وشمال عشان تحرك سفينتك وتتفادى. خبطة واحدة وتخسر. اللي يعيش أطول يكسب!",
+    how:()=>TW("☄️ Drag left and right to dodge","☄️ حرك صباعك يمين وشمال عشان تتفادى"),
+    tw:[null,TW("Faster meteors.","نيازك أسرع."),TW("Meteor storm: way more of them.","عاصفة: نيازك كتير أوي.")],
+    setup:v=>({v,seed:ri(1e9)}),
+    mount(el,ctx){
+      const d=ctx.data,r=rng(d.seed),rocks=[];let px=50,tx=50,over=false;
+      for(let at=700;at<21000;at+=(d.v===2?230:380)+r()*(d.v===2?220:320)*(1-at/30000))rocks.push({t:at,x:6+r()*88,s:7+r()*5,v:(d.v===1?58:42)+r()*20+at/1000*2.2});
+      el.innerHTML=`<div class="stage"><div class="score" data-s>0.0s</div><div class="dga" data-a>${rocks.map(()=>`<i class="met"></i>`).join("")}<div class="ship" data-sh>🛸</div></div><p class="prompt" data-p>Drag to move!</p></div>`;
+      const a=el.querySelector("[data-a]"),sh=el.querySelector("[data-sh]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]"),ms=[...a.querySelectorAll(".met")];
+      const setX=e=>{const b=a.getBoundingClientRect();tx=Math.max(5,Math.min(95,(e.clientX-b.left)/b.width*100))};
+      a.addEventListener("pointerdown",e=>{e.preventDefault();setX(e);try{a.setPointerCapture(e.pointerId)}catch(err){}});
+      a.addEventListener("pointermove",setX);
+      const T0=performance.now();
+      return timedLoop(el,ctx,now=>{
+        if(over)return;
+        const tt=performance.now()-T0;
+        px+=(tx-px)*.3;sh.style.left=px+"%";
+        let hit=false;
+        rocks.forEach((k,i)=>{
+          const yy=-8+k.v*(tt-k.t)/1000,m=ms[i];
+          if(tt<k.t||yy>110){if(m.style.display!=="none")m.style.display="none";return}
+          m.style.display="";m.style.left=k.x+"%";m.style.top=yy+"%";m.style.width=m.style.height=k.s+"%";
+          if(Math.abs(yy-88)<k.s*.42&&Math.abs(k.x-px)<k.s*.42+3.5)hit=true;
+        });
+        s.textContent=(tt/1000).toFixed(1)+"s";
+        if(hit){over=true;sh.textContent="💥";tone(110,.4,"sawtooth",.06);p.textContent=`Hit! You lasted ${(tt/1000).toFixed(1)}s`;ctx.submit(Math.round(tt));return}
+        if(now>=ctx.end){over=true;p.textContent=`You survived! ${(tt/1000).toFixed(1)}s`;ctx.submit(Math.round(tt))}
+      });
+    },
+    bot:d=>Math.max(800,3000+ri(14000)-d.v*1500),
+    fmt:v=>(v/1000).toFixed(1)+"s",
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} survived ${(V[r.order[0]]/1000).toFixed(1)}s!`:"Nobody survived ☄️"}},
+    rec:{lower:false,valid:v=>v>0,label:"Ace pilot"}
+  },
+  knight:{
+    n:"Knight Hop",i:"♞",play:20000,
+    en:d=>`Move the knight like in chess: an L shape, 2 squares one way and 1 square to the side. Hop onto the ⭐ to grab it. Grab as many stars as you can!${d.v===1?" No hint dots this time.":" The dots show where you can jump."}`,
+    ar:d=>`حرك الحصان زي الشطرنج: على شكل L، مربعين في اتجاه ومربع على الجنب. انط على النجمة ⭐ عشان تاخدها. خد أكتر نجوم تقدر عليها!${d.v===1?" المرة دي من غير نقط مساعدة.":" النقط بتوريك تقدر تنط فين."}`,
+    how:()=>TW("♞ Jump in an L shape onto the ⭐","♞ انط على شكل L لحد النجمة ⭐"),
+    tw:[null,TW("No hints: the dots are gone.","من غير مساعدة: النقط اختفت."),TW("Big board: 6 by 6.","لوحة كبيرة: ٦ في ٦.")],
+    setup:v=>({v,seed:ri(1e9),n:v===2?6:5}),
+    mount(el,ctx){
+      const d=ctx.data,n=d.n,r=rng(d.seed);let kn=0,star=0,got=0,lock=0;
+      const moves=i=>{const x=i%n,y=Math.floor(i/n);return KMOV.map(([a,b])=>[x+a,y+b]).filter(([u,v])=>u>=0&&v>=0&&u<n&&v<n).map(([u,v])=>v*n+u)};
+      const newStar=()=>{const D=Array(n*n).fill(-1);D[kn]=0;const q=[kn];while(q.length){const c=q.shift();for(const m of moves(c))if(D[m]<0){D[m]=D[c]+1;q.push(m)}}let pool=[];D.forEach((v,i)=>{if(v>=2&&v<=3)pool.push(i)});if(!pool.length)D.forEach((v,i)=>{if(v>0)pool.push(i)});star=pool[Math.floor(r()*pool.length)]};
+      kn=Math.floor(r()*n*n);newStar();
+      el.innerHTML=`<div class="stage"><div class="score" data-s>0 ⭐</div><div class="chess" data-g style="grid-template-columns:repeat(${n},1fr)"></div><p class="prompt" data-p>Tap a square the knight can jump to</p></div>`;
+      const g=el.querySelector("[data-g]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]");
+      const draw=()=>{const ok=new Set(moves(kn));g.innerHTML=Array.from({length:n*n},(_,i)=>`<button class="sq${(i%n+Math.floor(i/n))%2?" dk":""}${d.v!==1&&ok.has(i)?" hint":""}" data-i="${i}">${i===kn?`<b>♞</b>`:i===star?"⭐":""}</button>`).join("")};
+      g.addEventListener("pointerdown",e=>{
+        const b=e.target.closest(".sq");if(!b)return;e.preventDefault();
+        const now=Date.now();if(ctx.done()||now>ctx.end||now<lock)return;
+        const i=+b.dataset.i;
+        if(!moves(kn).includes(i)){lock=now+300;b.classList.add("bad");tone(150,.1,"sawtooth",.04);p.textContent="Knights only jump in an L!";return}
+        kn=i;tone(520,.05,"triangle",.04);
+        if(kn===star){got++;s.textContent=got+" ⭐";tone(1046,.1,"square",.05);newStar();p.textContent="Got it! Next star…"}
+        draw();
+      });
+      draw();
+      return timedLoop(el,ctx,now=>{if(now>=ctx.end&&!ctx.done()){g.querySelectorAll(".sq").forEach(x=>x.disabled=true);p.textContent=`Time! ${got} stars`;ctx.submit(got)}});
+    },
+    bot:d=>Math.max(0,3+ri(6)-d.v),
+    fmt:v=>v+" ⭐",
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} grabbed ${V[r.order[0]]} stars!`:"No stars grabbed ♞"}},
+    rec:{lower:false,valid:v=>v>0,label:"Knight rider"}
+  },
+  safe:{
+    n:"Safe Square",i:"♛",play:16000,
+    en:d=>`Chess pieces are on the board. Tap an empty square that NO piece can attack. ♜ attacks in straight lines, ♞ jumps in an L${d.v>=1?", ♝ attacks on diagonals":""}${d.v===2?", ♛ attacks in straight lines AND diagonals":""}. Pieces block each other. Wrong square = −1.`,
+    ar:d=>`في قطع شطرنج على اللوحة. دوس على مربع فاضي محدش من القطع يقدر يضربه. ♜ بيضرب في خطوط مستقيمة، ♞ بينط على شكل L${d.v>=1?"، ♝ بيضرب بالوراب":""}${d.v===2?"، ♛ بيضرب مستقيم وبالوراب":""}. القطع بتسد على بعض. مربع غلط = −١.`,
+    how:()=>TW("♛ Tap a square no piece can attack","♛ دوس على مربع محدش من القطع يقدر يضربه"),
+    tw:[null,TW("The bishop ♝ joins.","الفيل ♝ دخل اللعبة."),TW("The queen ♛ joins too.","الوزير ♛ دخل كمان.")],
+    setup:v=>({v,seed:ri(1e9)}),
+    mount(el,ctx){
+      const d=ctx.data,n=6,r=rng(d.seed),kinds=d.v===0?["R","N"]:d.v===1?["R","B","N"]:["Q","R","B","N"],GL={R:"♜",B:"♝",N:"♞",Q:"♛"};
+      let sc=0,lock=0,cur=null;
+      const attacks=pc=>{const at=new Set();for(const key in pc){const s0=+key,x=s0%n,y=Math.floor(s0/n),k=pc[key];
+        if(k==="N"){for(const[a,b]of KMOV){const u=x+a,v=y+b;if(u>=0&&v>=0&&u<n&&v<n)at.add(v*n+u)}continue}
+        const dirs=[...(k!=="B"?[[1,0],[-1,0],[0,1],[0,-1]]:[]),...(k!=="R"?[[1,1],[1,-1],[-1,1],[-1,-1]]:[])];
+        for(const[a,b]of dirs){let u=x+a,v=y+b;while(u>=0&&v>=0&&u<n&&v<n){at.add(v*n+u);if(pc[v*n+u])break;u+=a;v+=b}}}return at};
+      const gen=()=>{let best=null;for(let t=0;t<30;t++){const sq=shuffle([...Array(n*n).keys()],r).slice(0,kinds.length),pc={};kinds.forEach((k,j)=>pc[sq[j]]=k);const at=attacks(pc),safe=[...Array(n*n).keys()].filter(q=>!pc[q]&&!at.has(q));if(safe.length>=2&&(!best||safe.length<best.safe.length))best={pc,at,safe}}return best};
+      el.innerHTML=`<div class="stage"><div class="score" data-s>0 safe</div><div class="chess" data-g style="grid-template-columns:repeat(${n},1fr)"></div><div class="legend">♜ straight · ♞ L-jump${d.v>=1?" · ♝ diagonal":""}${d.v===2?" · ♛ both":""}</div><p class="prompt" data-p>Find a square nobody attacks</p></div>`;
+      const g=el.querySelector("[data-g]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]");
+      const draw=show=>{g.innerHTML=Array.from({length:n*n},(_,i)=>`<button class="sq${(i%n+Math.floor(i/n))%2?" dk":""}${show&&cur.at.has(i)?" atk":""}${show&&cur.safe.includes(i)?" safe":""}" data-i="${i}">${cur.pc[i]?`<b>${GL[cur.pc[i]]}</b>`:""}</button>`).join("")};
+      const next=()=>{cur=gen();draw(false)};
+      g.addEventListener("pointerdown",e=>{
+        const b=e.target.closest(".sq");if(!b)return;e.preventDefault();
+        const now=Date.now();if(ctx.done()||now>ctx.end||now<lock)return;
+        const i=+b.dataset.i;if(cur.pc[i])return;
+        if(cur.safe.includes(i)){sc++;s.textContent=sc+" safe";tone(988,.08,"square",.04);p.textContent="Safe! ✅";next();return}
+        sc--;s.textContent=sc+" safe";tone(150,.2,"sawtooth",.05);p.textContent="Attacked! Red squares are under attack.";lock=now+900;draw(true);
+        setTimeout(()=>{if(!ctx.done())next()},900);
+      });
+      next();
+      return timedLoop(el,ctx,now=>{if(now>=ctx.end&&!ctx.done()){g.querySelectorAll(".sq").forEach(x=>x.disabled=true);p.textContent=`Time! ${sc} safe squares`;ctx.submit(sc)}});
+    },
+    bot:d=>Math.max(0,4+ri(6)-d.v*2),
+    fmt:v=>v+" safe",
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} found ${V[r.order[0]]} safe squares!`:"Everyone got attacked ♛"}},
+    rec:{lower:false,valid:v=>v>0,label:"Chess brain"}
+  },
+  rps:{
+    n:"Rock Paper Scissors",i:"✊",play:8000,early:true,
+    en:d=>d.v===1?"Everyone picks at the same time. REVERSE: the hand that normally loses wins! ✌️ beats ✊, ✊ beats ✋, ✋ beats ✌️. You get a point for every player you beat.":d.v===2?"Everyone picks at the same time. ✊ beats ✌️, ✌️ beats ✋, ✋ beats ✊. NEW: 🧨 beats everything, but if 2 or more people pick 🧨 they all blow up!":"Everyone picks at the same time. ✊ beats ✌️, ✌️ beats ✋, ✋ beats ✊. You get a point for every player you beat. Beat the most to win!",
+    ar:d=>d.v===1?"كله بيختار في نفس الوقت. بالعكس: الإيد اللي عادة بتخسر هي اللي تكسب! ✌️ يكسب ✊، ✊ يكسب ✋، ✋ يكسب ✌️. ليك نقطة على كل واحد تكسبه.":d.v===2?"كله بيختار في نفس الوقت. ✊ يكسب ✌️، ✌️ يكسب ✋، ✋ يكسب ✊. جديد: 🧨 بيكسب كل حاجة، بس لو ٢ أو أكتر اختاروا 🧨 كلهم بيفرقعوا!":"كله بيختار في نفس الوقت. ✊ يكسب ✌️، ✌️ يكسب ✋، ✋ يكسب ✊. ليك نقطة على كل واحد تكسبه. اللي يكسب أكتر ناس يكسب!",
+    how:d=>d.v===1?TW("🔄 Reverse! ✌️ beats ✊ · ✊ beats ✋ · ✋ beats ✌️","🔄 بالعكس! ✌️ يكسب ✊ · ✊ يكسب ✋ · ✋ يكسب ✌️"):d.v===2?TW("🧨 beats all, unless 2+ people pick it","🧨 بيكسب الكل، إلا لو ٢ أو أكتر اختاروه"):TW("✊ beats ✌️ · ✌️ beats ✋ · ✋ beats ✊","✊ يكسب ✌️ · ✌️ يكسب ✋ · ✋ يكسب ✊"),
+    tw:[null,TW("Reverse: the losing hand wins.","بالعكس: الإيد اللي بتخسر تكسب."),TW("Dynamite 🧨 joins the game.","الديناميت 🧨 دخل اللعبة.")],
+    setup:v=>({v}),
+    mount(el,ctx){
+      const hs=ctx.data.v===2?4:3;
+      el.innerHTML=`<div class="stage"><div class="rpsg${hs===4?" four":""}" data-g>${RPS.slice(0,hs).map((h,k)=>`<button class="pick rpsb rp${k}" data-v="${k}"><span>${h}</span>${RPS_N[k]}</button>`).join("")}</div><p class="prompt" data-p>Pick your hand!</p></div>`;
+      el.querySelector("[data-g]").addEventListener("pointerdown",e=>{
+        const b=e.target.closest(".pick");if(!b)return;e.preventDefault();if(ctx.done())return;
+        b.classList.add("sel");el.querySelectorAll(".pick").forEach(x=>x.disabled=true);
+        el.querySelector("[data-p]").textContent=`Locked: ${RPS[+b.dataset.v]}. Waiting for the others…`;tone(660,.06,"square",.04);ctx.submit(+b.dataset.v);
+      });
+      return()=>{};
+    },
+    bot:d=>d.v===2&&Math.random()<.2?3:ri(3),
+    fmt:v=>RPS[v]?RPS[v]+" "+RPS_N[v]:"?",
+    award(V,d){
+      const ids=Object.keys(V).filter(id=>Number.isInteger(V[id])&&V[id]>=0&&V[id]<(d.v===2?4:3)),dyn=ids.filter(id=>V[id]===3),beat={},lab={};
+      const wins=(a,b)=>{if(a===3)return dyn.length===1&&b!==3;if(b===3)return false;return d.v===1?(b-a+3)%3===1:(a-b+3)%3===1};
+      ids.forEach(id=>{beat[id]=ids.filter(o=>o!==id&&wins(V[id],V[o])).length;lab[id]=`${RPS[V[id]]} · beat ${beat[id]}`});
+      const r=rankAward(beat,false,v=>v>0);
+      const head=r.order[0]?`${RPS[V[r.order[0]]]} ${nm(r.order[0])} beat ${beat[r.order[0]]} player${beat[r.order[0]]===1?"":"s"}!`:dyn.length>1?"💥 The dynamite blew up! Nobody wins.":ids.length?"It's a draw! 🤝":"Nobody picked!";
+      return{pts:r.pts,lab,head};
+    }
+  },
+  pairs:{
+    n:"Memory Pairs",i:"🎴",play:30000,early:true,
+    en:d=>`Flip 2 cards at a time to find matching pairs. Remember where everything is! Most pairs wins, and clearing the whole board gives a time bonus.${d.v===0?" You get a quick peek at the start.":""}`,
+    ar:d=>`اقلب كارتين كل مرة ولاقي الأزواج اللي زي بعض. افتكر كل حاجة مكانها فين! أكتر أزواج يكسب، ولو خلصت اللوحة كلها تاخد بونص وقت.${d.v===0?" هتشوف الكروت ثانية في الأول.":""}`,
+    how:()=>TW("🎴 Flip 2 cards, find the matching pairs","🎴 اقلب كارتين ولاقي الأزواج اللي زي بعض"),
+    tw:[null,TW("No peek at the start.","من غير ما تشوف الكروت في الأول."),TW("Bigger board: 10 pairs.","لوحة أكبر: ١٠ أزواج.")],
+    setup:v=>({v,seed:ri(1e9),np:v===2?10:8}),
+    mount(el,ctx){
+      const d=ctx.data,r=rng(d.seed),EM=shuffle(["🐶","🍕","🚀","🎸","🌵","🦄","🍩","⚽","🐙","🎈","🍉","👑"],r).slice(0,d.np),deck=shuffle([...EM,...EM],r),done=new Set(),timers=[];
+      let a=-1,lock=0,pairs=0;
+      el.innerHTML=`<div class="stage"><div class="score" data-s>0 pairs</div><div class="memg" data-g style="grid-template-columns:repeat(${d.np===10?5:4},1fr)">${deck.map((e,i)=>`<button class="mc" data-i="${i}"><span>${e}</span></button>`).join("")}</div><p class="prompt" data-p>${d.v===0?"Peek! Remember them…":"Flip two cards"}</p></div>`;
+      const g=el.querySelector("[data-g]"),cs=[...g.querySelectorAll(".mc")],s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]");
+      if(d.v===0){cs.forEach(c=>c.classList.add("up"));lock=Date.now()+1800;timers.push(setTimeout(()=>{cs.forEach((c,i)=>{if(!done.has(i))c.classList.remove("up")});p.textContent="Flip two cards"},1800))}
+      g.addEventListener("pointerdown",e=>{
+        const c=e.target.closest(".mc");if(!c)return;e.preventDefault();
+        const now=Date.now();if(ctx.done()||now>ctx.end||now<lock)return;
+        const i=+c.dataset.i;if(done.has(i)||i===a)return;
+        c.classList.add("up");tone(600,.04,"triangle",.03);
+        if(a<0){a=i;return}
+        const b=i,x=a;a=-1;
+        if(deck[x]===deck[b]){
+          done.add(x);done.add(b);cs[x].classList.add("got");cs[b].classList.add("got");pairs++;s.textContent=pairs+" pairs";tone(988,.1,"square",.04);
+          if(pairs===d.np){const left=Math.max(0,Math.floor((ctx.end-Date.now())/1000));p.textContent=`All pairs! +${left}s bonus 🎉`;ctx.submit(pairs*100+left)}
+        }else{lock=now+650;timers.push(setTimeout(()=>{cs[x].classList.remove("up");cs[b].classList.remove("up")},650))}
+      });
+      const stop=timedLoop(el,ctx,now=>{if(now>=ctx.end&&!ctx.done()){p.textContent=`Time! ${pairs} pairs`;ctx.submit(pairs*100)}});
+      return()=>{stop();timers.forEach(clearTimeout)};
+    },
+    bot:d=>Math.max(1,3+ri(5)-d.v)*100,
+    fmt:v=>Math.floor(v/100)+" pairs"+(v%100?` +${v%100}s`:""),
+    award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} found ${Math.floor(V[r.order[0]]/100)} pairs!`:"No pairs found 🎴"}},
+    rec:{lower:false,valid:v=>v>0,label:"Photo memory"}
+  }
+});
 const HOW={
   crash:()=>TW("👆 Pick a number nobody else picks","👆 اختار رقم محدش تاني يختاره"),
   react:()=>TW("🟢 Wait for GREEN, then tap","🟢 استنى الأخضر وبعدين دوس"),
@@ -2027,7 +2306,8 @@ function makeList(){
   }
   const per=G.per||2,pool=G.mode==="casino"?CASINO_IDS.slice():(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAMES[id]&&!GAMES[id].casino);
   let bag=[],last=null;
-  for(let g=0;g<(G.len||6);g++){
+  const count=G.len==="all"?pool.length:(G.len||6);
+  for(let g=0;g<count;g++){
     if(!bag.length){bag=shuffle(pool);if(pool.length>1&&bag[0]===last)bag.push(bag.shift())}
     const id=bag.shift();last=id;
     for(let i=0;i<per;i++)out.push({id,v:per===1?ri(3):Math.min(2,i+(per===2?ri(2):0)),n:i,of:per});
@@ -2160,7 +2440,7 @@ function setOpt(k,v){
   if(k==="allgames")G.games=GAME_IDS.slice();
   publish();
 }
-function setLen(n){if(!G||!isHost||G.phase!=="lobby")return;G.len=n;publish()}
+function setLen(n){if(!G||!isHost||G.phase!=="lobby")return;if(n!=="all"&&![4,6,9,12].includes(n))return;G.len=n;if(n==="all")G.per=1;publish()}
 
 const CSPEED={chill:{pick:15000,reveal:6200},normal:{pick:12000,reveal:5200},fast:{pick:8000,reveal:3800}};
 const MODS={
@@ -3241,7 +3521,7 @@ function optsHTML(host,lens){
   const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
   <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["brawl","⚔️ Brawl"],["hide","🙈 Hide & Seek"],["party","🎉 Party"],["single","🎯 One game"],["casino","🎰 Casino"]],G.mode)}</div></div>
-  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">🪙 Fake chips only, no real money. Everyone starts with 1,000 chips. Roulette, Dice, Slots, Blackjack and Higher or Lower. Most chips at the end wins. Go broke and the house gives you 100.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كل واحد بيبدأ بـ ١٠٠٠. اللي معاه أكتر فيش في الآخر يكسب. لو فلّست البيت هيديك ١٠٠.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">Each round of a game adds a new twist.</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
+  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">🪙 Fake chips only, no real money. Everyone starts with 1,000 chips. Roulette, Dice, Slots, Blackjack and Higher or Lower. Most chips at the end wins. Go broke and the house gives you 100.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كل واحد بيبدأ بـ ١٠٠٠. اللي معاه أكتر فيش في الآخر يكسب. لو فلّست البيت هيديك ١٠٠.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
   <div class="orow"><span class="ol">Lock lobby</span><button class="ffbtn${G.locked?" on":""}" data-act="opt" data-k="locked" ${dis}><span class="sw2"><i></i></span>${G.locked?"Locked":"Open"}</button></div>
@@ -3252,7 +3532,8 @@ function lobbyParts(){
   const rows=G.roster.map(p=>`<div class="lp" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span>${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
   const free=MAXP-G.roster.length;
   const empty=free>0?`<div class="empty">${free} open seat${free===1?"":"s"}. Friends tap your lobby under Open lobbies.</div>`:"";
-  const lens=[4,6,9,12].map(n=>`<button class="seg${G.len===n?" on":""}" data-act="len" data-n="${n}" ${host?"":"disabled"}>${n}</button>`).join("");
+  const allN=G.mode==="casino"?CASINO_IDS.length:(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAME_IDS.includes(id)).length;
+  const lens=[4,6,9,12].map(n=>`<button class="seg${G.len===n?" on":""}" data-act="len" data-n="${n}" ${host?"":"disabled"}>${n}</button>`).join("")+`<button class="seg${G.len==="all"?" on":""}" data-act="len" data-n="all" ${host?"":"disabled"}>⭐ All ${allN}</button>`;
   const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${free<=0?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to tap Start.</p>`;
   return{
     "s-top":topBar("LOBBY"),
@@ -3371,7 +3652,7 @@ document.addEventListener("click",e=>{
   else if(a==="invx"){ON.inv=null;renderInvite()}
   else if(a==="addbot")addBot();
   else if(a==="rmbot")rmBot(b.dataset.id);
-  else if(a==="len")setLen(+b.dataset.n);
+  else if(a==="len")setLen(b.dataset.n==="all"?"all":+b.dataset.n);
   else if(a==="opt")setOpt(b.dataset.k,b.dataset.v);
   else if(a==="x2")cToggleX2();
   else if(a==="px2")togglePX2();
