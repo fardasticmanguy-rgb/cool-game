@@ -27,6 +27,7 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🙈 Hide & Seek | Hide on the map, sneak around, or hunt as the seeker |
 | 🎉 Party | A mix of mini games, each with rounds and twists |
 | 🎯 One game | Play one mini game for several rounds |
+| 🎰 Casino | Fake chips only, no real money. Roulette, dice, slots, blackjack and higher or lower |
 
 ## The mini games
 
@@ -40,7 +41,7 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | ⏱️ Stop at 5 | Stop the hidden clock at 5.00 |
 | 🎨 Color Trap | Tap the color, not the word |
 | 🤝 Grab or Share | Share with everyone, or grab it all |
-| ⚖️ Pick a Side | The smaller side wins |
+| ⚖️ Pick a Side | The smaller side wins. With 2 players it turns into a Chaser vs Dodger duel |
 | 🚀 Rocket Cash | Cash out before the rocket explodes |
 | 💎 Gem Mines | Dig up gems, dodge the bombs, bank in time |
 | ☝️ Steady Finger | Keep your finger in a moving, shrinking circle |
@@ -48,11 +49,27 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🎯 Sharpshooter | Fire when the line hits the bullseye |
 | 🔨 Whack-a-Mole | Smack the moles, not the bombs |
 
+## 🎰 Casino (side mode, fake chips)
+
+Just for fun. No real money is ever used.
+
+| Game | What to do |
+| --- | --- |
+| 🎡 Roulette | Bet on 🔴 or ⚫ (×2) or 🟢 (×14) |
+| 🎲 Over / Under 7 | Will two dice add up under, over, or exactly 7? |
+| 🎰 Slots | Spin and match the symbols |
+| 🃏 Blackjack | Get closer to 21 than the dealer |
+| 🔼 Higher or Lower | Guess the next card, cash out before you miss |
+
+Everyone starts with 1,000 chips. Most chips at the end wins. Go broke and the house gives you 100.
+
 ## Extras
 
 - Emoji reactions to trash-talk without talking
 - **Family friendly** mode is on by default
 - Bots can fill empty seats
+- Every game shows a one-line "how to play" in English and Arabic, on the intro and while you play
+- Works great with just 2 players: the loser of a round gets 0, so every round counts
 - **Practice vs bots** works offline
 - **Online now** shows who else has the game open, and which lobby they're in
 - **Invite** anyone online from your lobby, or tap **Share link** to paste it in the chat
@@ -60,4 +77,4 @@ A party of tiny games for 2 to 6 players. No talking needed.
 
 ## Play links
 
-`?play=<code>` opens or joins that lobby. Add `&mode=cards|brawl|hide|party|single`, or `&game=rocket` (any mini game) to start in One game mode with it. `&games=rocket,mines,whack` picks the Party games.
+`?play=<code>` opens or joins that lobby. Add `&mode=cards|brawl|hide|party|single|casino`, or `&game=rocket` (any mini game) to start in One game mode with it. `&games=rocket,mines,whack` picks the Party games.
