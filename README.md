@@ -48,6 +48,15 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🧠 Copy Cat | Repeat a color pattern that keeps growing |
 | 🎯 Sharpshooter | Fire when the line hits the bullseye |
 | 🔨 Whack-a-Mole | Smack the moles, not the bombs |
+| 🧱 Tower Stack | Drop sliding blocks to build the tallest tower |
+| 🐤 Flap Dash | Tap to flap through the gaps between pipes |
+| ☄️ Meteor Dodge | Drag your ship to dodge falling meteors |
+| ♞ Knight Hop | Jump like a chess knight to grab stars |
+| ♛ Safe Square | Find the square no chess piece can attack |
+| ✊ Rock Paper Scissors | Beat as many players as you can. Twists: Reverse, 🧨 Dynamite |
+| 🎴 Memory Pairs | Flip cards and find the matching pairs |
+
+Tap **⭐ All** next to the number of games and every game comes up once, so you can try them all.
 
 ## 🎰 Casino (side mode, fake chips)
 
