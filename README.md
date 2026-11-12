@@ -27,7 +27,7 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🙈 Hide & Seek | Hide on the map, sneak around, or hunt as the seeker |
 | 🎉 Party | A mix of mini games, each with rounds and twists |
 | 🎯 One game | Play one mini game for several rounds |
-| 🎰 Casino | Fake chips only, no real money. Roulette, dice, slots, blackjack and higher or lower |
+| 🎰 Casino | Fake chips only, no real money. An open casino with a live Crash table, Mines, Plinko and duels against friends |
 
 ## The mini games
 
@@ -68,19 +68,38 @@ Tug of War, Red Light Green Light, Shaky Bridge and Hot Potato are live: you see
 
 Tap **⭐ Try every game** in the Mode row, or **⭐ All** next to the number of games, and every game comes up once, so you can try them all.
 
-## 🎰 Casino (side mode, fake chips)
+## 🎰 Casino (open floor, fake chips)
 
 Just for fun. No real money is ever used.
 
-| Game | What to do |
-| --- | --- |
-| 🎡 Roulette | Bet on 🔴 or ⚫ (×2) or 🟢 (×14) |
-| 🎲 Over / Under 7 | Will two dice add up under, over, or exactly 7? |
-| 🎰 Slots | Spin and match the symbols |
-| 🃏 Blackjack | Get closer to 21 than the dealer |
-| 🔼 Higher or Lower | Guess the next card, cash out before you miss |
+The casino is an open floor. Everyone starts with 1,000 chips and walks between tables whenever they want. The host picks how long it runs (5, 8 or 12 minutes). Most chips when the clock hits 0 wins.
 
-Everyone starts with 1,000 chips. Most chips at the end wins. Go broke and the house gives you 100.
+| Table | What to do |
+| --- | --- |
+| 🚀 Crash | **Live, everyone rides the same rocket.** Bet before it launches, cash out before it blows. Set an auto cash out if you're scared |
+| 💣 Mines | Pick 1, 3, 5 or 10 bombs. Every safe tile grows your prize. Cash out any time |
+| 🔻 Plinko | Drop balls down the pegs. The edges pay up to 13× |
+| 🎰 Slots | Spin and match the symbols. 💎💎💎 pays 25× |
+| 🎡 Roulette | Bet on 🔴 or ⚫ (×2) or 🟢 (×14) and watch the wheel |
+| 🃏 Blackjack | Hit, stand or double. Blackjack pays 3 to 2 |
+| 🔼 Higher or Lower | Guess the next card. The riskier the guess, the bigger the boost |
+| 🎲 Over / Under 7 | Will two dice add up under, over, or exactly 7? |
+| ⚔️ Duel a friend | Challenge someone to 🪙 Coin Flip, 🃏 High Card or 🎲 Dice Duel. Winner takes the bet |
+
+- Everyone's balance updates live, and you can see which table each player is at
+- A live feed shows big wins, crash cash outs and duel results
+- Out of chips? Ask the house for 300
+- Bots play the tables too, and sometimes challenge you to duels
+
+## 🔐 Private chat
+
+Tap the **🔐 CHAT** tab on the right edge to open [Chat](https://fardasticmanguy-rgb.github.io/chat/) in a side panel, right inside the game.
+
+- Type a room code to join, just like on the Chat site. Messages are encrypted with the code
+- **— (minimize)** hides the panel but keeps you connected. New notes show a badge and a notification
+- **🔒 (close)** locks it. Nothing is saved on the device: no room codes, no history. Next time you open it you type the code again
+- **🎮 Invite** sends your current lobby to the chat room, so friends can tap Join
+- Tap **Join** on a game invite in the chat and you go straight into that lobby
 
 ## Extras
 
@@ -100,4 +119,4 @@ Everyone starts with 1,000 chips. Most chips at the end wins. Go broke and the h
 
 ## Play links
 
-`?play=<code>` opens or joins that lobby. Add `&mode=cards|brawl|hide|party|single|casino`, or `&game=rocket` (any mini game) to start in One game mode with it. `&games=rocket,mines,whack` picks the Party games.
+`?play=<code>` opens or joins that lobby (2 to 12 letters or numbers). Add `&mode=cards|brawl|hide|party|single|casino`, or `&game=rocket` (any mini game) to start in One game mode with it. `&games=rocket,mines,whack` picks the Party games.

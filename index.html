@@ -209,6 +209,19 @@ input:focus{border-color:var(--butter)}
 .invt .btn.primary{background:var(--cardink);color:var(--butter);box-shadow:none}
 .jt{position:fixed;left:12px;right:12px;bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 84px));margin:0 auto;max-width:320px;z-index:79;text-align:center;background:var(--mint);color:var(--cardink);font-weight:800;border-radius:999px;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.4);pointer-events:none}
 .jt.show{animation:fade .25s}
+.pcb{position:fixed;right:0;top:42%;z-index:96;border:0;border-radius:14px 0 0 14px;background:var(--mint);color:var(--cardink);padding:10px 6px 10px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;box-shadow:-4px 4px 16px rgba(0,0,0,.35)}
+.pcb span{font-size:20px;line-height:1}
+.pcb small{font-family:var(--display);font-size:9px;letter-spacing:.5px}
+.pcb b{position:absolute;top:-6px;left:-6px;background:var(--coral);color:var(--cardink);border-radius:999px;font-size:11px;padding:2px 6px;font-family:var(--body);animation:pulse .8s infinite}
+.pcb.on{background:var(--butter)}
+.pcp{position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);z-index:97;background:#171a21;display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.5);animation:pcin .22s ease-out}
+@keyframes pcin{from{transform:translateX(100%)}to{transform:none}}
+.pcp[hidden]{display:none}
+.pch{display:flex;align-items:center;gap:6px;padding:8px 8px 8px 12px;background:var(--panel);border-bottom:2px solid var(--line)}
+.pch .t{flex:1;font-family:var(--display);font-size:13px;color:var(--ink);line-height:1.1}
+.pch .t small{display:block;font-family:var(--body);font-size:11px;color:var(--dim);font-weight:700}
+.pch .btn{padding:7px 10px;font-size:12px}
+.pcp iframe{flex:1;width:100%;border:0;background:#171a21}
 .invt .x{appearance:none;border:0;background:transparent;font-size:24px;line-height:1;cursor:pointer;color:var(--cardink);padding:0 4px}
 .codebox{display:flex;flex-direction:column;align-items:center;gap:4px}
 .codebox b{font-family:var(--display);font-weight:400;font-size:28px;letter-spacing:.25em;color:var(--mint)}
@@ -411,6 +424,108 @@ body.haschat .clock{max-width:924px}
 .sfring.sfwarn{border-color:var(--coral);background:rgba(255,107,87,.3)}
 .rr.lost .p{color:var(--coral)}
 .stage.cas{gap:12px;justify-content:flex-start;padding-top:14px}
+.kfloor{display:flex;flex-direction:column;gap:10px;width:100%}
+.ktabs{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.ktabs::-webkit-scrollbar{display:none}
+.ktab{appearance:none;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:6px 10px;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;flex:none}
+.ktab span{font-size:22px;line-height:1}
+.ktab b{font-family:var(--display);font-weight:400;font-size:11px;font-variant-numeric:tabular-nums}
+.ktab.on{background:var(--butter);color:var(--cardink);border-color:var(--butter)}
+.ktab.hot{border-color:var(--mint);animation:pulse .6s infinite}
+.ktable .stage{min-height:0}
+.kbet{width:100%;display:flex;flex-direction:column;gap:8px}
+.kbet .btn{align-self:center}
+.krm{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:clamp(40px,13vw,64px);color:var(--mint);font-variant-numeric:tabular-nums;text-shadow:0 3px 0 rgba(0,0,0,.4);pointer-events:none}
+.krm.boom{color:var(--coral)}
+.kcr .rcsky{height:170px}
+.krhist{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:22px}
+.krhist i{font-style:normal;font-family:var(--display);font-size:11px;padding:3px 7px;border-radius:999px;background:var(--bg);color:var(--dim)}
+.krhist i.h2{color:var(--mint)}
+.krhist i.h3{color:var(--butter)}
+.krhist i.r0{background:#ff5b4f;color:#fff}
+.krhist i.r1{background:#0e0828;color:#fff}
+.krhist i.r2{background:#3fdc8f;color:#0e0828}
+.kauto{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;font-size:13px;font-weight:700;color:var(--dim)}
+.kauto .betb{padding:5px 10px;font-size:12px}
+.krp{width:100%;display:flex;flex-direction:column;gap:4px}
+.krr{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;background:var(--bg);border-radius:10px;padding:7px 10px;font-size:14px;text-align:left}
+.krr .n{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.krr .bt{color:var(--dim);font-family:var(--display);font-size:12px}
+.krr .o{font-family:var(--display);font-size:12px;color:var(--dim)}
+.krr.won .o{color:var(--mint)}
+.krr.lost .o{color:var(--coral)}
+.krr.me{outline:2px solid var(--butter)}
+.kmrow{display:flex;gap:6px;align-items:center;font-weight:700;color:var(--dim);font-size:14px}
+.kmg .gmtile.dim{opacity:.45}
+.kmm{display:flex;flex-direction:column;align-items:center;line-height:1}
+.kmm b{font-family:var(--display);font-weight:400;font-size:30px;color:var(--mint)}
+.kmm small{color:var(--dim);font-weight:700;min-height:16px;margin-top:4px}
+.kpl{position:relative;width:100%;max-width:340px;aspect-ratio:1/1.02;background:var(--bg);border-radius:16px;overflow:hidden}
+.kpeg{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--ink);opacity:.75;transform:translate(-50%,-50%)}
+.kball{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--butter);box-shadow:0 0 10px var(--butter);transform:translate(-50%,-50%);transition:left .14s ease-in,top .14s ease-in;z-index:2}
+.kslots{position:absolute;left:5%;right:5%;bottom:3%;display:grid;grid-template-columns:repeat(9,1fr);gap:2px}
+.ks{font-family:var(--display);font-size:clamp(8px,2.6vw,11px);background:var(--raise);color:var(--dim);border-radius:6px;padding:6px 0;text-align:center}
+.ks.mid{background:#6fb6ff;color:var(--cardink)}
+.ks.hi{background:var(--coral);color:var(--cardink)}
+.ks.pop{animation:pop .35s}
+.krw{position:relative;width:100%;max-width:360px;height:58px;overflow:hidden;border-radius:12px;background:var(--bg)}
+.krs{display:flex;height:100%;align-items:center;will-change:transform}
+.krs i{flex:none;width:44px;height:44px;margin:0 1px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-size:14px;color:#fff}
+.krs i.w0{background:#ff5b4f}
+.krs i.w1{background:#0e0828;border:1px solid var(--line)}
+.krs i.w2{background:#3fdc8f;color:#0e0828}
+.krmark{position:absolute;left:50%;top:0;bottom:0;width:4px;margin-left:-2px;background:var(--butter);box-shadow:0 0 8px var(--butter)}
+.cbtn.dblb{background:var(--butter)}
+.kbj{grid-template-columns:repeat(3,1fr)}
+.kbj .pick{font-size:15px;padding:14px 4px}
+.krow2{display:flex;gap:10px;align-items:center;justify-content:center}
+.pc.bad{background:#ffd6d1;animation:shake .35s}
+.kdice{font-size:72px;line-height:1;display:flex;gap:10px;color:var(--ink)}
+.kdice.roll span{animation:rumble .12s infinite}
+.kdt{font-family:var(--display);font-size:26px;color:var(--butter);min-height:30px}
+.kduel .headline{font-size:22px}
+.kgms{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.kdl{width:100%;display:flex;flex-direction:column;gap:6px}
+.kpl2{display:grid;grid-template-columns:12px 1fr auto auto;gap:8px;align-items:center;background:var(--bg);border-radius:12px;padding:8px 10px;text-align:left}
+.kpl2 .dot{width:12px;height:12px;border-radius:50%}
+.kpl2 .n{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kpl2 .n small{font-size:10px;color:var(--dim)}
+.kpl2 .bt{font-family:var(--display);font-size:12px;color:var(--butter)}
+.kwait{background:var(--bg);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.kdh{width:100%;display:flex;flex-direction:column;gap:4px}
+.kdh h2{font-size:13px;margin:6px 0 2px;color:var(--dim)}
+.kdr{background:var(--bg);border-radius:10px;padding:7px 10px;font-size:14px;text-align:left}
+.kdr span{float:right;color:var(--mint);font-family:var(--display);font-size:12px}
+.kin{background:var(--coral);color:var(--cardink);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px;animation:slam .35s both;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.kint{font-weight:700;font-size:15px}
+.kinb{display:flex;gap:8px}
+.kinb .btn{flex:1}
+.kinb .btn.ghost{border-color:var(--cardink);color:var(--cardink)}
+.kfeed{display:flex;flex-direction:column;gap:4px}
+.kf{background:var(--panel);border-radius:10px;padding:7px 10px;font-size:13px;color:var(--dim);text-align:left}
+.kf span{margin-right:6px}
+.kf.new{animation:fade .4s both;color:var(--ink)}
+.kov{position:fixed;inset:0;z-index:90;background:rgba(10,6,30,.72);display:grid;place-items:center;padding:16px}
+.kovb{background:var(--panel);border-radius:20px;padding:20px 16px;width:min(360px,100%);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;animation:slam .3s both}
+.kcoin{position:relative;width:110px;height:110px;transform-style:preserve-3d;animation:kflipH 1.5s cubic-bezier(.3,.8,.4,1) both}
+.kcoin.tails{animation-name:kflipT}
+.kcoin i{position:absolute;inset:0;border-radius:50%;background:var(--butter);box-shadow:inset 0 -8px 0 var(--butter-d);display:grid;place-items:center;font-style:normal;font-size:52px;backface-visibility:hidden}
+.kcoin i+i{transform:rotateY(180deg)}
+@keyframes kflipH{from{transform:rotateY(0)}to{transform:rotateY(1800deg)}}
+@keyframes kflipT{from{transform:rotateY(0)}to{transform:rotateY(1980deg)}}
+.kvs{display:flex;gap:16px;font-weight:800;font-size:14px}
+.kvs2{display:flex;align-items:center;gap:12px;justify-content:center}
+.kvs2>div{display:flex;flex-direction:column;align-items:center;gap:6px}
+.kvs2 small{font-weight:800;color:var(--dim)}
+.kvs2>b{font-family:var(--display);font-weight:400;color:var(--coral)}
+.kflip{animation:flip .6s .7s both;min-height:0}
+.kdice.roll2{font-size:44px;animation:shake .4s 3 both}
+.ksum{font-family:var(--display);font-weight:400;font-size:22px;color:var(--butter);animation:fade .3s 1.3s both}
+.kres{animation:fade .35s 1.5s both}
+.kres.win{color:var(--mint)}
+.kres.lose{color:var(--coral)}
+#kclock{font-variant-numeric:tabular-nums;color:var(--butter);margin-left:6px}
+.st.ktb{font-size:16px}
 .betbox{width:100%;display:flex;flex-direction:column;gap:8px}
 .cbal{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;color:var(--dim);font-size:14px}
 .cbal b{color:var(--butter);font-family:var(--display);font-weight:400;font-size:18px}
@@ -679,6 +794,8 @@ body.haschat .clock{max-width:924px}
 <div id="clock" class="clock"></div>
 <div id="invt" class="invt" hidden></div>
 <div id="jt" class="jt" hidden></div>
+<button id="pcb" class="pcb" aria-label="Private chat"><span>🔐</span><small>CHAT</small><b id="pcn" hidden></b></button>
+<aside id="pcp" class="pcp" hidden></aside>
 <div id="shell"><div id="app"></div><aside id="chat" class="chat" hidden></aside></div>
 <button id="chatfab" class="chatfab" data-act="chat" hidden aria-label="Open chat">💬<b id="unread" hidden></b></button>
 
@@ -2559,166 +2676,506 @@ const HOW={
 for(const id in HOW)if(GAMES[id]&&!GAMES[id].how)GAMES[id].how=HOW[id];
 const fmtc=n=>Math.round(n).toLocaleString("en-US");
 const CARD_RK=["","A","2","3","4","5","6","7","8","9","10","J","Q","K"],CARD_SU=["♠","♥","♦","♣"],DICE=["","⚀","⚁","⚂","⚃","⚄","⚅"];
-const SLOT_SYM=["🍒","🍋","🔔","⭐","7️⃣","💎"],SLOT_PAY=[0,1.5,5,10,15,25],HL_MULT=[1,1.5,2.2,3.2,4.8,7,10,15,25];
-const ROUL=k=>k===0?2:k<=7?0:1,ROUL_N=[["🔴","Red","أحمر"],["⚫","Black","أسود"],["🟢","Green","أخضر"]];
-function chipBal(id){return Math.max(0,Math.round((G&&G.total&&G.total[id||me.pid])||0))}
-function cdec(v,id){const bal=chipBal(id);return{bet:Math.max(0,Math.min(bal,99999,Math.floor(v/10))),c:((v%10)+10)%10}}
-function botBet(p){const bal=chipBal(p&&p.id);if(bal<=0)return 0;if(Math.random()<.05)return Math.min(bal,99999);return Math.min(bal,99999,Math.max(25,Math.round(bal*(.08+Math.random()*.22)/25)*25))}
-function betPicker(root){
-  const bal=Math.min(99999,chipBal()),steps=[25,50,100,250,500,1000,2500,5000,10000,25000].filter(x=>x<bal).slice(-4),opts=[...steps,bal].filter(x=>x>0);
-  let bet=opts.filter(x=>x<=Math.max(25,bal*.2)).pop()||opts[0]||0,locked=false;
-  root.className="betbox";
-  root.innerHTML=`<div class="cbal">💰 <b>${fmtc(chipBal())}</b> chips<span>Bet: <b data-bv>${fmtc(bet)}</b></span></div><div class="bets">${opts.map(v=>`<button class="betb${v===bet?" on":""}${v===bal?" allin":""}" data-v="${v}">${v===bal?"ALL IN":fmtc(v)}</button>`).join("")}</div>`;
-  root.addEventListener("pointerdown",e=>{const b=e.target.closest(".betb");if(!b||locked)return;e.preventDefault();bet=+b.dataset.v;root.querySelectorAll(".betb").forEach(x=>x.classList.toggle("on",x===b));root.querySelector("[data-bv]").textContent=fmtc(bet);tone(520,.04,"square",.03)});
-  return{get:()=>bet,lock(){locked=true;root.querySelectorAll(".betb").forEach(x=>x.disabled=true)}};
+const SLOT_SYM=["🍒","🍋","🔔","⭐","7️⃣","💎"],SLOT_PAY=[0,1.6,5,10,15,25];
+const ROUL_ORDER=[0,1,8,2,9,3,10,4,11,5,12,6,13,7,14],ROUL=k=>k===0?2:k<=7?0:1;
+const PLINKO=[13,3,1.3,.7,.4,.7,1.3,3,13];
+const CR_BET=7000,CR_K=.0001,CR_GRACE=1500,CR_NEXT=4200;
+const DUELS={coin:{i:"🪙",n:"Coin Flip"},card:{i:"🃏",n:"High Card"},dice:{i:"🎲",n:"Dice Duel"}};
+const kCard=()=>({r:1+ri(13),s:ri(4)});
+const kDeck=()=>shuffle(Array.from({length:52},(_,i)=>({r:1+i%13,s:Math.floor(i/13)})));
+function pcard(c,back){return back||!c?`<span class="pc back"></span>`:`<span class="pc${c.s===1||c.s===2?" red":""}">${CARD_RK[c.r]}<i>${CARD_SU[c.s]}</i></span>`}
+function bjVal(cs){let t=0,a=0;for(const c of cs){const r=c.r;t+=r===1?11:r>=10?10:r;if(r===1)a++}while(t>21&&a){t-=10;a--}return t}
+function slotRoll(){const r=[ri(6),ri(6),ri(6)];const c=r[0]===r[1]&&r[1]===r[2]?(r[0]<3?2:r[0]):r[0]===r[1]||r[1]===r[2]||r[0]===r[2]?1:0;return{r,c}}
+function botBet(bal){if(bal<=0)return 0;if(Math.random()<.04)return bal;return Math.min(bal,Math.max(10,Math.round(bal*(.05+Math.random()*.15)/10)*10))}
+
+let K=null,kTab="crash",kMounted="",kUn=null,kTm=0,kSent=0,kBetV=100,kAuto=0,kFeedK=0,kShow=null,kShowTm=0;
+const kSeenDu=new Set();
+function kNow(){return Date.now()-(isHost?0:offset)}
+function kInit(){
+  if(!G||(K&&K.g===G.gid))return;
+  let s=null;try{s=JSON.parse(ss.get("cp.k")||"null")}catch(e){}
+  K=s&&s.g===G.gid?s:{g:G.gid,sn:0,bl:0,cr:null,dl:null,da:[],dx:[],big:null,at:"crash"};
+  kSeenDu.clear();kShow=null;
 }
-function pcard(r,i,back){return back?`<span class="pc back"></span>`:`<span class="pc${i%4===1||i%4===2?" red":""}">${CARD_RK[r]}<i>${CARD_SU[i%4]}</i></span>`}
-function bjVal(rs){let t=0,a=0;for(const r of rs){t+=r===1?11:r>=10?10:r;if(r===1)a++}while(t>21&&a){t-=10;a--}return t}
-function bjCards(d,c){const h=[[d.k[0],0],[d.k[2],2]];for(let j=0;j<c;j++)h.push([d.k[4+j],4+j]);return h}
-function bjDealer(d){const h=[[d.k[1],1],[d.k[3],3]];let j=12;while(bjVal(h.map(x=>x[0]))<17&&j<20){h.push([d.k[j],j]);j++}return h}
-function bjPay(d,c){const ph=bjCards(d,c).map(x=>x[0]),p=bjVal(ph);if(p>21)return 0;const dh=bjDealer(d).map(x=>x[0]),dv=bjVal(dh),pbj=p===21&&ph.length===2,dbj=dv===21&&dh.length===2;if(pbj&&!dbj)return 2.5;if(dbj&&!pbj)return 0;if(dv>21)return 2;return p>dv?2:p===dv?1:0}
-function slotRoll(){const r=[ri(6),ri(6),ri(6)];const c=r[0]===r[1]&&r[1]===r[2]?(r[0]<3?2:r[0]-1):r[0]===r[1]||r[1]===r[2]||r[0]===r[2]?1:0;return{r,c}}
-function casinoGame(o){
-  return Object.assign({early:true,casino:true,tw:[null,null,null],
-    fmt:v=>"Bet "+fmtc(Math.floor(v/10)),
-    award(V,d){const pts={},lab={};for(const id in V){const{bet,c}=cdec(V[id],id);if(!bet){lab[id]="No bet";continue}const net=Math.round(bet*(o.pay(c,d)-1));if(net)pts[id]=net;lab[id]=`${o.say(c,d)} · bet ${fmtc(bet)}`}return{pts,lab,head:o.head(d,V)}}
-  },o);
+function kSave(){if(K)ss.set("cp.k",JSON.stringify(K))}
+function kSend(){
+  if(!K)return;
+  K.at=kTab;kSave();
+  if(nr&&!practice){clearTimeout(kTm);const w=Math.max(0,120-(Date.now()-kSent));kTm=setTimeout(()=>{kSent=Date.now();nr.presence({ck:K}).catch(()=>{})},w)}
 }
-function pickCasino(el,ctx,opts,wait){
-  const bp=betPicker(el.querySelector("[data-bet]")),p=el.querySelector("[data-p]");
-  el.querySelector("[data-opts]").addEventListener("pointerdown",e=>{
-    const b=e.target.closest(".cbtn");if(!b)return;e.preventDefault();
-    if(ctx.done()||Date.now()>ctx.end||!bp.get())return;
-    bp.lock();b.classList.add("sel");el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true);
-    p.textContent=`Locked: ${opts[+b.dataset.c]} for ${fmtc(bp.get())} chips. ${wait}`;tone(784,.08,"square",.04);
-    ctx.submit(bp.get()*10+(+b.dataset.c));
-  });
-  if(!bp.get())p.textContent="You're out of chips this round 😢";
-  return()=>{};
+function kPend(){const c=G&&G.cr;return K&&K.cr&&c&&K.cr.n>(c.sd||0)?K.cr.b:0}
+function kBal(id){
+  if(!G||!G.base)return 0;id=id||me.pid;
+  if(id===me.pid&&K&&K.g===G.gid)return Math.max(0,Math.round((G.base[id]||0)+K.sn-kPend()));
+  return Math.max(0,Math.round((G.base[id]||0)+((G.sn||{})[id]||0)));
 }
-Object.assign(GAMES,{
-  roulette:casinoGame({
-    n:"Roulette",i:"🎡",play:12000,
-    en:()=>"Pick a bet, then pick a color. The wheel has 7 red, 7 black and 1 green. Red or black doubles your bet. Green pays 14 times!",
-    ar:()=>"اختار المبلغ وبعدين اختار لون. العجلة فيها ٧ أحمر و٧ أسود و١ أخضر. الأحمر أو الأسود بيضاعفوا رهانك. الأخضر بيدفع ١٤ مرة!",
-    how:()=>TW("🎡 Pick a color: 🔴 ×2 · ⚫ ×2 · 🟢 ×14","🎡 اختار لون: 🔴 ×٢ · ⚫ ×٢ · 🟢 ×١٤"),
-    setup:()=>({res:ri(15)}),
-    mount(el,ctx){
-      el.innerHTML=`<div class="stage cas"><div class="wheel">${Array.from({length:15},(_,k)=>`<i class="w${ROUL(k)}"></i>`).join("")}</div><div data-bet></div><div class="duo trio" data-opts>${ROUL_N.map((o,k)=>`<button class="pick cbtn rc${k}" data-c="${k}"><span>${o[0]}</span>${o[1]}<small>${k===2?"×14":"×2"}</small></button>`).join("")}</div><p class="prompt" data-p>Pick a bet, then tap a color.</p></div>`;
-      return pickCasino(el,ctx,ROUL_N.map(o=>o[0]+" "+o[1]),"The wheel spins when everyone's in!");
-    },
-    bot:(d,p)=>botBet(p)*10+(Math.random()<.1?2:ri(2)),
-    pay:(c,d)=>c===ROUL(d.res)?(c===2?14:2):0,
-    say:c=>ROUL_N[c]?ROUL_N[c][0]+" "+ROUL_N[c][1]:"?",
-    head:d=>{const o=ROUL_N[ROUL(d.res)];return `🎡 Landed on ${o[0]} ${o[1].toUpperCase()} ${d.res}!`}
-  }),
-  dice:casinoGame({
-    n:"Over / Under 7",i:"🎲",play:12000,
-    en:()=>"Two dice get rolled. Bet that the total is UNDER 7, OVER 7, or EXACTLY 7. Under or over doubles your bet. Exactly 7 pays 5 times!",
-    ar:()=>"هيترمي زهرين. راهن إن المجموع أقل من ٧، أكتر من ٧، أو ٧ بالظبط. أقل أو أكتر بيضاعفوا رهانك. ٧ بالظبط بيدفع ٥ مرات!",
-    how:()=>TW("🎲 Will 2 dice add up UNDER, OVER, or EXACTLY 7?","🎲 مجموع الزهرين أقل من ٧، أكتر، ولا ٧ بالظبط؟"),
-    setup:()=>({a:1+ri(6),b:1+ri(6)}),
-    mount(el,ctx){
-      const L=["⬇️ Under 7","🎯 Exactly 7","⬆️ Over 7"];
-      el.innerHTML=`<div class="stage cas"><div class="dicebig">🎲🎲</div><div data-bet></div><div class="duo trio" data-opts><button class="pick cbtn dc0" data-c="0"><span>⬇️</span>UNDER 7<small>2 to 6 · ×2</small></button><button class="pick cbtn dc1" data-c="1"><span>🎯</span>EXACTLY 7<small>×5</small></button><button class="pick cbtn dc2" data-c="2"><span>⬆️</span>OVER 7<small>8 to 12 · ×2</small></button></div><p class="prompt" data-p>Pick a bet, then make your call.</p></div>`;
-      return pickCasino(el,ctx,L,"Dice roll when everyone's in!");
-    },
-    bot:(d,p)=>botBet(p)*10+(Math.random()<.15?1:Math.random()<.5?0:2),
-    pay:(c,d)=>{const t=d.a+d.b,k=t<7?0:t===7?1:2;return c===k?(k===1?5:2):0},
-    say:c=>["⬇️ Under","🎯 Exactly 7","⬆️ Over"][c]||"?",
-    head:d=>`🎲 Rolled ${DICE[d.a]} ${DICE[d.b]} = ${d.a+d.b}!`
-  }),
-  slots:casinoGame({
-    n:"Slots",i:"🎰",play:12000,
-    en:()=>"Pick a bet and SPIN. Any 2 matching gives back 1.5 times your bet. 3 matching pays big: up to 25 times for 💎💎💎!",
-    ar:()=>"اختار المبلغ ودوس SPIN. أي ٢ زي بعض بيرجعولك رهانك مرة ونص. ٣ زي بعض بيدفعوا كتير: لحد ٢٥ مرة لـ 💎💎💎!",
-    how:()=>TW("🎰 Pick a bet, tap SPIN, match the symbols","🎰 اختار المبلغ، دوس SPIN، وطابق الرموز"),
-    setup:()=>({}),
-    mount(el,ctx){
-      el.innerHTML=`<div class="stage cas"><div class="reels">${[0,1,2].map(k=>`<div class="reel" data-r="${k}">${SLOT_SYM[k*2]}</div>`).join("")}</div><div class="paytab"><span>2 same ×1.5</span><span>🍒🍋🔔 ×5</span><span>⭐ ×10</span><span>7️⃣ ×15</span><span>💎 ×25</span></div><div data-bet></div><button class="mashbtn rccash" data-spin>SPIN</button><p class="prompt" data-p>Pick a bet, then SPIN!</p></div>`;
-      const bp=betPicker(el.querySelector("[data-bet]")),sb=el.querySelector("[data-spin]"),p=el.querySelector("[data-p]"),rs=[...el.querySelectorAll(".reel")],timers=[];
-      let spun=null,stopped=0;
-      const finish=()=>{if(ctx.done())return;rs.forEach((x,k)=>x.textContent=SLOT_SYM[spun.r[k]]);const m=SLOT_PAY[spun.c],net=Math.round(bp.get()*(m-1));p.textContent=spun.c>=2?`JACKPOT! +${fmtc(net)} 🤑`:spun.c===1?`A pair! +${fmtc(net)}`:`No match. −${fmtc(bp.get())}`;if(spun.c)tone(1046,.15,"square",.05);ctx.submit(bp.get()*10+spun.c)};
-      sb.addEventListener("pointerdown",e=>{
-        e.preventDefault();if(spun||ctx.done()||Date.now()>ctx.end||!bp.get())return;
-        bp.lock();sb.disabled=true;spun=slotRoll();p.textContent="Spinning…";
-        const spin=setInterval(()=>{rs.forEach((x,k)=>{if(k>=stopped)x.textContent=SLOT_SYM[ri(6)]});tone(300+ri(300),.03,"square",.02)},70);timers.push(spin);
-        [600,950,1300].forEach((t,k)=>timers.push(setTimeout(()=>{stopped=k+1;rs[k].textContent=SLOT_SYM[spun.r[k]];rs[k].classList.add("stop");if(k===2){clearInterval(spin);finish()}},t)));
-      });
-      if(!bp.get())p.textContent="You're out of chips this round 😢";
-      const stop=timedLoop(el,ctx,now=>{if(now>=ctx.end&&spun&&!ctx.done()){timers.forEach(clearTimeout);timers.forEach(clearInterval);finish()}});
-      return()=>{stop();timers.forEach(clearTimeout);timers.forEach(clearInterval)};
-    },
-    bot:(d,p)=>botBet(p)*10+slotRoll().c,
-    pay:c=>SLOT_PAY[c]||0,
-    say:c=>["No match","Pair","🍒 Triple","⭐⭐⭐","7️⃣7️⃣7️⃣","💎💎💎"][c]||"?",
-    head:(d,V)=>{let best=null;for(const id in V){const{bet,c}=cdec(V[id],id);if(bet&&(!best||c>best.c))best={id,c}}return !best?"Nobody spun!":best.c>=2?`🎰 ${nm(best.id)} hit ${["","","🍒 a triple","⭐⭐⭐","7️⃣7️⃣7️⃣","💎💎💎"][best.c]}!`:best.c===1?`🎰 Best spin: ${nm(best.id)} got a pair`:"🎰 The slots were cold 🥶"}
-  }),
-  blackjack:casinoGame({
-    n:"Blackjack",i:"🃏",play:20000,
-    en:()=>"Get closer to 21 than the dealer without going over. Pick a bet, then HIT to take a card or STAND to stop. Over 21 = you lose. Picture cards are 10, aces are 1 or 11.",
-    ar:()=>"قرب من ٢١ أكتر من الديلر من غير ما تعدي. اختار المبلغ، وبعدين HIT تاخد كارت أو STAND توقف. لو عديت ٢١ تخسر. الصور بـ ١٠، والآس بـ ١ أو ١١.",
-    how:()=>TW("🃏 Get closer to 21 than the dealer · over 21 = bust","🃏 قرب من ٢١ أكتر من الديلر · لو عديت تخسر"),
-    setup:()=>({k:Array.from({length:20},()=>1+ri(13))}),
-    mount(el,ctx){
-      const d=ctx.data;let hits=0,acted=false,over=false;
-      el.innerHTML=`<div class="stage cas"><div class="ctab"><div class="clab">Dealer <b data-dv>?</b></div><div class="cards" data-dc></div><div class="clab">You <b data-pv></b></div><div class="cards" data-pc></div></div><div data-bet></div><div class="duo" data-btns><button class="pick cbtn hitb" data-a="hit"><span>👆</span>HIT<small>take a card</small></button><button class="pick cbtn standb" data-a="stand"><span>✋</span>STAND<small>stop here</small></button></div><p class="prompt" data-p>Pick a bet, then HIT or STAND.</p></div>`;
-      const bp=betPicker(el.querySelector("[data-bet]")),dc=el.querySelector("[data-dc]"),pc=el.querySelector("[data-pc]"),dv=el.querySelector("[data-dv]"),pv=el.querySelector("[data-pv]"),p=el.querySelector("[data-p]");
-      const draw=show=>{const h=bjCards(d,hits),v=bjVal(h.map(x=>x[0]));pc.innerHTML=h.map(([r,i])=>pcard(r,i)).join("");pv.textContent=v>21?v+" BUST":v;const dl=show?bjDealer(d):[[d.k[1],1]];dc.innerHTML=dl.map(([r,i])=>pcard(r,i)).join("")+(show?"":pcard(0,0,true));dv.textContent=show?bjVal(dl.map(x=>x[0])):"?";return v};
-      const finish=()=>{if(over)return;over=true;el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true);draw(true);const m=bjPay(d,hits),net=Math.round(bp.get()*(m-1));p.textContent=m===2.5?`BLACKJACK! +${fmtc(net)} 🤑`:m===2?`You beat the dealer! +${fmtc(net)}`:m===1?"Push. You get your bet back.":bjVal(bjCards(d,hits).map(x=>x[0]))>21?`Bust! −${fmtc(bp.get())}`:`Dealer wins. −${fmtc(bp.get())}`;tone(m>1?1046:m===1?520:150,.15,m>=1?"square":"sawtooth",.05);ctx.submit(bp.get()*10+hits)};
-      const v0=draw(false);if(v0===21)p.textContent="21 already! Pick a bet and tap STAND.";
-      if(!bp.get()){p.textContent="You're out of chips this round 😢";el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true)}
-      el.querySelector("[data-btns]").addEventListener("pointerdown",e=>{
-        const b=e.target.closest(".cbtn");if(!b)return;e.preventDefault();
-        if(over||ctx.done()||Date.now()>ctx.end||!bp.get())return;
-        if(!acted){acted=true;bp.lock()}
-        if(b.dataset.a==="stand"){finish();return}
-        hits++;tone(440,.05,"triangle",.04);const v=draw(false);
-        if(v>21||v===21||hits>=8)finish();else p.textContent=`You have ${v}. HIT or STAND?`;
-      });
-      return timedLoop(el,ctx,now=>{if(now>=ctx.end&&acted&&!over&&!ctx.done())finish()});
-    },
-    bot:(d,p)=>{let c=0;const stop=15+ri(3);while(c<8&&bjVal(bjCards(d,c).map(x=>x[0]))<stop)c++;return botBet(p)*10+c},
-    pay:(c,d)=>bjPay(d,c),
-    say:(c,d)=>{const v=bjVal(bjCards(d,c).map(x=>x[0]));return v>21?`Bust (${v})`:`Had ${v}`},
-    head:d=>{const v=bjVal(bjDealer(d).map(x=>x[0]));return v>21?`🃏 Dealer busted with ${v}! 💥`:`🃏 Dealer had ${v}`}
-  }),
-  hilo:casinoGame({
-    n:"Higher or Lower",i:"🔼",play:16000,
-    en:()=>"Pick a bet. Guess if the next card is HIGHER or LOWER (same counts as right). Every right guess grows your prize. Cash out whenever you want. One wrong guess and you lose your bet!",
-    ar:()=>"اختار المبلغ. خمن الكارت الجاي أعلى ولا أوطى (لو زي بعض تبقى صح). كل تخمينة صح بتكبر الجايزة. اسحب فلوسك وقت ما تحب. تخمينة غلط واحدة وتخسر رهانك!",
-    how:()=>TW("🔼 Next card higher or lower? Cash out before you miss","🔼 الكارت الجاي أعلى ولا أوطى؟ اسحب قبل ما تغلط"),
-    setup:()=>({k:Array.from({length:10},()=>1+ri(13))}),
-    mount(el,ctx){
-      const d=ctx.data;let s=0,acted=false,over=false;
-      el.innerHTML=`<div class="stage cas"><div class="hlrow"><div class="cards big" data-c></div><div class="hlinfo"><div class="hlm" data-m>×1</div><small data-s>0 right</small></div></div><div class="ladder">${HL_MULT.slice(1).map((m,k)=>`<i data-l="${k+1}">×${m}</i>`).join("")}</div><div data-bet></div><div class="duo" data-btns><button class="pick cbtn hib" data-a="hi"><span>⬆️</span>HIGHER<small>or same</small></button><button class="pick cbtn lob" data-a="lo"><span>⬇️</span>LOWER<small>or same</small></button></div><button class="gmbank" data-cash disabled>CASH OUT</button><p class="prompt" data-p>Pick a bet, then guess. Aces are low.</p></div>`;
-      const bp=betPicker(el.querySelector("[data-bet]")),cc=el.querySelector("[data-c]"),mm=el.querySelector("[data-m]"),ss=el.querySelector("[data-s]"),cb=el.querySelector("[data-cash]"),p=el.querySelector("[data-p]");
-      const show=()=>{cc.innerHTML=pcard(d.k[s],s);mm.textContent="×"+HL_MULT[s];ss.textContent=s+" right";el.querySelectorAll("[data-l]").forEach(x=>x.classList.toggle("on",+x.dataset.l<=s));const win=Math.round(bp.get()*HL_MULT[s])-bp.get();cb.disabled=!s||over;cb.textContent=s?`CASH OUT +${fmtc(win)}`:"CASH OUT"};
-      const end=(c,msg)=>{if(over)return;over=true;el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true);cb.disabled=true;p.textContent=msg;ctx.submit(bp.get()*10+c)};
-      const cash=()=>{if(!s)return;tone(1046,.15,"square",.05);end(s+1,`Cashed out at ×${HL_MULT[s]}! +${fmtc(Math.round(bp.get()*HL_MULT[s])-bp.get())} 🤑`)};
-      show();
-      if(!bp.get()){p.textContent="You're out of chips this round 😢";el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true)}
-      el.querySelector("[data-btns]").addEventListener("pointerdown",e=>{
-        const b=e.target.closest(".cbtn");if(!b)return;e.preventDefault();
-        if(over||ctx.done()||Date.now()>ctx.end||!bp.get())return;
-        if(!acted){acted=true;bp.lock()}
-        const cur=d.k[s],nx=d.k[s+1],ok=b.dataset.a==="hi"?nx>=cur:nx<=cur;
-        s++;show();
-        if(!ok){cc.innerHTML=pcard(nx,s);tone(150,.3,"sawtooth",.05);end(0,`Wrong! It was ${CARD_RK[nx]}. −${fmtc(bp.get())}`);return}
-        tone(500+s*70,.07,"triangle",.04);
-        if(s>=HL_MULT.length-1)cash();else p.textContent="Right! Keep going or CASH OUT.";
-      });
-      cb.addEventListener("pointerdown",e=>{e.preventDefault();if(!over&&!ctx.done())cash()});
-      return timedLoop(el,ctx,now=>{if(now>=ctx.end&&acted&&!over&&!ctx.done())cash()});
-    },
-    bot:(d,p)=>{const bet=botBet(p),t=1+ri(4);let s=0;while(s<t){const cur=d.k[s],nx=d.k[s+1],ok=cur<=7?nx>=cur:nx<=cur;if(!ok)return bet*10;s++}return bet*10+s+1},
-    pay:c=>c?HL_MULT[c-1]:0,
-    say:c=>c?`Cashed ×${HL_MULT[c-1]}`:"Wrong guess",
-    head:(d,V)=>{let best=null;for(const id in V){const{bet,c}=cdec(V[id],id);if(bet&&c&&(!best||c>best.c))best={id,c}}return best?`🔼 ${nm(best.id)} cashed out at ×${HL_MULT[best.c-1]}!`:"🔼 Everyone guessed wrong 😬"}
-  })
+function kBetUse(){return Math.max(0,Math.min(kBetV,kBal()))}
+function kTake(a){a=Math.floor(a);if(!(a>0)||a>kBal())return false;K.sn-=a;kSend();kBump();return true}
+function kGive(a){a=Math.round(a);if(a>0){K.sn+=a;kSend()}kBump()}
+function kBigWin(t,x,net){if(net<300&&x<5)return;K.big={n:((K.big&&K.big.n)||0)+1,t,x:Math.round(x*100),w:Math.round(net)};kSend()}
+function kBump(){
+  document.querySelectorAll("[data-kbal]").forEach(e=>e.textContent=fmtc(kBal()));
+  document.querySelectorAll("[data-kbv]").forEach(e=>e.textContent=fmtc(kBetUse()));
+  document.querySelectorAll("[data-kloan]").forEach(e=>e.hidden=!(kBal()<50&&!(kUn&&kUn.busy&&kUn.busy())));
+  if(G&&screen==="room")part("s-chips",chipsHTML());
+}
+function kBetHTML(){
+  return `<div class="kbet"><div class="cbal">💰 <b data-kbal>${fmtc(kBal())}</b><span>Bet <b data-kbv>${fmtc(kBetUse())}</b></span></div><div class="bets">${[10,50,100,500,1000,5000].map(v=>`<button class="betb${kBetV===v?" on":""}" data-kb="${v}">${v>=1000?v/1000+"K":v}</button>`).join("")}<button class="betb" data-kb="h">½</button><button class="betb allin" data-kb="m">MAX</button></div><button class="btn small hot" data-kloan ${kBal()<50?"":"hidden"}>🆘 Out of chips? Ask the house for 300</button></div>`;
+}
+function kPeer(id){
+  if(id===me.pid)return K&&K.g===G.gid?K:null;
+  if(!nr)return null;
+  for(const peer of nr.peers()){const pr=peer.presence||{},c=pr.ck;if(pr.pid===id&&c&&typeof c==="object"&&c.g===G.gid)return c}
+  return null;
+}
+function kTot(id){return Math.max(0,Math.round((G.base[id]||0)+(G.sn[id]||0)))}
+function kFeed(e,t){G.fk=(G.fk||0)+1;G.feed.unshift({k:G.fk,e,t:String(t).slice(0,120)});G.feed=G.feed.slice(0,8)}
+function kCbig(id,v){if(v>0&&(!G.cbig||v>G.cbig.v))G.cbig={id,v}}
+function kBust(){const u=Math.random();return Math.min(200,Math.max(1,Math.floor(97/(1-u))/100))}
+function kCrBots(){
+  const c=G.cr;H.crBot={};
+  for(const p of G.roster)if(p.bot&&Math.random()<.6){const b=botBet(kTot(p.id));if(!b)continue;c.p[p.id]={b,o:0};H.crBot[p.id]=Math.round((1.1+(-Math.log(1-Math.random()*.95))*1.1)*100)/100}
+}
+function kStart(ros){
+  const now=Date.now();
+  G.gid=rid();G.roster=ros;G.list=[];G.k=0;G.total={};G.wins={};G.rec={};G.be={};G.res=null;G.x2used={};G.streak={};G.cbig=null;G.bail=[];G.zero={};G.bs={};
+  G.base={};G.sn={};G.bl={};G.at={};G.feed=[];G.fk=0;G.du=[];
+  ros.forEach(p=>{G.base[p.id]=1000;G.sn[p.id]=0;G.total[p.id]=1000;G.wins[p.id]=0});
+  G.phase="floor";G.t0=now;G.dur=(G.cmin||8)*60000;
+  H=freshH();Object.assign(H,{crB:0,crBot:{},duSeen:{},duBot:{},kbot:{},bigN:{},botDuAt:now+20000+ri(20000),ksig:""});
+  G.cr={n:1,st:"bet",t:now,b:0,sd:0,p:{},hist:[]};kCrBots();
+  kFeed("🎰","The casino is open! Everyone starts with 1,000 chips.");
+  publish();
+}
+function kTick(now){
+  if(!G.base)return false;
+  for(const p of G.roster){
+    if(G.base[p.id]==null){G.base[p.id]=1000;G.sn[p.id]=0}
+    if(p.bot)continue;
+    const ck=kPeer(p.id);if(!ck)continue;
+    const sn=+ck.sn;if(isFinite(sn))G.sn[p.id]=Math.max(-1e9,Math.min(1e9,Math.round(sn)));
+    if(typeof ck.at==="string"&&KT[ck.at])G.at[p.id]=ck.at;
+    const bl=Math.floor(+ck.bl)||0;
+    if(bl>(G.bl[p.id]||0)){G.bl[p.id]=bl;if(kTot(p.id)<50){G.base[p.id]+=300;kFeed("🆘",`${p.name} got 300 chips from the house`)}}
+    const bg=ck.big;
+    if(bg&&typeof bg==="object"&&+bg.n>(H.bigN[p.id]||0)){H.bigN[p.id]=+bg.n;const t=KT[bg.t],x=Math.round(+bg.x)/100,w=Math.round(+bg.w)||0;if(t&&isFinite(x)){kFeed(t.i,`${p.name} hit ×${x} on ${t.n} (+${fmtc(w)})`);kCbig(p.id,w)}}
+  }
+  kTickBots(now);kTickCrash(now);kTickDuels(now);
+  for(const p of G.roster)G.total[p.id]=kTot(p.id);
+  if(now>=G.t0+G.dur){
+    if(G.cr.st!=="bet"&&G.cr.sd<G.cr.n)kSettle();
+    for(const p of G.roster)G.total[p.id]=kTot(p.id);
+    G.phase="over";G.t0=now;G.dur=0;return true;
+  }
+  const sig=JSON.stringify([G.total,G.cr,G.du,G.fk,G.at]);
+  if(sig!==H.ksig){H.ksig=sig;return true}
+  return false;
+}
+function kTickBots(now){
+  for(const p of G.roster){
+    if(!p.bot)continue;
+    if(!H.kbot[p.id]){H.kbot[p.id]=now+3000+ri(6000);continue}
+    if(now<H.kbot[p.id])continue;
+    H.kbot[p.id]=now+4000+ri(7000);
+    let bal=kTot(p.id);
+    if(bal<50){G.base[p.id]+=300;kFeed("🆘",`${p.name} got 300 chips from the house`);continue}
+    const bet=botBet(bal),r=Math.random(),ks=["mines","plinko","slots","roulette","blackjack","hilo","dice"],t=ks[ri(ks.length)];
+    const x=r<.002?25:r<.012?8:r<.042?3:r<.44?2:0;
+    G.base[p.id]+=Math.round(bet*x)-bet;G.at[p.id]=t;
+    if(x>=3&&bet*(x-1)>=200){kFeed(KT[t].i,`${p.name} hit ×${x} on ${KT[t].n} (+${fmtc(bet*(x-1))})`);kCbig(p.id,bet*(x-1))}
+  }
+}
+function kSettle(){
+  const c=G.cr;
+  for(const id in c.p){
+    const e=c.p[id],net=e.o?Math.round(e.b*(e.o/100-1)):-e.b;
+    if(G.base[id]==null)continue;
+    G.base[id]+=net;kCbig(id,net);
+    if(e.o>=500||net>=1000)kFeed("🚀",`${nameOf(id)} cashed out at ${(e.o/100).toFixed(2)}× (+${fmtc(net)})`);
+  }
+  c.sd=c.n;c.hist.unshift(c.b);c.hist=c.hist.slice(0,10);
+}
+function kTickCrash(now){
+  const c=G.cr;
+  if(c.st==="bet"){
+    for(const p of G.roster){
+      if(p.bot||c.p[p.id])continue;
+      const ck=kPeer(p.id),b=ck&&ck.cr&&ck.cr.n===c.n?Math.floor(+ck.cr.b):0;
+      if(b>0)c.p[p.id]={b:Math.min(b,kTot(p.id)),o:0};
+    }
+    if(now>=c.t+CR_BET){c.st="fly";c.t=now;H.crB=kBust()}
+    return;
+  }
+  const lim=Math.round((c.st==="fly"?Math.min(H.crB,Math.exp(CR_K*(now-c.t))+.05):c.b)*100);
+  for(const id in c.p){
+    const e=c.p[id];if(e.o)continue;
+    const p=G.roster.find(r=>r.id===id);if(!p)continue;
+    if(p.bot){if(c.st==="fly"&&H.crBot[id]<H.crB&&Math.exp(CR_K*(now-c.t))>=H.crBot[id])e.o=Math.round(H.crBot[id]*100);continue}
+    if(c.st==="bust"&&now>c.t+CR_GRACE)continue;
+    const ck=kPeer(id),o=ck&&ck.cr&&ck.cr.n===c.n?Math.round(+ck.cr.o):0;
+    if(o>=100&&o<=lim&&o<=Math.round(H.crB*100))e.o=o;
+  }
+  if(c.st==="fly"&&Math.exp(CR_K*(now-c.t))>=H.crB){c.st="bust";c.b=H.crB;c.t=now;return}
+  if(c.st==="bust"){
+    if(c.sd<c.n&&now>=c.t+CR_GRACE)kSettle();
+    if(now>=c.t+CR_NEXT){c.n++;c.st="bet";c.t=now;c.b=0;c.p={};kCrBots()}
+  }
+}
+function kDuelGo(du,now){
+  const a=du.a,b=du.b,amt=Math.min(du.amt,kTot(a),kTot(b));
+  if(amt<10){du.st="no";du.why="Not enough chips";return}
+  let r,w;
+  if(du.gm==="coin"){r={f:ri(2)};w=r.f===0?a:b}
+  else if(du.gm==="card"){let ca,cb;do{ca=kCard();cb=kCard()}while(ca.r===cb.r);r={ca,cb};const v=c=>c.r===1?14:c.r;w=v(ca)>v(cb)?a:b}
+  else{let x,y;do{x=[1+ri(6),1+ri(6)];y=[1+ri(6),1+ri(6)]}while(x[0]+x[1]===y[0]+y[1]);r={x,y};w=x[0]+x[1]>y[0]+y[1]?a:b}
+  const l=w===a?b:a;
+  G.base[w]+=amt;G.base[l]-=amt;G.wins[w]=(G.wins[w]||0)+1;
+  Object.assign(du,{st:"done",w,amt,r,t:now});
+  kCbig(w,amt);kFeed("⚔️",`${nameOf(w)} beat ${nameOf(l)} at ${DUELS[du.gm].n} for ${fmtc(amt)}`);
+}
+function kTickDuels(now){
+  const busy=id=>G.du.some(d=>d.st==="ask"&&(d.a===id||d.b===id));
+  for(const p of G.roster){
+    if(p.bot)continue;
+    const ck=kPeer(p.id);if(!ck)continue;
+    const dl=ck.dl;
+    if(dl&&typeof dl==="object"&&typeof dl.id==="string"&&!H.duSeen[dl.id]){
+      H.duSeen[dl.id]=1;
+      const to=G.roster.find(r=>r.id===dl.to),amt=Math.floor(+dl.a);
+      if(to&&to.id!==p.id&&DUELS[dl.gm]&&amt>=10&&!busy(p.id)&&!busy(to.id))G.du.push({id:dl.id.slice(0,14),a:p.id,b:to.id,amt:Math.min(amt,kTot(p.id),kTot(to.id)),gm:dl.gm,st:"ask",t:now});
+    }
+    const da=Array.isArray(ck.da)?ck.da:[],dx=Array.isArray(ck.dx)?ck.dx:[];
+    for(const d of G.du){
+      if(d.st!=="ask")continue;
+      if(d.b===p.id&&da.includes(d.id))kDuelGo(d,now);
+      else if((d.b===p.id||d.a===p.id)&&dx.includes(d.id))d.st="no";
+    }
+  }
+  for(const d of G.du){
+    if(d.st!=="ask")continue;
+    const pa=G.roster.find(r=>r.id===d.a),pb=G.roster.find(r=>r.id===d.b);
+    if(!pa||!pb||now-d.t>25000){d.st="no";continue}
+    if(!pa.bot){const ck=kPeer(d.a);if(ck&&(!ck.dl||ck.dl.id!==d.id)){d.st="no";continue}}
+    if(pb.bot){
+      if(!H.duBot[d.id])H.duBot[d.id]={at:now+1200+ri(2200),ok:Math.random()<.85};
+      const bd=H.duBot[d.id];if(now>=bd.at){if(bd.ok)kDuelGo(d,now);else d.st="no"}
+    }
+  }
+  if(now>=H.botDuAt){
+    H.botDuAt=now+30000+ri(40000);
+    const bots=G.roster.filter(p=>p.bot&&!busy(p.id)&&kTot(p.id)>=100),hum=G.roster.filter(p=>!p.bot&&!busy(p.id)&&kTot(p.id)>=50);
+    if(bots.length&&hum.length){
+      const a=bots[ri(bots.length)],b=hum[ri(hum.length)],m=Math.min(kTot(a.id),kTot(b.id));
+      const amt=Math.max(10,Math.round(m*(.15+Math.random()*.25)/10)*10),gs=Object.keys(DUELS);
+      G.du.push({id:"b"+rid(),a:a.id,b:b.id,amt,gm:gs[ri(gs.length)],st:"ask",t:now});
+    }
+  }
+  if(G.du.length>14)G.du=G.du.filter(d=>d.st==="ask").concat(G.du.filter(d=>d.st!=="ask").slice(-10));
+}
+
+function kClockTxt(){if(!G||!G.dur)return"";const left=Math.max(0,G.t0+G.dur-kNow()),s=Math.ceil(left/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function kM(c){return c.st==="fly"?Math.exp(CR_K*Math.max(0,kNow()-c.t)):c.st==="bust"?c.b:1}
+
+const KT={
+  crash:{i:"🚀",n:"Crash",live:true,mount(el){
+    el.innerHTML=`<div class="stage cas kcr"><div class="krhist" data-h></div><div class="rcsky" data-sky><div class="rcship" data-r>🚀</div><div class="krm" data-m>1.00×</div></div><p class="prompt" data-st>&nbsp;</p>${kBetHTML()}<div class="kauto"><span>Auto cash out</span>${[0,150,200,300,500,1000].map(v=>`<button class="betb${kAuto===v?" on":""}" data-au="${v}">${v?v/100+"×":"Off"}</button>`).join("")}</div><button class="mashbtn rccash" data-b>BET</button><div class="krp" data-p></div></div>`;
+    const sky=el.querySelector("[data-sky]"),r=el.querySelector("[data-r]"),m=el.querySelector("[data-m]"),st=el.querySelector("[data-st]"),b=el.querySelector("[data-b]"),pl=el.querySelector("[data-p]"),hi=el.querySelector("[data-h]");
+    let lastBust=0,lastKey="";
+    const mine=()=>{const c=G.cr;return K.cr&&K.cr.n===c.n?K.cr:null};
+    el.querySelector(".kauto").addEventListener("pointerdown",e=>{const x=e.target.closest("[data-au]");if(!x)return;e.preventDefault();kAuto=+x.dataset.au;el.querySelectorAll("[data-au]").forEach(y=>y.classList.toggle("on",y===x));const my=mine();if(my&&!my.o){my.au=kAuto;kSend()}tone(520,.04,"square",.03)});
+    b.addEventListener("pointerdown",e=>{
+      e.preventDefault();const c=G.cr,my=mine();
+      if(c.st==="bet"&&!my){const a=kBetUse();if(!a)return;K.cr={n:c.n,b:a,o:0,au:kAuto};kSend();kBump();tone(784,.08,"square",.04);return}
+      if(c.st==="fly"&&my&&!my.o){my.o=Math.max(100,Math.floor(kM(c)*100));kSend();tone(988,.1,"square",.05);tone(1318,.14,"square",.05,.08)}
+    });
+    const list=()=>{
+      const c=G.cr,ids=Object.keys(c.p).sort((x,y)=>c.p[y].b-c.p[x].b);
+      if(K.cr&&K.cr.n===c.n&&!c.p[me.pid])ids.unshift(me.pid);
+      const key=JSON.stringify([c.n,c.st,c.p,c.hist,K.cr]);if(key===lastKey)return;lastKey=key;
+      hi.innerHTML=c.hist.map(x=>`<i class="${x>=10?"h3":x>=2?"h2":"h1"}">${x.toFixed(2)}×</i>`).join("");
+      pl.innerHTML=ids.length?ids.map(id=>{const e=c.p[id]||{b:K.cr.b,o:K.cr.o};const o=e.o;return `<div class="krr${id===me.pid?" me":""}${o?" won":c.st==="bust"?" lost":""}"><span class="n">${nm(id)}</span><span class="bt">${fmtc(e.b)}</span><span class="o">${o?(o/100).toFixed(2)+"× +"+fmtc(e.b*(o/100-1)):c.st==="bust"?"💥 −"+fmtc(e.b):c.st==="fly"?"riding…":"in"}</span></div>`}).join(""):`<p class="note">Nobody's in yet. Be the first!</p>`;
+    };
+    const tick=()=>{
+      const c=G&&G.cr;if(!c||!K)return;
+      const x=kM(c),my=mine(),now=kNow();
+      if(c.st==="bust"){
+        if(lastBust!==c.n){lastBust=c.n;tone(110,.4,"sawtooth",.06)}
+        r.textContent="💥";sky.classList.add("rcboom");sky.classList.remove("rchot");m.textContent=c.b.toFixed(2)+"×";m.classList.add("boom");
+        st.textContent=`💥 Busted at ${c.b.toFixed(2)}×`;
+        b.disabled=true;
+        const hp=c.p[me.pid];
+        b.textContent=!my?"NEXT ROUND…":!hp?"BET MISSED, REFUNDED":hp.o?`WON +${fmtc(hp.b*(hp.o/100-1))}`:my.o&&now<c.t+CR_GRACE?"CHECKING…":my.o?`TOO LATE −${fmtc(hp.b)}`:`💥 −${fmtc(hp.b)}`;
+      }else{
+        sky.classList.remove("rcboom");m.classList.remove("boom");
+        if(c.st==="bet"){
+          r.textContent="🚀";r.style.bottom="4%";r.style.left="8%";m.textContent="1.00×";sky.classList.remove("rchot");
+          st.textContent=`Bets close in ${Math.max(0,Math.ceil((c.t+CR_BET-now)/1000))}s`;
+          b.disabled=!!my||!kBetUse();b.textContent=my?`✓ IN FOR ${fmtc(my.b)}`:`BET ${fmtc(kBetUse())}`;
+        }else{
+          const f=Math.min(1,Math.log(x)/Math.log(10));
+          r.textContent="🚀";r.style.bottom=(4+f*66)+"%";r.style.left=(8+f*70)+"%";m.textContent=x.toFixed(2)+"×";sky.classList.toggle("rchot",x>=3);
+          st.textContent=my&&!my.o?"Cash out before it blows!":"Flying…";
+          b.disabled=!my||!!my.o;b.textContent=!my?"NEXT ROUND…":my.o?`✓ ${(my.o/100).toFixed(2)}× +${fmtc(my.b*(my.o/100-1))}`:`CASH OUT ${fmtc(my.b*x)}`;
+        }
+      }
+      list();
+    };
+    let raf=0;const loop=()=>{raf=requestAnimationFrame(loop);tick()};loop();
+    return{un(){cancelAnimationFrame(raf)},busy:()=>false,onG:tick};
+  }},
+  mines:{i:"💣",n:"Mines",mount(el){
+    let nb=3,on=false,bet=0,safe=0,bombs=new Set();
+    el.innerHTML=`<div class="stage cas"><div class="kmrow"><span>Bombs</span>${[1,3,5,10].map(v=>`<button class="betb${v===nb?" on":""}" data-nb="${v}">${v}</button>`).join("")}</div><div class="grid gmgrid kmg" data-g>${Array.from({length:25},(_,k)=>`<button class="cell gmtile" data-k="${k}" disabled></button>`).join("")}</div><div class="kmm"><b data-m>×1.00</b><small data-nx></small></div>${kBetHTML()}<button class="gmbank" data-b>START</button><p class="prompt" data-p>Pick how many bombs and a bet, then START.</p></div>`;
+    const g=el.querySelector("[data-g]"),bk=el.querySelector("[data-b]"),p=el.querySelector("[data-p]"),mm=el.querySelector("[data-m]"),nx=el.querySelector("[data-nx]");
+    const mult=k=>{let x=.97;for(let i=0;i<k;i++)x*=(25-i)/(25-nb-i);return Math.floor(x*100)/100};
+    const upd=()=>{mm.textContent="×"+(safe?mult(safe):1).toFixed(2);nx.textContent=on&&safe<25-nb?`next tile: ×${mult(safe+1).toFixed(2)}`:"";bk.textContent=on?(safe?`CASH OUT ${fmtc(bet*mult(safe))}`:"PICK A TILE"):"START";bk.disabled=on&&!safe;el.querySelectorAll("[data-nb]").forEach(x=>x.disabled=on)};
+    const reveal=()=>g.querySelectorAll(".gmtile").forEach(x=>{x.disabled=true;if(bombs.has(+x.dataset.k)&&!x.textContent){x.textContent="💣";x.classList.add("dim")}else if(!x.textContent){x.textContent="💎";x.classList.add("dim")}});
+    const cash=()=>{if(!on||!safe)return;const x=mult(safe),w=Math.floor(bet*x);on=false;kGive(w);kBigWin("mines",x,w-bet);p.textContent=`Cashed out ×${x.toFixed(2)}! +${fmtc(w-bet)} 🤑`;tone(1046,.15,"square",.05);reveal();upd()};
+    el.querySelector(".kmrow").addEventListener("pointerdown",e=>{const x=e.target.closest("[data-nb]");if(!x||on)return;e.preventDefault();nb=+x.dataset.nb;el.querySelectorAll("[data-nb]").forEach(y=>y.classList.toggle("on",y===x));upd()});
+    bk.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      if(on){cash();return}
+      const a=kBetUse();if(!a||!kTake(a))return;
+      bet=a;on=true;safe=0;bombs=new Set(shuffle([...Array(25).keys()]).slice(0,nb));
+      g.querySelectorAll(".gmtile").forEach(x=>{x.textContent="";x.className="cell gmtile";x.disabled=false});
+      p.textContent=`${nb} bomb${nb>1?"s":""} hiding. Dig!`;tone(660,.06,"square",.04);upd();
+    });
+    g.addEventListener("pointerdown",e=>{
+      const c=e.target.closest(".gmtile");if(!c||!on||c.textContent)return;e.preventDefault();
+      const k=+c.dataset.k;
+      if(bombs.has(k)){on=false;c.textContent="💥";c.classList.add("wrong");g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");tone(110,.35,"sawtooth",.06);p.textContent=`BOOM! −${fmtc(bet)}`;reveal();kBump();upd();return}
+      safe++;c.textContent="💎";c.classList.add("gmsafe");tone(480+safe*50,.07,"triangle",.04);
+      if(safe>=25-nb){cash();return}
+      p.textContent="Keep digging or cash out!";upd();
+    });
+    upd();
+    return{un(){if(on){if(safe)cash();else{on=false;kGive(bet)}}},busy:()=>on};
+  }},
+  plinko:{i:"🔻",n:"Plinko",mount(el){
+    const balls=new Set();
+    let pegs="";for(let r=0;r<8;r++)for(let k=0;k<r+3;k++)pegs+=`<i class="kpeg" style="left:${50+(k-(r+2)/2)*10}%;top:${6+r*10.5}%"></i>`;
+    el.innerHTML=`<div class="stage cas"><div class="kpl" data-pl>${pegs}<div class="kslots">${PLINKO.map((x,j)=>`<span class="ks${x>=3?" hi":x>=1?" mid":""}" data-j="${j}">${x}×</span>`).join("")}</div></div>${kBetHTML()}<button class="gmbank" data-b>DROP</button><p class="prompt" data-p>Drop as many balls as you want!</p></div>`;
+    const pl=el.querySelector("[data-pl]"),p=el.querySelector("[data-p]");
+    const land=o=>{if(o.done)return;o.done=true;o.tms.forEach(clearTimeout);balls.delete(o);const x=PLINKO[o.j],w=Math.floor(o.bet*x);kGive(w);kBigWin("plinko",x,w-o.bet);const s=pl.querySelector(`[data-j="${o.j}"]`);if(s){s.classList.remove("pop");void s.offsetWidth;s.classList.add("pop")}if(o.el)o.el.remove();p.textContent=`${x}× ${w>=o.bet?"+"+fmtc(w-o.bet):"−"+fmtc(o.bet-w)}`;tone(x>=3?1046:x>=1?660:220,.1,"triangle",.04)};
+    el.querySelector("[data-b]").addEventListener("pointerdown",e=>{
+      e.preventDefault();if(balls.size>=12)return;
+      const a=kBetUse();if(!a||!kTake(a))return;
+      const b=document.createElement("b");b.className="kball";b.style.left="50%";b.style.top="0%";pl.appendChild(b);
+      const o={bet:a,j:0,el:b,tms:[],done:false};balls.add(o);
+      for(let r=0;r<8;r++){o.j+=ri(2);const j=o.j,rr=r;o.tms.push(setTimeout(()=>{b.style.left=(50+(j-(rr+1)/2)*10)+"%";b.style.top=(6+rr*10.5+5)+"%";tone(400+rr*40,.02,"triangle",.02)},140*(r+1)))}
+      o.tms.push(setTimeout(()=>{b.style.top="92%";},140*9));
+      o.tms.push(setTimeout(()=>land(o),140*10));
+    });
+    return{un(){[...balls].forEach(land)},busy:()=>false};
+  }},
+  slots:{i:"🎰",n:"Slots",mount(el){
+    el.innerHTML=`<div class="stage cas"><div class="reels">${[0,1,2].map(k=>`<div class="reel" data-r="${k}">${SLOT_SYM[k*2]}</div>`).join("")}</div><div class="paytab"><span>2 same ×1.6</span><span>🍒🍋🔔 ×5</span><span>⭐⭐⭐ ×10</span><span>7️⃣7️⃣7️⃣ ×15</span><span>💎💎💎 ×25</span></div>${kBetHTML()}<button class="mashbtn rccash" data-spin>SPIN</button><p class="prompt" data-p>Match the symbols!</p></div>`;
+    const sb=el.querySelector("[data-spin]"),p=el.querySelector("[data-p]"),rs=[...el.querySelectorAll(".reel")];
+    let cur=null,timers=[];
+    const finish=()=>{if(!cur)return;timers.forEach(clearTimeout);timers.forEach(clearInterval);timers=[];const s=cur;cur=null;rs.forEach((x,k)=>x.textContent=SLOT_SYM[s.r[k]]);const x=SLOT_PAY[s.c],w=Math.floor(s.bet*x);kGive(w);kBigWin("slots",x,w-s.bet);p.textContent=s.c>=2?`JACKPOT ×${x}! +${fmtc(w-s.bet)} 🤑`:s.c===1?`A pair! +${fmtc(w-s.bet)}`:`No match. −${fmtc(s.bet)}`;if(s.c)tone(1046,.15,"square",.05);sb.disabled=false};
+    sb.addEventListener("pointerdown",e=>{
+      e.preventDefault();if(cur)return;
+      const a=kBetUse();if(!a||!kTake(a))return;
+      cur={...slotRoll(),bet:a};sb.disabled=true;p.textContent="Spinning…";rs.forEach(x=>x.classList.remove("stop"));
+      let stopped=0;
+      const spin=setInterval(()=>{rs.forEach((x,k)=>{if(k>=stopped)x.textContent=SLOT_SYM[ri(6)]});tone(300+ri(300),.03,"square",.02)},70);timers.push(spin);
+      [600,950,1300].forEach((t,k)=>timers.push(setTimeout(()=>{if(!cur)return;stopped=k+1;rs[k].textContent=SLOT_SYM[cur.r[k]];rs[k].classList.add("stop");if(k===2)finish()},t)));
+    });
+    return{un:finish,busy:()=>!!cur};
+  }},
+  roulette:{i:"🎡",n:"Roulette",mount(el){
+    const W=46,strip=Array.from({length:75},(_,i)=>ROUL_ORDER[i%15]);
+    el.innerHTML=`<div class="stage cas"><div class="krhist" data-h></div><div class="krw"><div class="krs" data-s>${strip.map(k=>`<i class="w${ROUL(k)}">${k}</i>`).join("")}</div><b class="krmark"></b></div>${kBetHTML()}<div class="duo trio" data-o><button class="pick cbtn rc0" data-c="0"><span>🔴</span>RED<small>×2</small></button><button class="pick cbtn rc1" data-c="1"><span>⚫</span>BLACK<small>×2</small></button><button class="pick cbtn rc2" data-c="2"><span>🟢</span>GREEN<small>×14</small></button></div><p class="prompt" data-p>Tap a color to bet and spin.</p></div>`;
+    const s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]"),hi=el.querySelector("[data-h]"),wrap=el.querySelector(".krw");
+    let pos=7,cur=null,tm=0;const hist=[];
+    const place=(i,j,anim)=>{s.style.transition=anim?"transform 2.6s cubic-bezier(.12,.75,.2,1)":"none";s.style.transform=`translateX(${wrap.clientWidth/2-(i*W+W/2)+(j||0)}px)`};
+    requestAnimationFrame(()=>place(pos,0,false));
+    const finish=()=>{if(!cur)return;clearTimeout(tm);const c=cur;cur=null;place(c.i,0,false);pos=c.i-45;setTimeout(()=>place(pos,0,false),30);const col=ROUL(c.res),x=col===c.c?(col===2?14:2):0,w=c.bet*x;kGive(w);kBigWin("roulette",x,w-c.bet);hist.unshift(c.res);hi.innerHTML=hist.slice(0,12).map(k=>`<i class="r${ROUL(k)}">${k}</i>`).join("");p.textContent=`${["🔴","⚫","🟢"][col]} ${c.res}! ${x?"+"+fmtc(w-c.bet)+" 🤑":"−"+fmtc(c.bet)}`;tone(x?1046:180,.15,x?"square":"sawtooth",.05);el.querySelectorAll(".cbtn").forEach(b=>{b.disabled=false;b.classList.remove("sel")})};
+    el.querySelector("[data-o]").addEventListener("pointerdown",e=>{
+      const b=e.target.closest(".cbtn");if(!b||cur)return;e.preventDefault();
+      const a=kBetUse();if(!a||!kTake(a))return;
+      const res=ri(15),i=45+ROUL_ORDER.indexOf(res);
+      cur={c:+b.dataset.c,bet:a,res,i};b.classList.add("sel");el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true);p.textContent="Spinning…";
+      place(i,ri(30)-15,true);
+      for(let k=0;k<12;k++)setTimeout(()=>{if(cur)tone(500,.02,"square",.02)},k*k*18);
+      tm=setTimeout(finish,2800);
+    });
+    return{un:finish,busy:()=>!!cur};
+  }},
+  blackjack:{i:"🃏",n:"Blackjack",mount(el){
+    let deck=[],pl=[],dl=[],bet=0,on=false,dealing=false,tms=[];
+    el.innerHTML=`<div class="stage cas"><div class="ctab"><div class="clab">Dealer <b data-dv></b></div><div class="cards" data-dc></div><div class="clab">You <b data-pv></b></div><div class="cards" data-pc></div></div>${kBetHTML()}<div class="duo kbj" data-btns><button class="pick cbtn hitb" data-a="hit"><span>👆</span>HIT</button><button class="pick cbtn standb" data-a="stand"><span>✋</span>STAND</button><button class="pick cbtn dblb" data-a="dbl"><span>✌️</span>DOUBLE</button></div><button class="gmbank" data-deal>DEAL</button><p class="prompt" data-p>Beat the dealer without going over 21. Blackjack pays 3 to 2.</p></div>`;
+    const dc=el.querySelector("[data-dc]"),pc=el.querySelector("[data-pc]"),dv=el.querySelector("[data-dv]"),pv=el.querySelector("[data-pv]"),p=el.querySelector("[data-p]"),deal=el.querySelector("[data-deal]");
+    const draw=show=>{pc.innerHTML=pl.map(c=>pcard(c)).join("");const v=bjVal(pl);pv.textContent=pl.length?(v>21?v+" BUST":v):"";dc.innerHTML=dl.map((c,i)=>pcard(c,!show&&i===1)).join("");dv.textContent=dl.length?(show?bjVal(dl):bjVal([dl[0]])):""};
+    const btns=()=>{el.querySelectorAll("[data-btns] .cbtn").forEach(b=>b.disabled=!on||dealing||(b.dataset.a==="dbl"&&(pl.length!==2||kBal()<bet)));deal.hidden=on;el.querySelector("[data-btns]").hidden=!on};
+    const settle=()=>{
+      tms.forEach(clearTimeout);tms=[];
+      const pv2=bjVal(pl),dv2=bjVal(dl),pbj=pv2===21&&pl.length===2,dbj=dv2===21&&dl.length===2;
+      const x=pv2>21?0:pbj&&!dbj?2.5:dbj&&!pbj?0:dv2>21?2:pv2>dv2?2:pv2===dv2?1:0,w=Math.floor(bet*x);
+      on=false;dealing=false;draw(true);kGive(w);kBigWin("blackjack",x,w-bet);
+      p.textContent=x===2.5?`BLACKJACK! +${fmtc(w-bet)} 🤑`:x===2?(dv2>21?`Dealer busts! +${fmtc(w-bet)}`:`You win! +${fmtc(w-bet)}`):x===1?"Push. Bet back.":pv2>21?`Bust! −${fmtc(bet)}`:`Dealer wins. −${fmtc(bet)}`;
+      tone(x>1?1046:x===1?520:150,.15,x>=1?"square":"sawtooth",.05);btns();
+    };
+    const dealer=fast=>{
+      dealing=true;btns();draw(true);
+      if(bjVal(pl)>21){settle();return}
+      if(fast){while(bjVal(dl)<17)dl.push(deck.pop());settle();return}
+      const step=()=>{if(!on)return;if(bjVal(dl)<17){dl.push(deck.pop());draw(true);tone(440,.05,"triangle",.04);tms.push(setTimeout(step,550))}else settle()};
+      tms.push(setTimeout(step,500));
+    };
+    deal.addEventListener("pointerdown",e=>{
+      e.preventDefault();if(on)return;
+      const a=kBetUse();if(!a||!kTake(a))return;
+      bet=a;on=true;deck=kDeck();pl=[deck.pop(),deck.pop()];dl=[deck.pop(),deck.pop()];draw(false);tone(440,.05,"triangle",.04);
+      if(bjVal(pl)===21||bjVal(dl)===21){dealer(true);return}
+      p.textContent=`You have ${bjVal(pl)}. HIT, STAND or DOUBLE?`;btns();
+    });
+    el.querySelector("[data-btns]").addEventListener("pointerdown",e=>{
+      const b=e.target.closest(".cbtn");if(!b||!on||dealing||b.disabled)return;e.preventDefault();
+      const a=b.dataset.a;
+      if(a==="stand"){dealer(false);return}
+      if(a==="dbl"){if(pl.length!==2||!kTake(bet))return;bet*=2;pl.push(deck.pop());draw(false);dealer(false);return}
+      pl.push(deck.pop());draw(false);tone(440,.05,"triangle",.04);
+      const v=bjVal(pl);if(v>=21){dealer(false);return}
+      p.textContent=`You have ${v}. HIT or STAND?`;btns();
+    });
+    btns();
+    return{un(){if(on)dealer(true)},busy:()=>on};
+  }},
+  hilo:{i:"🔼",n:"Higher or Lower",mount(el){
+    let on=false,bet=0,mult=1,n=0,card=kCard();
+    el.innerHTML=`<div class="stage cas"><div class="hlrow"><div class="cards big" data-c></div><div class="hlinfo"><div class="hlm" data-m>×1.00</div><small data-s>Aces are low</small></div></div>${kBetHTML()}<div class="duo" data-btns><button class="pick cbtn hib" data-a="hi"><span>⬆️</span>HIGHER<small data-hx></small></button><button class="pick cbtn lob" data-a="lo"><span>⬇️</span>LOWER<small data-lx></small></button></div><div class="krow2"><button class="btn small" data-skip>Skip card</button><button class="gmbank" data-b>START</button></div><p class="prompt" data-p>Same card counts as right. Cash out before you miss!</p></div>`;
+    const cc=el.querySelector("[data-c]"),mm=el.querySelector("[data-m]"),ss2=el.querySelector("[data-s]"),bk=el.querySelector("[data-b]"),p=el.querySelector("[data-p]"),hx=el.querySelector("[data-hx]"),lx=el.querySelector("[data-lx]");
+    const fh=()=>Math.floor(.97/((14-card.r)/13)*100)/100,fl=()=>Math.floor(.97/(card.r/13)*100)/100;
+    const show=()=>{cc.innerHTML=pcard(card);mm.textContent="×"+mult.toFixed(2);ss2.textContent=on?`${n} right`:"Aces are low";hx.textContent="×"+fh().toFixed(2);lx.textContent="×"+fl().toFixed(2);el.querySelectorAll("[data-btns] .cbtn").forEach(b=>b.disabled=!on);bk.textContent=on?(n?`CASH OUT ${fmtc(bet*mult)}`:"GUESS FIRST"):"START";bk.disabled=on&&!n};
+    const cash=()=>{if(!on||!n)return;const w=Math.floor(bet*mult);on=false;kGive(w);kBigWin("hilo",mult,w-bet);p.textContent=`Cashed out ×${mult.toFixed(2)}! +${fmtc(w-bet)} 🤑`;tone(1046,.15,"square",.05);show()};
+    bk.addEventListener("pointerdown",e=>{e.preventDefault();if(on){cash();return}const a=kBetUse();if(!a||!kTake(a))return;bet=a;on=true;mult=1;n=0;p.textContent="Higher or lower?";tone(660,.06,"square",.04);show()});
+    el.querySelector("[data-skip]").addEventListener("pointerdown",e=>{e.preventDefault();if(on&&n)return;card=kCard();tone(400,.04,"triangle",.03);show()});
+    el.querySelector("[data-btns]").addEventListener("pointerdown",e=>{
+      const b=e.target.closest(".cbtn");if(!b||!on)return;e.preventDefault();
+      const hi2=b.dataset.a==="hi",f=hi2?fh():fl(),nx=kCard(),ok=hi2?nx.r>=card.r:nx.r<=card.r;
+      card=nx;
+      if(!ok){on=false;show();if(cc.firstChild)cc.firstChild.classList.add("bad");tone(150,.3,"sawtooth",.05);p.textContent=`Wrong! −${fmtc(bet)}`;mm.textContent="×0";return}
+      mult=Math.round(mult*f*100)/100;n++;tone(500+n*60,.07,"triangle",.04);p.textContent="Right! Keep going or CASH OUT.";show();
+    });
+    show();
+    return{un(){if(on){if(n)cash();else{on=false;kGive(bet)}}},busy:()=>on};
+  }},
+  dice:{i:"🎲",n:"Over / Under 7",mount(el){
+    let cur=null,tms=[];
+    el.innerHTML=`<div class="stage cas"><div class="kdice"><span data-d0>⚂</span><span data-d1>⚃</span></div><div class="kdt" data-t>&nbsp;</div>${kBetHTML()}<div class="duo trio" data-o><button class="pick cbtn dc0" data-c="0"><span>⬇️</span>UNDER 7<small>×2.3</small></button><button class="pick cbtn dc1" data-c="1"><span>🎯</span>EXACTLY 7<small>×5.5</small></button><button class="pick cbtn dc2" data-c="2"><span>⬆️</span>OVER 7<small>×2.3</small></button></div><p class="prompt" data-p>Tap your call to bet and roll.</p></div>`;
+    const d0=el.querySelector("[data-d0]"),d1=el.querySelector("[data-d1]"),t=el.querySelector("[data-t]"),p=el.querySelector("[data-p]");
+    const finish=()=>{if(!cur)return;tms.forEach(clearTimeout);tms.forEach(clearInterval);tms=[];const c=cur;cur=null;d0.textContent=DICE[c.a];d1.textContent=DICE[c.b];const s=c.a+c.b,k=s<7?0:s===7?1:2,x=k===c.c?(k===1?5.5:2.3):0,w=Math.floor(c.bet*x);t.textContent=`= ${s}`;kGive(w);kBigWin("dice",x,w-c.bet);p.textContent=x?`Nice! +${fmtc(w-c.bet)} 🤑`:`Nope. −${fmtc(c.bet)}`;tone(x?1046:160,.15,x?"square":"sawtooth",.05);el.querySelector(".kdice").classList.remove("roll");el.querySelectorAll(".cbtn").forEach(b=>{b.disabled=false;b.classList.remove("sel")})};
+    el.querySelector("[data-o]").addEventListener("pointerdown",e=>{
+      const b=e.target.closest(".cbtn");if(!b||cur)return;e.preventDefault();
+      const a=kBetUse();if(!a||!kTake(a))return;
+      cur={c:+b.dataset.c,bet:a,a:1+ri(6),b:1+ri(6)};b.classList.add("sel");el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true);t.textContent=" ";p.textContent="Rolling…";el.querySelector(".kdice").classList.add("roll");
+      tms.push(setInterval(()=>{d0.textContent=DICE[1+ri(6)];d1.textContent=DICE[1+ri(6)];tone(250+ri(200),.03,"square",.02)},80));
+      tms.push(setTimeout(finish,1000));
+    });
+    return{un:finish,busy:()=>!!cur};
+  }},
+  duel:{i:"⚔️",n:"Duel a friend",mount(el){
+    let gm="coin";
+    el.innerHTML=`<div class="stage cas kduel"><div class="headline">⚔️ Bet against your friends</div><p class="sub">Pick a game and a bet, then challenge someone. Winner takes the bet from the loser.</p><div class="kgms">${Object.keys(DUELS).map(k=>`<button class="betb${k===gm?" on":""}" data-gm="${k}">${DUELS[k].i} ${DUELS[k].n}</button>`).join("")}</div>${kBetHTML()}<div class="kdl" data-l></div><div class="kdh" data-h></div></div>`;
+    const l=el.querySelector("[data-l]"),h=el.querySelector("[data-h]");
+    el.querySelector(".kgms").addEventListener("pointerdown",e=>{const x=e.target.closest("[data-gm]");if(!x)return;e.preventDefault();gm=x.dataset.gm;el.querySelectorAll("[data-gm]").forEach(y=>y.classList.toggle("on",y===x));tone(520,.04,"square",.03)});
+    l.addEventListener("pointerdown",e=>{
+      const x=e.target.closest("[data-ch],[data-cx]");if(!x)return;e.preventDefault();
+      if(x.dataset.cx!=null){K.dl=null;kSend();draw();return}
+      const to=x.dataset.ch,a=Math.min(kBetUse(),kBal(to));if(a<10)return;
+      K.dl={id:rid()+rid().slice(0,4),to,a,gm,t:Date.now()};kSend();tone(784,.08,"square",.04);draw();
+    });
+    const draw=()=>{
+      if(!G||!G.du)return;
+      if(K.dl){const d=G.du.find(x=>x.id===K.dl.id);if((d&&d.st!=="ask")||(!d&&Date.now()-(K.dl.t||0)>5000)){if(d&&d.st==="no")kToast(`${nameOf(d.b)} said no 🙅`);K.dl=null;kSend()}}
+      const out=G.du.find(d=>d.st==="ask"&&d.a===me.pid),pend=K.dl;
+      const busy=id=>G.du.some(d=>d.st==="ask"&&(d.a===id||d.b===id));
+      const others=G.roster.filter(p=>p.id!==me.pid);
+      const wait=out||pend;
+      l.innerHTML=wait?`<div class="kwait">⏳ Waiting for <b>${nm(wait.b||wait.to)}</b> to accept ${DUELS[wait.gm].i} ${DUELS[wait.gm].n} for <b>${fmtc(wait.amt||wait.a)}</b>…<button class="btn small ghost" data-cx>Cancel</button></div>`:others.map(p=>{const bal=kBal(p.id),b=busy(p.id),amt=Math.min(kBetUse(),bal);return `<div class="kpl2"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}${p.bot?" <small>BOT</small>":""}</span><span class="bt">💰${fmtc(bal)}</span><button class="btn small primary" data-ch="${esc(p.id)}" ${b||amt<10?"disabled":""}>${b?"Busy":`Challenge ${fmtc(amt)}`}</button></div>`}).join("");
+      const done=G.du.filter(d=>d.st==="done").slice(-6).reverse();
+      h.innerHTML=done.length?`<h2>Recent duels</h2>`+done.map(d=>`<div class="kdr">${DUELS[d.gm].i} <b>${nm(d.w)}</b> beat ${nm(d.w===d.a?d.b:d.a)} <span>+${fmtc(d.amt)}</span></div>`).join(""):"";
+    };
+    draw();
+    return{un(){},busy:()=>false,onG:draw};
+  }}
+};
+const KT_IDS=Object.keys(KT);
+
+function kToast(t){const jt=$("#jt");if(!jt)return;jt.textContent=t;jt.hidden=false;jt.classList.remove("show");void jt.offsetWidth;jt.classList.add("show");clearTimeout(jnTimer);jnTimer=setTimeout(()=>{jt.hidden=true},2200)}
+function kStop(){if(kUn&&kUn.un)try{kUn.un()}catch(e){}kUn=null;kMounted=""}
+function kPartEl(el,html){if(el&&el.dataset.k!==html){el.dataset.k=html;el.innerHTML=html}}
+function kTabsHTML(){return KT_IDS.map(id=>`<button class="ktab${id===kTab?" on":""}" data-ktab="${id}"><span>${KT[id].i}</span>${id==="crash"?`<b data-kcm>LIVE</b>`:`<b>${esc(KT[id].n.split(" ")[0])}</b>`}</button>`).join("")}
+function kIncomingHTML(){
+  if(!G.du)return"";
+  const d=G.du.find(x=>x.st==="ask"&&x.b===me.pid&&!(K.dx||[]).includes(x.id)&&!(K.da||[]).includes(x.id));
+  if(!d)return"";
+  return `<div class="kin"><div class="kint">⚔️ <b>${nm(d.a)}</b> challenges you to ${DUELS[d.gm].i} <b>${DUELS[d.gm].n}</b> for <b>💰${fmtc(d.amt)}</b>!</div><div class="kinb"><button class="btn primary" data-kacc="${esc(d.id)}">Accept</button><button class="btn ghost" data-kno="${esc(d.id)}">No thanks</button></div></div>`;
+}
+function kFeedHTML(){
+  const f=G.feed||[];
+  return f.length?f.slice(0,6).map(x=>`<div class="kf${x.k>kFeedK?" new":""}"><span>${esc(x.e)}</span>${esc(x.t)}</div>`).join(""):"";
+}
+function kRevealHTML(d){
+  const a=d.a,b=d.b,iw=d.w===me.pid,r=d.r||{};
+  let mid="";
+  if(d.gm==="coin")mid=`<div class="kcoin ${r.f?"tails":"heads"}"><i>👑</i><i>🦅</i></div><div class="kvs"><span>👑 ${nm(a)}</span><span>🦅 ${nm(b)}</span></div>`;
+  else if(d.gm==="card")mid=`<div class="kvs2"><div><small>${nm(a)}</small><div class="cards big kflip">${pcard(r.ca)}</div></div><b>VS</b><div><small>${nm(b)}</small><div class="cards big kflip">${pcard(r.cb)}</div></div></div>`;
+  else mid=`<div class="kvs2"><div><small>${nm(a)}</small><div class="kdice roll2">${DICE[r.x[0]]}${DICE[r.x[1]]}</div><b class="ksum">${r.x[0]+r.x[1]}</b></div><b>VS</b><div><small>${nm(b)}</small><div class="kdice roll2">${DICE[r.y[0]]}${DICE[r.y[1]]}</div><b class="ksum">${r.y[0]+r.y[1]}</b></div></div>`;
+  return `<div class="kov" data-kovx><div class="kovb"><div class="potlbl">${DUELS[d.gm].i} ${DUELS[d.gm].n} · 💰${fmtc(d.amt)}</div>${mid}<div class="headline kres ${iw?"win":"lose"}">${iw?`YOU WIN +${fmtc(d.amt)} 🤑`:`${nm(d.w)} wins. −${fmtc(d.amt)}`}</div><p class="note">Tap to close</p></div></div>`;
+}
+function kRender(){
+  kInit();
+  layout("casino",["s-top","timer","s-chips","s-floor","s-emo"]);
+  part("s-top",topBar(`🎰 CASINO <b id="kclock">${kClockTxt()}</b>`));
+  part("s-chips",chipsHTML());
+  const f=$("#s-floor");if(!f)return;
+  if(!f.querySelector(".kfloor")){f.innerHTML=`<div class="kfloor"><div data-kin></div><div data-kov></div><div class="ktabs" data-ktabs></div><div class="ktable" data-kt></div><div class="kfeed" data-kf></div></div>`;kMounted=""}
+  kPartEl(f.querySelector("[data-ktabs]"),kTabsHTML());
+  kPartEl(f.querySelector("[data-kin]"),kIncomingHTML());
+  kPartEl(f.querySelector("[data-kf]"),kFeedHTML());
+  kFeedK=Math.max(kFeedK,G.fk||0);
+  if(kMounted!==kTab){kStop();kMounted=kTab;const el=f.querySelector("[data-kt]");el.innerHTML="";kUn=KT[kTab].mount(el)||{}}
+  else if(kUn&&kUn.onG)kUn.onG();
+  const now=kNow();
+  for(const d of G.du||[]){
+    if(d.st!=="done"||(d.a!==me.pid&&d.b!==me.pid)||kSeenDu.has(d.id))continue;
+    kSeenDu.add(d.id);
+    if(now-d.t<9000){kShow=d;clearTimeout(kShowTm);kShowTm=setTimeout(()=>{kShow=null;render()},5200);const iw=d.w===me.pid;setTimeout(()=>iw?[523,659,784,1046].forEach((fq,i)=>tone(fq,.12,"square",.04,i*.08)):tone(140,.35,"sawtooth",.05),1500)}
+  }
+  kPartEl(f.querySelector("[data-kov]"),kShow?kRevealHTML(kShow):"");
+  part("s-emo",emoBar());
+  kBump();
+}
+function kFrame(){
+  if(!G||G.mode!=="casino"||G.phase!=="floor"||screen!=="room"||!K)return;
+  const ck=$("#kclock");if(ck){const t=kClockTxt();if(ck.textContent!==t)ck.textContent=t}
+  const c=G.cr;if(!c)return;
+  const lab=$("[data-kcm]");if(lab){const t=c.st==="fly"?kM(c).toFixed(2)+"×":c.st==="bust"?"💥":"BET";if(lab.textContent!==t)lab.textContent=t;lab.parentNode.classList.toggle("hot",c.st==="fly"&&!!(K.cr&&K.cr.n===c.n&&!K.cr.o))}
+  if(c.st==="fly"&&K.cr&&K.cr.n===c.n&&!K.cr.o&&K.cr.au&&kM(c)*100>=K.cr.au){K.cr.o=K.cr.au;kSend();tone(988,.1,"square",.05)}
+}
+document.addEventListener("pointerdown",e=>{
+  if(!G||G.mode!=="casino"||G.phase!=="floor"||!K)return;
+  const t=e.target.closest("[data-ktab],[data-kb],[data-kacc],[data-kno],[data-kovx],[data-kloan]");if(!t||t.disabled)return;
+  e.preventDefault();
+  if(t.dataset.ktab){
+    const id=t.dataset.ktab;if(id===kTab||!KT[id])return;
+    if(kUn&&kUn.busy&&kUn.busy()){kToast("Finish this round first!");return}
+    kTab=id;kSend();tone(600,.04,"triangle",.03);render();return;
+  }
+  if(t.dataset.kb){
+    const v=t.dataset.kb,bal=kBal();
+    kBetV=v==="h"?Math.max(1,Math.floor(bal/2)):v==="m"?Math.max(1,bal):+v;
+    document.querySelectorAll("[data-kb]").forEach(x=>x.classList.toggle("on",x.dataset.kb===v&&v!=="h"&&v!=="m"));
+    tone(520,.04,"square",.03);kBump();if(kUn&&kUn.onG)kUn.onG();return;
+  }
+  if(t.dataset.kacc){K.da=[...(K.da||[]),t.dataset.kacc].slice(-6);kSend();render();return}
+  if(t.dataset.kno){K.dx=[...(K.dx||[]),t.dataset.kno].slice(-6);kSend();render();return}
+  if(t.hasAttribute("data-kloan")){K.bl=(K.bl||0)+1;kSend();t.hidden=true;return}
+  if(t.hasAttribute("data-kovx")){kShow=null;render()}
 });
 const GAME_IDS=Object.keys(GAMES).filter(id=>!GAMES[id].casino);
-const CASINO_IDS=Object.keys(GAMES).filter(id=>GAMES[id].casino);
 
 const me={pid:ss.get("cp.tab")||rid(),name:clean(ls.get("cp.name")||""),col:0,tm:0};
 ss.set("cp.tab",me.pid);
@@ -2779,7 +3236,7 @@ function makeList(){
     for(let i=0;i<n;i++)out.push({id,v:Math.min(2,Math.floor(i*3/n)),n:i,of:n});
     return out;
   }
-  const per=G.per||2,pool=G.mode==="casino"?CASINO_IDS.slice():(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAMES[id]&&!GAMES[id].casino);
+  const per=G.per||2,pool=(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAMES[id]&&!GAMES[id].casino);
   let bag=[],last=null;
   const count=G.len==="all"?pool.length:(G.len||6);
   for(let g=0;g<count;g++){
@@ -2796,6 +3253,7 @@ function startGame(){
   if(G.mode==="brawl"){bStart(ros);return}
   if(G.mode==="hide"){hStart(ros);return}
   if(G.teams)teamBalance(ros);
+  if(G.mode==="casino"){kStart(ros);return}
   G.gid=rid();G.roster=ros;G.list=makeList();G.k=0;G.total={};G.wins={};G.rec={};G.be={};G.res=null;G.x2used={};G.streak={};G.cbig=null;G.bail=[];G.zero={};G.bs={};
   ros.forEach(p=>{G.total[p.id]=G.mode==="casino"?1000:0;G.wins[p.id]=0});
   beginIntro();publish();
@@ -2912,6 +3370,7 @@ function setOpt(k,v){
   if(k==="mode"&&["cards","brawl","hide","party","single","casino"].includes(v))G.mode=v;
   if(k==="per"&&["1","2","3"].includes(v))G.per=+v;
   if(k==="srounds"&&["3","5","7"].includes(v))G.srounds=+v;
+  if(k==="cmin"&&["5","8","12"].includes(v))G.cmin=+v;
   if(k==="sgame"&&GAMES[v])G.single=v;
   if(k==="rounds"&&["6","8","10"].includes(v))G.rounds=+v;
   if(k==="botlvl"&&["easy","normal","hard"].includes(v))G.botlvl=v;
@@ -3617,6 +4076,7 @@ function lateSafe(){
   if(m==="cards")return ph==="pick"&&left>5000;
   if(m==="brawl")return(ph==="role"&&left>3000)||(ph==="breveal"&&bAlive().length>=2);
   if(m==="hide")return(ph==="hide"&&left>3000)||ph==="hend";
+  if(m==="casino")return ph==="floor"&&left>20000;
   return ph==="intro"&&left>1500;
 }
 function teamBalance(ros){
@@ -3692,6 +4152,8 @@ function hostTick(force){
     if(bTick(now))ch=true;
   }else if(G.mode==="hide"&&G.phase!=="lobby"&&G.phase!=="over"){
     if(hTick(now))ch=true;
+  }else if(G.mode==="casino"&&G.phase==="floor"){
+    if(kTick(now))ch=true;
   }else if(G.mode==="cards"&&(G.phase==="pick"||G.phase==="reveal")){
     if(cTick(now))ch=true;
   }else if(G.phase==="intro"){
@@ -4024,8 +4486,8 @@ function menuHTML(){
   </section>
   <section class="rules">
     <h2>ALSO: 🎰 CASINO (FAKE CHIPS)</h2>
-    <div class="glist">${CASINO_IDS.map(id=>`<div class="gi"><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</div>`).join("")}</div>
-    <p class="note">Just for fun, no real money. Everyone starts with 1,000 chips. Most chips at the end wins. The host picks 🎰 Casino in Lobby options.</p>
+    <div class="glist">${KT_IDS.map(id=>`<div class="gi"><span>${KT[id].i}</span>${esc(KT[id].n)}</div>`).join("")}</div>
+    <p class="note">Just for fun, no real money. An open casino: walk between tables, ride the live Crash rocket together, and challenge friends to duels. Most chips when the clock runs out wins. The host picks 🎰 Casino in Lobby options.</p>
     <p class="note ar" dir="rtl" lang="ar">للتسلية بس، مفيش فلوس حقيقية. كل واحد بيبدأ بـ ١٠٠٠ فيشة. اللي معاه أكتر فيش في الآخر يكسب.</p>
   </section>`;
 }
@@ -4057,10 +4519,11 @@ function chipsHTML(){
   const ts=teamModeOn()?teamScores():null,cas=G.mode==="casino";
   return `${ts?`<div class="tscore"><span class="t1">🔴 RED ${cas?fmtc(ts[1]):ts[1]}</span><small>team average</small><span class="t2">${cas?fmtc(ts[2]):ts[2]} BLUE 🔵</span></div>`:""}<div class="players">${G.roster.map(p=>{
     let st="",cls="";
-    if(G.phase==="play"){const d=(G.done||[]).includes(p.id);st=d?"Done":"…";cls=d?"ready":""}
+    if(G.phase==="floor"){const t=KT[p.id===me.pid?kTab:(G.at||{})[p.id]];st=t?t.i:"";cls="ktb"}
+    else if(G.phase==="play"){const d=(G.done||[]).includes(p.id);st=d?"Done":"…";cls=d?"ready":""}
     else if(G.phase==="result"&&G.res){const d=G.res.pts[p.id]||0;st=d>0?"+"+fmtc(d):d<0?"−"+fmtc(-d):"0";cls=d>0?"plus":d<0?"minus":""}
     const tags=`${p.bot?"<small>BOT</small>":""}${p.id===me.pid?"<small>YOU</small>":""}${((G.streak||{})[p.id]||0)>=2?`<small class="fire">🔥</small>`:""}${G.mode!=="casino"&&!(G.x2used||{})[p.id]?`<small class="hasx">×2</small>`:""}`;
-    return `<div class="chip${p.id===me.pid?" me":""}${teamModeOn()&&p.tm?" tm"+p.tm:""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${tags}</span><span class="sc">${G.mode==="casino"?fmtc(G.total[p.id]||0):G.total[p.id]||0}</span><span class="st ${cls}">${st}</span></div>`;
+    return `<div class="chip${p.id===me.pid?" me":""}${teamModeOn()&&p.tm?" tm"+p.tm:""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="nm">${esc(p.name)}${tags}</span><span class="sc">${G.mode==="casino"?fmtc(G.phase==="floor"?kBal(p.id):G.total[p.id]||0):G.total[p.id]||0}</span><span class="st ${cls}">${st}</span></div>`;
   }).join("")}</div>`;
 }
 function introHTML(){
@@ -4081,7 +4544,7 @@ function optsHTML(host,lens){
   const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
   <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["brawl","⚔️ Brawl"],["hide","🙈 Hide & Seek"],["party","🎉 Party"],["single","🎯 One game"],["casino","🎰 Casino"]],G.mode)}<button class="seg tryall${G.mode==="party"&&G.len==="all"&&(G.games||[]).length>=GAME_IDS.length?" on":""}" data-act="opt" data-k="tryall" ${dis}>⭐ Try every game</button></div></div>
-  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">🪙 Fake chips only, no real money. Everyone starts with 1,000 chips. Roulette, Dice, Slots, Blackjack and Higher or Lower. Most chips at the end wins. Go broke and the house gives you 100.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كل واحد بيبدأ بـ ١٠٠٠. اللي معاه أكتر فيش في الآخر يكسب. لو فلّست البيت هيديك ١٠٠.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
+  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Length</span><div class="segs">${seg("cmin",[["5","5 min"],["8","8 min"],["12","12 min"]],String(G.cmin||8))}</div></div><p class="note">🪙 Fake chips only, no real money. An open casino: everyone starts with 1,000 chips and walks between tables whenever they want. 🚀 Crash is live, so you all ride the same rocket. 💣 Mines, 🔻 Plinko, 🎰 Slots, 🎡 Roulette, 🃏 Blackjack, 🔼 Higher or Lower, 🎲 Dice. ⚔️ Challenge friends to duels and take their chips. Most chips when time runs out wins.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كازينو مفتوح: كل واحد بيبدأ بـ ١٠٠٠ ويلعب اللي هو عايزه. الكراش لايف وكلكم راكبين نفس الصاروخ. ودي صحابك تحدي وخد فيشهم. اللي معاه أكتر فيش لما الوقت يخلص يكسب.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
   ${["party","single","casino"].includes(G.mode)?`<div class="orow"><span class="ol">Teams</span><button class="ffbtn${G.teams?" on":""}" data-act="opt" data-k="teams" ${dis}><span class="sw2"><i></i></span>${G.teams?"🔴 vs 🔵 On":"Off"}</button></div>`:""}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
@@ -4094,7 +4557,7 @@ function lobbyParts(){
   const rows=G.roster.map(p=>`<div class="lp${tOn&&p.tm?" tm"+p.tm:""}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span>${tOn?`<span class="tb">${p.tm===1?"🔴":p.tm===2?"🔵":"⚪"}</span>`:""}<span class="n">${esc(p.name)}</span>${tOn&&p.bot&&host?`<button class="x" data-act="bteam" data-id="${esc(p.id)}" aria-label="Switch team">⇄</button>`:""}${p.id===me.pid?`<span class="t">You</span>`:""}${p.id===G.host?`<span class="t">Host</span>`:""}${p.bot?`<span class="t">Bot</span>${host?`<button class="x" data-act="rmbot" data-id="${esc(p.id)}" aria-label="Remove ${esc(p.name)}">×</button>`:""}`:""}</div>`).join("");
   const free=MAXP-G.roster.length;
   const empty=free>0?`<div class="empty">${free} open seat${free===1?"":"s"}. Friends tap your lobby under Open lobbies.</div>`:"";
-  const allN=G.mode==="casino"?CASINO_IDS.length:(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAME_IDS.includes(id)).length;
+  const allN=(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAME_IDS.includes(id)).length;
   const lens=[4,6,9,12].map(n=>`<button class="seg${G.len===n?" on":""}" data-act="len" data-n="${n}" ${host?"":"disabled"}>${n}</button>`).join("")+`<button class="seg${G.len==="all"?" on":""}" data-act="len" data-n="all" ${host?"":"disabled"}>⭐ All ${allN}</button>`;
   const actions=host?`<div class="actions"><button class="btn" data-act="addbot" ${free<=0?"disabled":""}>Add bot</button><button class="btn primary" data-act="start" ${G.roster.length<2?"disabled":""}>Start</button></div>${G.roster.length<2?`<p class="note">Need 2 players. Add a bot or wait for a friend.</p>`:""}`:`<p class="note">Waiting for ${esc(nameOf(G.host))} to tap Start.</p>`;
   return{
@@ -4146,7 +4609,7 @@ function part(id,html,force){
   if(!force&&el.dataset.k===html)return;
   el.dataset.k=html;el.innerHTML=html;
 }
-function stopStage(){liveCb=null;if(unmount){try{unmount()}catch(e){}unmount=null}stageKey=""}
+function stopStage(){kStop();liveCb=null;if(unmount){try{unmount()}catch(e){}unmount=null}stageKey=""}
 function renderStage(){
   const el=$("#s-stage");if(!el)return;
   const key=G.gid+"-"+G.k+"-"+G.phase;
@@ -4179,6 +4642,7 @@ function renderMain(){
   if(G.phase==="lobby"){layout("lobby",["s-top","s-head","s-list","s-inv","s-act","s-opts","s-emo"]);const p=lobbyParts();for(const k in p)part(k,p[k]);return}
   if(G.phase==="over"){layout("over",["s-top","s-table","s-act","s-emo"]);const p=G.mode==="cards"?cOverParts():G.mode==="brawl"?bOverParts():G.mode==="hide"?hOverParts():overParts();for(const k in p)part(k,p[k]);return}
   if(G.mode==="cards"){cRender();return}
+  if(G.mode==="casino"&&G.phase==="floor"){kRender();return}
   if(G.mode==="brawl"){bRender();return}
   if(G.mode==="hide"){hRender();return}
   layout("game",["s-top","timer","s-chips","s-stage","s-emo"]);
@@ -4201,7 +4665,7 @@ function frameOnce(){
   const cd=$("#cd");
   if(cd){const n=Math.ceil(left/1000);if(cd.textContent!==String(n)){cd.textContent=n;if(n!==lastCd&&n<=3&&n>0)tone(440,.06,"square",.03);lastCd=n}}
 }
-function frame(){frameOnce();if(G&&G.mode==="hide"&&G.phase==="hide"&&screen==="room")hTrack();requestAnimationFrame(frame)}
+function frame(){frameOnce();kFrame();if(G&&G.mode==="hide"&&G.phase==="hide"&&screen==="room")hTrack();requestAnimationFrame(frame)}
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");if(!b||b.disabled)return;
@@ -4251,6 +4715,50 @@ document.addEventListener("input",e=>{
 });
 
 setInterval(()=>{if(isHost)hostTick();else watchdog()},100);
+const PC_URL=location.hostname.endsWith("github.io")||location.hostname==="localhost"?new URL("../chat/",location.href).href:"https://fardasticmanguy-rgb.github.io/chat/";
+const PC={fr:null,min:false,n:0,lob:""};
+function pcPost(o){if(PC.fr&&PC.fr.contentWindow)try{PC.fr.contentWindow.postMessage(o,new URL(PC_URL).origin)}catch(e){}}
+function pcBadge(){const b=$("#pcn"),btn=$("#pcb");if(b){b.hidden=!PC.n;b.textContent=PC.n>9?"9+":PC.n}if(btn)btn.classList.toggle("on",!!PC.fr)}
+function pcHead(){
+  const room=screen==="room"&&G&&code&&!practice;
+  return `<div class="pch"><div class="t">🔐 Private chat<small>Close = locked. You'll need the room code again.</small></div>${room?`<button class="btn small primary" data-pc="inv" title="Send this lobby to the chat room">🎮 Invite</button>`:""}<button class="btn small" data-pc="min" title="Hide but stay connected">—</button><button class="btn small hot" data-pc="lock" title="Close and lock">🔒</button></div>`;
+}
+function pcOpen(){
+  const p=$("#pcp");if(!p)return;
+  if(!PC.fr){
+    p.innerHTML=pcHead()+`<iframe title="Private chat" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>`;
+    PC.fr=p.querySelector("iframe");PC.fr.src=PC_URL+"?embed=1&private=1&name="+encodeURIComponent(me.name||"");
+  }else pcRefresh();
+  p.hidden=false;PC.min=false;PC.n=0;pcBadge();pcPost({cmd:"vis",on:true});
+}
+function pcRefresh(){const l=screen==="room"&&!practice&&code?{code,mode:G?G.mode:""}:null,k=JSON.stringify(l);if(k!==PC.lob){PC.lob=k;pcPost({cpLobby:l})}const p=$("#pcp"),h=p&&p.querySelector(".pch");if(h){const n=pcHead();if(h.outerHTML!==n)h.outerHTML=n}}
+function pcMin(){const p=$("#pcp");if(p)p.hidden=true;PC.min=true;pcPost({cmd:"vis",on:false});pcBadge()}
+function pcLock(){const p=$("#pcp");if(p){p.innerHTML="";p.hidden=true}PC.fr=null;PC.lob="";PC.min=false;PC.n=0;pcBadge()}
+async function pcPlay(c,m,h){
+  c=String(c||"").toLowerCase();if(!/^[a-z0-9]{2,12}$/.test(c))return;
+  if(!wide())pcMin();
+  if(screen==="room"&&code===c)return;
+  if(screen==="room")await leave();
+  await enter(c,!!h,true);
+  if(isHost&&m&&G&&G.phase==="lobby")setOpt("mode",m);
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("#pcb,[data-pc]");if(!t)return;
+  if(t.id==="pcb"){if(!PC.fr||PC.min)pcOpen();else pcMin();return}
+  const a=t.dataset.pc;
+  if(a==="min")pcMin();
+  else if(a==="lock")pcLock();
+  else if(a==="inv"&&screen==="room"&&G&&code&&!practice)pcPost({cmd:"invite",m:G.mode,c:code});
+});
+window.addEventListener("message",e=>{
+  if(!PC.fr||e.source!==PC.fr.contentWindow)return;
+  const d=e.data&&typeof e.data==="object"?e.data:{};
+  if(d.chat==="new"&&(PC.min||document.hidden)){PC.n+=Math.max(1,Math.min(50,d.n|0));pcBadge();if(PC.min)kToast("🔐 New note in your chat");tone(880,.06,"triangle",.03)}
+  else if(d.cpPlay&&typeof d.cpPlay==="object")pcPlay(d.cpPlay.c,d.cpPlay.m,d.cpPlay.h);
+  else if(d.cpReady)pcPost({cpLobby:screen==="room"&&!practice&&code?{code,mode:G?G.mode:""}:null});
+});
+setInterval(()=>{if(PC.fr)pcRefresh()},1000);
+
 render();
 requestAnimationFrame(frame);
 async function playLink(){
