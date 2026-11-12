@@ -402,6 +402,19 @@ input:focus{border-color:var(--butter)}
 .rr.lost .p{color:var(--coral)}
 .stage.cas{gap:12px;justify-content:flex-start;padding-top:14px}
 .kfloor{display:flex;flex-direction:column;gap:10px;width:100%}
+.khd{display:flex;flex-direction:column;gap:2px;padding:0 2px}
+.khd b{font-family:var(--display);font-weight:400;font-size:20px}
+.khd small{color:var(--dim)}
+.khd.row{flex-direction:row;align-items:center;gap:10px}
+.khd.row b{font-size:17px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kgame{appearance:none;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;cursor:pointer;font:inherit;min-width:0}
+.kgame:active{transform:scale(.97)}
+.kgame .ki{font-size:32px;line-height:1}
+.kgame b{font-family:var(--display);font-weight:400;font-size:16px}
+.kgame b i{font-style:normal;font-family:var(--body);font-weight:800;font-size:11px;background:var(--mint);color:var(--cardink);border-radius:999px;padding:1px 7px;vertical-align:middle}
+.kgame small{color:var(--dim);font-size:13px;line-height:1.3}
+.kgame em{font-style:normal;font-size:12px;font-weight:700;color:var(--butter)}
 .ktabs{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .ktabs::-webkit-scrollbar{display:none}
 .ktab{appearance:none;border:2px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:6px 10px;min-width:62px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;flex:none}
@@ -3005,14 +3018,14 @@ function bjVal(cs){let t=0,a=0;for(const c of cs){const r=c.r;t+=r===1?11:r>=10?
 function slotRoll(){const r=[ri(6),ri(6),ri(6)];const c=r[0]===r[1]&&r[1]===r[2]?(r[0]<3?2:r[0]):r[0]===r[1]||r[1]===r[2]||r[0]===r[2]?1:0;return{r,c}}
 function botBet(bal){if(bal<=0)return 0;if(Math.random()<.04)return bal;return Math.min(bal,Math.max(10,Math.round(bal*(.05+Math.random()*.15)/10)*10))}
 
-let K=null,kTab="crash",kMounted="",kUn=null,kTm=0,kSent=0,kBetV=100,kAuto=0,kFeedK=0,kShow=null,kShowTm=0;
+let K=null,kTab="home",kMounted="",kUn=null,kTm=0,kSent=0,kBetV=100,kAuto=0,kFeedK=0,kShow=null,kShowTm=0;
 const kSeenDu=new Set();
 function kNow(){return Date.now()-(isHost?0:offset)}
 function kInit(){
   if(!G||(K&&K.g===G.gid))return;
   let s=null;try{s=JSON.parse(ss.get("cp.k")||"null")}catch(e){}
-  K=s&&s.g===G.gid?s:{g:G.gid,sn:0,bl:0,cr:null,dl:null,da:[],dx:[],big:null,at:"crash"};
-  kSeenDu.clear();kShow=null;
+  K=s&&s.g===G.gid?s:{g:G.gid,sn:0,bl:0,cr:null,dl:null,da:[],dx:[],big:null,at:"home"};
+  kSeenDu.clear();kShow=null;kTab="home";kMounted="";
 }
 function kSave(){if(K)ss.set("cp.k",JSON.stringify(K))}
 function kSend(){
@@ -3058,7 +3071,7 @@ function kStart(ros){
   G.gid=rid();G.roster=ros;G.list=[];G.k=0;G.total={};G.wins={};G.rec={};G.be={};G.res=null;G.x2used={};G.streak={};G.cbig=null;G.bail=[];G.zero={};G.bs={};
   G.base={};G.sn={};G.bl={};G.at={};G.feed=[];G.fk=0;G.du=[];
   ros.forEach(p=>{G.base[p.id]=1000;G.sn[p.id]=0;G.total[p.id]=1000;G.wins[p.id]=0});
-  G.phase="floor";G.t0=now;G.dur=(G.cmin||8)*60000;G.kcl=0;G.kq=null;
+  G.phase="floor";G.t0=now;G.dur=(G.cmin||8)*60000;G.kcl=0;
   H=freshH();Object.assign(H,{crB:0,crBot:{},duSeen:{},duBot:{},kbot:{},bigN:{},botDuAt:now+20000+ri(20000),ksig:""});
   G.cr={n:1,st:"bet",t:now,b:0,sd:0,p:{},hist:[]};kCrBots();
   kFeed("🎰","The casino is open! Everyone starts with 1,000 chips.");
@@ -3079,11 +3092,9 @@ function kTick(now){
   }
   kTickBots(now);kTickCrash(now);kTickDuels(now);
   for(const p of G.roster)G.total[p.id]=kTot(p.id);
-  const qh=G.quota?G.roster.slice().sort((a,b)=>G.total[b.id]-G.total[a.id]).find(p=>G.total[p.id]>=G.quota):null;
-  if(G.kcl||qh||now>=G.t0+G.dur){
+  if(G.kcl||now>=G.t0+G.dur){
     if(G.cr.st!=="bet"&&G.cr.sd<G.cr.n)kSettle();
     for(const p of G.roster)G.total[p.id]=kTot(p.id);
-    if(qh){G.kq=qh.id;kFeed("🎯",`${qh.name} hit the ${fmtc(G.quota)} quota!`)}
     G.phase="over";G.t0=now;G.dur=0;return true;
   }
   const sig=JSON.stringify([G.total,G.cr,G.du,G.fk,G.at]);
@@ -3425,7 +3436,12 @@ const KT_IDS=Object.keys(KT);
 function kToast(t){const jt=$("#jt");if(!jt)return;jt.textContent=t;jt.hidden=false;jt.classList.remove("show");void jt.offsetWidth;jt.classList.add("show");clearTimeout(jnTimer);jnTimer=setTimeout(()=>{jt.hidden=true},2200)}
 function kStop(){if(kUn&&kUn.un)try{kUn.un()}catch(e){}kUn=null;kMounted=""}
 function kPartEl(el,html){if(el&&el.dataset.k!==html){el.dataset.k=html;el.innerHTML=html}}
-function kTabsHTML(){return KT_IDS.map(id=>`<button class="ktab${id===kTab?" on":""}" data-ktab="${id}"><span>${KT[id].i}</span>${id==="crash"?`<b data-kcm>LIVE</b>`:`<b>${esc(KT[id].n.split(" ")[0])}</b>`}</button>`).join("")}
+const KD={crash:"Ride the rocket with everyone. Cash out before it blows.",mines:"Flip tiles, dodge the bombs, cash out anytime.",plinko:"Drop a ball and see where it lands.",slots:"Spin three reels. Match them up.",roulette:"Bet on a color or a number.",blackjack:"Beat the dealer to 21.",hilo:"Guess if the next card is higher or lower.",dice:"Roll two dice. Over or under 7?",duel:"Challenge a friend and take their chips."};
+function kTabsHTML(){if(kTab==="home"||!KT[kTab])return `<div class="khd"><b>🎰 Pick a game</b><small>Play any game, as long as you want. Most money when time runs out wins.</small></div>`;return `<div class="khd row"><button class="btn small ghost" data-ktab="home">← All games</button><b>${KT[kTab].i} ${esc(KT[kTab].n)}</b></div>`}
+function kHomeHTML(){
+  const at={};for(const p of G.roster){const t=p.id===me.pid?null:(G.at||{})[p.id];if(t&&KT[t])(at[t]=at[t]||[]).push(p.name)}
+  return `<div class="kgrid">${KT_IDS.map(id=>`<button class="kgame" data-ktab="${id}"><span class="ki">${KT[id].i}</span><b>${esc(KT[id].n)}${id==="crash"?` <i data-kcm>LIVE</i>`:""}</b><small>${KD[id]||""}</small>${at[id]?`<em>👥 ${at[id].map(esc).join(", ")}</em>`:""}</button>`).join("")}</div>`;
+}
 function kIncomingHTML(){
   if(!G.du)return"";
   const d=G.du.find(x=>x.st==="ask"&&x.b===me.pid&&!(K.dx||[]).includes(x.id)&&!(K.da||[]).includes(x.id));
@@ -3447,7 +3463,7 @@ function kRevealHTML(d){
 function kRender(){
   kInit();
   layout("casino",["s-top","timer","s-chips","s-floor","s-emo"]);
-  part("s-top",topBar(`🎰 CASINO <b id="kclock">${kClockTxt()}</b>${G.quota?` <b class="kquota">🎯 ${fmtc(G.quota)}</b>`:""}`).replace('<span class="sp"></span>',`<span class="sp"></span>${isHost?`<button class="mute" data-act="kclose">🔒 Close</button>`:""}`));
+  part("s-top",topBar(`🎰 CASINO <b id="kclock">${kClockTxt()}</b>`).replace('<span class="sp"></span>',`<span class="sp"></span>${isHost?`<button class="mute" data-act="kclose">🔒 Close</button>`:""}`));
   part("s-chips",chipsHTML());
   const f=$("#s-floor");if(!f)return;
   if(!f.querySelector(".kfloor")){f.innerHTML=`<div class="kfloor"><div data-kin></div><div data-kov></div><div class="ktabs" data-ktabs></div><div class="ktable" data-kt></div><div class="kfeed" data-kf></div></div>`;kMounted=""}
@@ -3455,7 +3471,7 @@ function kRender(){
   kPartEl(f.querySelector("[data-kin]"),kIncomingHTML());
   kPartEl(f.querySelector("[data-kf]"),kFeedHTML());
   kFeedK=Math.max(kFeedK,G.fk||0);
-  if(kMounted!==kTab){kStop();kMounted=kTab;const el=f.querySelector("[data-kt]");el.innerHTML="";kUn=KT[kTab].mount(el)||{}}
+  if(kMounted!==kTab){kStop();kMounted=kTab;const el=f.querySelector("[data-kt]");el.innerHTML="";if(KT[kTab])kUn=KT[kTab].mount(el)||{};else{kPartEl(el,kHomeHTML());kUn={onG(){kPartEl(el,kHomeHTML())}}}}
   else if(kUn&&kUn.onG)kUn.onG();
   const now=kNow();
   for(const d of G.du||[]){
@@ -3479,7 +3495,7 @@ document.addEventListener("pointerdown",e=>{
   const t=e.target.closest("[data-ktab],[data-kb],[data-kacc],[data-kno],[data-kovx],[data-kloan]");if(!t||t.disabled)return;
   e.preventDefault();
   if(t.dataset.ktab){
-    const id=t.dataset.ktab;if(id===kTab||!KT[id])return;
+    const id=t.dataset.ktab;if(id===kTab||(!KT[id]&&id!=="home"))return;
     if(kUn&&kUn.busy&&kUn.busy()){kToast("Finish this round first!");return}
     kTab=id;kSend();tone(600,.04,"triangle",.03);render();return;
   }
@@ -3700,7 +3716,6 @@ function setOpt(k,v){
   if(k==="per"&&["1","2","3"].includes(v))G.per=+v;
   if(k==="srounds"&&["3","5","7"].includes(v))G.srounds=+v;
   if(k==="cmin"&&["5","8","12"].includes(v))G.cmin=+v;
-  if(k==="cq"&&["0","5000","10000","25000"].includes(v))G.quota=+v;
   if(k==="sgame"&&GAMES[v])G.single=v;
   if(k==="rounds"&&["6","8","10"].includes(v))G.rounds=+v;
   if(k==="botlvl"&&["easy","normal","hard"].includes(v))G.botlvl=v;
@@ -4726,7 +4741,7 @@ function menuHTML(){
   <section class="rules">
     <h2>ALSO: 🎰 CASINO (FAKE CHIPS)</h2>
     <div class="glist">${KT_IDS.map(id=>`<div class="gi"><span>${KT[id].i}</span>${esc(KT[id].n)}</div>`).join("")}</div>
-    <p class="note">Just for fun, no real money. An open casino: walk between tables, ride the live Crash rocket together, and challenge friends to duels. Play any table you want until the clock runs out. Hit the 🎯 quota first, or have the most chips at the end, to win. The host picks 🎰 Casino in Lobby options.</p>
+    <p class="note">Just for fun, no real money. An open casino: walk between tables, ride the live Crash rocket together, and challenge friends to duels. Pick any game from the menu and switch whenever you want. Most money when the clock runs out wins. The host picks 🎰 Casino in Lobby options.</p>
     <p class="note ar" dir="rtl" lang="ar">للتسلية بس، مفيش فلوس حقيقية. كل واحد بيبدأ بـ ١٠٠٠ فيشة. اللي معاه أكتر فيش في الآخر يكسب.</p>
   </section>`;
 }
@@ -4783,7 +4798,7 @@ function optsHTML(host,lens){
   const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
   <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["brawl","⚔️ Brawl"],["hide","🙈 Hide & Seek"],["party","🎉 Party"],["single","🎯 One game"],["casino","🎰 Casino"]],G.mode)}<button class="seg tryall${G.mode==="party"&&G.len==="all"&&(G.games||[]).length>=GAME_IDS.length?" on":""}" data-act="opt" data-k="tryall" ${dis}>⭐ Try every game</button></div></div>
-  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Time</span><div class="segs">${seg("cmin",[["5","5 min"],["8","8 min"],["12","12 min"]],String(G.cmin||8))}</div></div><div class="orow"><span class="ol">Goal</span><div class="segs">${seg("cq",[["0","💰 Most chips"],["5000","🎯 5K"],["10000","🎯 10K"],["25000","🎯 25K"]],String(G.quota||0))}</div></div><p class="note">🪙 Fake chips only, no real money. An open casino: everyone starts with 1,000 chips and walks between tables whenever they want. 🚀 Crash is live, so you all ride the same rocket. 💣 Mines, 🔻 Plinko, 🎰 Slots, 🎡 Roulette, 🃏 Blackjack, 🔼 Higher or Lower, 🎲 Dice. ⚔️ Challenge friends to duels and take their chips. No rounds: play any table you want, as much as you want, until the clock runs out. Friends can walk in anytime. With a 🎯 quota, the first to reach it wins right away. Otherwise most chips when time runs out wins.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كازينو مفتوح: كل واحد بيبدأ بـ ١٠٠٠ ويلعب اللي هو عايزه. الكراش لايف وكلكم راكبين نفس الصاروخ. ودي صحابك تحدي وخد فيشهم. مفيش جولات: العب أي ترابيزة على مزاجك لحد ما الوقت يخلص، وأي حد يقدر يدخل في أي وقت. لو فيه 🎯 هدف، أول واحد يوصله يكسب على طول. غير كده اللي معاه أكتر فيش لما الوقت يخلص يكسب.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
+  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Time</span><div class="segs">${seg("cmin",[["5","5 min"],["8","8 min"],["12","12 min"]],String(G.cmin||8))}</div></div><p class="note">🪙 Fake chips only, no real money. An open casino: everyone starts with 1,000 chips and walks between tables whenever they want. 🚀 Crash is live, so you all ride the same rocket. 💣 Mines, 🔻 Plinko, 🎰 Slots, 🎡 Roulette, 🃏 Blackjack, 🔼 Higher or Lower, 🎲 Dice. ⚔️ Challenge friends to duels and take their chips. No rounds: pick any game from the menu, play as much as you want, and switch whenever. Friends can walk in anytime. Most money when time runs out wins.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كازينو مفتوح: كل واحد بيبدأ بـ ١٠٠٠ ويلعب اللي هو عايزه. الكراش لايف وكلكم راكبين نفس الصاروخ. ودي صحابك تحدي وخد فيشهم. مفيش جولات: اختار أي لعبة من القايمة والعب براحتك وغيّر وقت ما تحب. وأي حد يقدر يدخل في أي وقت. اللي معاه أكتر فلوس لما الوقت يخلص يكسب.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
   ${["party","single","casino"].includes(G.mode)?`<div class="orow"><span class="ol">Teams</span><button class="ffbtn${G.teams?" on":""}" data-act="opt" data-k="teams" ${dis}><span class="sw2"><i></i></span>${G.teams?"🔴 vs 🔵 On":"Off"}</button></div>`:""}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
@@ -4812,7 +4827,7 @@ function lobbyParts(){
 function overParts(){
   const ranked=G.roster.slice().sort((a,b)=>(G.total[b.id]||0)-(G.total[a.id]||0)||(G.wins[b.id]||0)-(G.wins[a.id]||0));
   const top=G.total[ranked[0].id]||0,winners=ranked.filter(p=>(G.total[p.id]||0)===top),cas=G.mode==="casino";
-  const head=cas&&G.kq?`🎯 ${esc(nameOf(G.kq))} hit the ${fmtc(G.quota)} quota and wins!`:winners.length>1?"Tie game!":cas?`${esc(winners[0].name)} wins with 💰${fmtc(top)}!`:`${esc(winners[0].name)} wins!`;
+  const head=winners.length>1?"Tie game!":cas?`${esc(winners[0].name)} wins with 💰${fmtc(top)}!`:`${esc(winners[0].name)} wins!`;
   const pl=["1st","2nd","3rd","4th","5th","6th"];
   let place=0,prev=null;
   const rows=ranked.map((p,i)=>{const s=G.total[p.id]||0;if(s!==prev){place=i;prev=s}return `<div class="rk${place===0?" first":""}" data-pid="${esc(p.id)}"><span class="p">${pl[place]}</span><span class="n">${esc(p.name)}${p.id===me.pid?" (you)":""}</span><span class="s">${cas?"💰"+fmtc(s):s}</span></div>`}).join("");
