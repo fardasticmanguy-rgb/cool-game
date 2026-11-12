@@ -113,6 +113,8 @@ Tap the **🔐 CHAT** tab on the right edge to open [Chat](https://fardasticmang
 - **Jump in mid-game**: open a lobby that is already playing (or tap Jump in) and you join at the next round. Late joiners start with the lowest score (1,000 chips in Casino). If the room is full, a bot gives up its seat. Locked lobbies stay locked
 - **Online now** shows who else has the game open, and which lobby they're in
 - **Invite** anyone online from your lobby, or tap **Share link** to paste it in the chat
+- **Chats inside the game**: tap 💬 (or the chat panel on a computer) and switch to **Chats** to use your [Chat](https://fardasticmanguy-rgb.github.io/chat/) rooms without leaving Crashpot. In a lobby, tap Play in a chat room and **Invite them to my lobby**. Tapping Join on a game invite drops you straight in
+- **Refresh-proof lobbies**: refresh as the host and your lobby, players and game come back. Guests who refresh rejoin on their own
 - Fonts ship with the game, so they work on school Wi-Fi, Firefox and tablets
 
 ## Play links
