@@ -4716,7 +4716,7 @@ document.addEventListener("input",e=>{
 
 setInterval(()=>{if(isHost)hostTick();else watchdog()},100);
 const PC_URL=location.hostname.endsWith("github.io")||location.hostname==="localhost"?new URL("../chat/",location.href).href:"https://fardasticmanguy-rgb.github.io/chat/";
-const PC={fr:null,min:false,n:0};
+const PC={fr:null,min:false,n:0,lob:""};
 function pcPost(o){if(PC.fr&&PC.fr.contentWindow)try{PC.fr.contentWindow.postMessage(o,new URL(PC_URL).origin)}catch(e){}}
 function pcBadge(){const b=$("#pcn"),btn=$("#pcb");if(b){b.hidden=!PC.n;b.textContent=PC.n>9?"9+":PC.n}if(btn)btn.classList.toggle("on",!!PC.fr)}
 function pcHead(){
@@ -4727,13 +4727,13 @@ function pcOpen(){
   const p=$("#pcp");if(!p)return;
   if(!PC.fr){
     p.innerHTML=pcHead()+`<iframe title="Private chat" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>`;
-    PC.fr=p.querySelector("iframe");PC.fr.src=PC_URL+"?embed=1&name="+encodeURIComponent(me.name||"");
+    PC.fr=p.querySelector("iframe");PC.fr.src=PC_URL+"?embed=1&private=1&name="+encodeURIComponent(me.name||"");
   }else pcRefresh();
   p.hidden=false;PC.min=false;PC.n=0;pcBadge();pcPost({cmd:"vis",on:true});
 }
-function pcRefresh(){const p=$("#pcp"),h=p&&p.querySelector(".pch");if(h){const n=pcHead();if(h.outerHTML!==n)h.outerHTML=n}}
+function pcRefresh(){const l=screen==="room"&&!practice&&code?{code,mode:G?G.mode:""}:null,k=JSON.stringify(l);if(k!==PC.lob){PC.lob=k;pcPost({cpLobby:l})}const p=$("#pcp"),h=p&&p.querySelector(".pch");if(h){const n=pcHead();if(h.outerHTML!==n)h.outerHTML=n}}
 function pcMin(){const p=$("#pcp");if(p)p.hidden=true;PC.min=true;pcPost({cmd:"vis",on:false});pcBadge()}
-function pcLock(){const p=$("#pcp");if(p){p.innerHTML="";p.hidden=true}PC.fr=null;PC.min=false;PC.n=0;pcBadge()}
+function pcLock(){const p=$("#pcp");if(p){p.innerHTML="";p.hidden=true}PC.fr=null;PC.lob="";PC.min=false;PC.n=0;pcBadge()}
 async function pcPlay(c,m,h){
   c=String(c||"").toLowerCase();if(!/^[a-z0-9]{2,12}$/.test(c))return;
   if(!wide())pcMin();
@@ -4754,9 +4754,10 @@ window.addEventListener("message",e=>{
   if(!PC.fr||e.source!==PC.fr.contentWindow)return;
   const d=e.data&&typeof e.data==="object"?e.data:{};
   if(d.chat==="new"&&(PC.min||document.hidden)){PC.n+=Math.max(1,Math.min(50,d.n|0));pcBadge();if(PC.min)kToast("🔐 New note in your chat");tone(880,.06,"triangle",.03)}
-  else if(d.chat==="play")pcPlay(d.c,d.m,d.h);
+  else if(d.cpPlay&&typeof d.cpPlay==="object")pcPlay(d.cpPlay.c,d.cpPlay.m,d.cpPlay.h);
+  else if(d.cpReady)pcPost({cpLobby:screen==="room"&&!practice&&code?{code,mode:G?G.mode:""}:null});
 });
-setInterval(()=>{if(PC.fr&&!PC.min)pcRefresh()},1000);
+setInterval(()=>{if(PC.fr)pcRefresh()},1000);
 
 render();
 requestAnimationFrame(frame);
