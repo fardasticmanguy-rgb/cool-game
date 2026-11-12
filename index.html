@@ -329,6 +329,9 @@ input:focus{border-color:var(--butter)}
 .rc .xb.sh{right:auto;left:4px;background:var(--mint);color:var(--cardink)}
 .ground{font-family:var(--display);font-size:14px;letter-spacing:.06em;opacity:.8}
 .twist{background:var(--cardink);color:var(--butter);border-radius:12px;padding:8px 12px;font-weight:700;font-size:15px;display:flex;flex-direction:column;gap:2px;max-width:34ch}
+.twist.fin{background:linear-gradient(90deg,#ff8c42,#ff5b8a);color:#fff;animation:finpulse 1.2s ease-in-out infinite alternate}
+@keyframes finpulse{to{transform:scale(1.04)}}
+.twist.fin span{color:#fff}
 .twist span{font-family:"Cairo",var(--body);font-weight:800;color:var(--ink)}
 .x2.big2{margin-top:6px;border-color:var(--cardink);color:var(--cardink);font-size:15px;padding:8px 16px}
 .x2.big2.on{background:var(--cardink);color:var(--butter)}
@@ -2090,13 +2093,13 @@ const triw=u=>{const f=u-Math.floor(u/2)*2;return f<1?f:2-f};
 Object.assign(GAMES,{
   stack:{
     n:"Tower Stack",i:"🧱",play:20000,early:true,
-    en:()=>"A block slides back and forth. Tap to drop it on the tower. Only the part that lands on the block below stays. Miss completely and your tower is done. Tallest tower wins!",
-    ar:()=>"في بلوك بيتحرك يمين وشمال. دوس عشان تنزله على البرج. الحتة اللي مش فوق البلوك اللي تحته بتقع. لو فوته خالص البرج يخلص. أعلى برج يكسب!",
+    en:()=>"A block slides back and forth. Tap to drop it on the tower. Only the part that lands on the block below stays. Miss completely and you start a new tower. Your tallest one counts!",
+    ar:()=>"في بلوك بيتحرك يمين وشمال. دوس عشان تنزله على البرج. الحتة اللي مش فوق البلوك اللي تحته بتقع. لو فوته خالص تبدأ برج جديد. أعلى برج ليك هو اللي بيتحسب!",
     how:()=>TW("🧱 Tap to drop the block right on top","🧱 دوس عشان تنزل البلوك فوق اللي قبله بالظبط"),
     tw:[null,TW("Faster: blocks slide quicker.","أسرع: البلوكات بتتحرك أسرع."),TW("Thin: you start with a narrow block.","رفيع: بتبدأ ببلوك ضيق.")],
     setup:v=>({v,w:v===2?42:60,sp:v===1?.95:.65}),
     mount(el,ctx){
-      const d=ctx.data,bl=[{x:(100-d.w)/2,w:d.w}];let w=d.w,t0=performance.now(),over=false;
+      const d=ctx.data,bl=[{x:(100-d.w)/2,w:d.w}];let w=d.w,t0=performance.now(),over=false,best=0,dead=0,sent=false;
       el.innerHTML=`<div class="stage"><div class="score" data-s>0 floors</div><div class="stk" data-k></div><p class="prompt" data-p>Tap anywhere to drop!</p></div>`;
       const k=el.querySelector("[data-k]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]"),mv=document.createElement("div");
       mv.className="stb";k.appendChild(mv);
@@ -2108,16 +2111,18 @@ Object.assign(GAMES,{
         mv.style.bottom=(bl.length-off)*26+"px";mv.style.width=w+"%";mv.style.background=col(bl.length);
       };
       const xNow=()=>triw((performance.now()-t0)/1000*d.sp*(1+(bl.length-1)*.07))*(100-w);
-      const end=msg=>{if(over)return;over=true;mv.remove();p.textContent=msg;ctx.submit(bl.length-1)};
+      const lbl=()=>{s.textContent=(bl.length-1)+" floors"+(best?` · best ${best}`:"")};
+      const end=msg=>{if(over)return;over=true;dead=performance.now();best=Math.max(best,bl.length-1);mv.style.display="none";p.textContent=msg+" · tap to build again";lbl()};
       el.querySelector(".stage").addEventListener("pointerdown",e=>{
-        e.preventDefault();if(over||ctx.done()||Date.now()>ctx.end)return;
+        e.preventDefault();if(sent||ctx.done()||Date.now()>ctx.end)return;
+        if(over){if(performance.now()-dead<650)return;over=false;bl.length=1;w=d.w;t0=performance.now();mv.style.display="";p.textContent="Go again!";lbl();draw();return}
         const x=xNow(),pr=bl[bl.length-1];let l=Math.max(x,pr.x),r=Math.min(x+w,pr.x+pr.w);
         if(Math.abs(x-pr.x)<2){l=pr.x;r=pr.x+pr.w;p.textContent="PERFECT! ✨";tone(1046,.08,"square",.05)}else{p.textContent="Nice!";tone(480+bl.length*30,.06,"triangle",.04)}
         if(r-l<=.5){tone(110,.35,"sawtooth",.06);end(`Missed! Your tower: ${bl.length-1} floors`);return}
-        bl.push({x:l,w:r-l});w=r-l;t0=performance.now()-ri(900);s.textContent=(bl.length-1)+" floors";draw();
+        bl.push({x:l,w:r-l});w=r-l;t0=performance.now()-ri(900);lbl();draw();
       });
       draw();
-      return timedLoop(el,ctx,now=>{if(over)return;mv.style.left=xNow()+"%";if(now>=ctx.end)end(`Time! Your tower: ${bl.length-1} floors`)});
+      return timedLoop(el,ctx,now=>{if(sent)return;if(now>=ctx.end){sent=true;if(!over)best=Math.max(best,bl.length-1);over=true;mv.style.display="none";p.textContent=`Time! Best tower: ${best} floors`;ctx.submit(best);return}if(over)return;mv.style.left=xNow()+"%"});
     },
     bot:d=>Math.max(1,4+ri(12)-d.v*2),
     fmt:v=>v+" floors",
@@ -2126,23 +2131,25 @@ Object.assign(GAMES,{
   },
   flap:{
     n:"Flap Dash",i:"🐤",play:22000,early:true,
-    en:()=>"Tap to flap and fly through the gaps between the pipes. Touch a pipe or the floor and you're out. Most pipes wins!",
-    ar:()=>"دوس عشان العصفورة تطير وتعدي من الفتحات بين المواسير. لو لمست ماسورة أو الأرض تخسر. أكتر مواسير يكسب!",
+    en:()=>"Tap to flap and fly through the gaps between the pipes. Touch a pipe or the floor and you start over. Your best run counts!",
+    ar:()=>"دوس عشان العصفورة تطير وتعدي من الفتحات بين المواسير. لو لمست ماسورة أو الأرض تبدأ من الأول. أحسن محاولة ليك هي اللي بتتحسب!",
     how:()=>TW("🐤 Tap to flap through the gaps","🐤 دوس عشان تطير من الفتحات"),
     tw:[null,TW("Faster: the pipes come quicker.","أسرع: المواسير بتيجي أسرع."),TW("Tight: smaller gaps.","ضيق: الفتحات أصغر.")],
     setup:v=>({v,seed:ri(1e9),sp:v===1?30:24,gap:v===2?35:42}),
     mount(el,ctx){
       const d=ctx.data,r=rng(d.seed),pipes=Array.from({length:40},(_,i)=>({x:75+i*44,c:d.gap/2+8+r()*(100-d.gap-16)}));
-      let y=45,vy=0,last=0,started=false,over=false,score=0,dist=0;
+      let y=45,vy=0,last=0,started=false,over=false,score=0,dist=0,best=0,dead=0,sent=false;
       el.innerHTML=`<div class="stage"><div class="score" data-s>0 pipes</div><div class="fla" data-a>${pipes.map(()=>`<div class="pp top"></div><div class="pp bot"></div>`).join("")}<div class="bird" data-b>🐤</div><div class="flmsg" data-m>Tap to start flying!</div></div><p class="prompt" data-p></p></div>`;
       const a=el.querySelector("[data-a]"),bd=el.querySelector("[data-b]"),s=el.querySelector("[data-s]"),m=el.querySelector("[data-m]"),p=el.querySelector("[data-p]"),tops=[...a.querySelectorAll(".pp.top")],bots=[...a.querySelectorAll(".pp.bot")];
       pipes.forEach((q,i)=>{tops[i].style.height=(q.c-d.gap/2)+"%";bots[i].style.height=(100-q.c-d.gap/2)+"%";tops[i].style.display=bots[i].style.display="none"});
-      a.addEventListener("pointerdown",e=>{e.preventDefault();if(over||ctx.done()||Date.now()>ctx.end)return;if(!started){started=true;m.remove()}vy=-60;tone(700,.04,"square",.03)});
-      const end=msg=>{if(over)return;over=true;bd.textContent="💥";p.textContent=msg;ctx.submit(score)};
+      const lbl=()=>{s.textContent=score+" pipes"+(best?` · best ${best}`:"")};
+      a.addEventListener("pointerdown",e=>{e.preventDefault();if(sent||ctx.done()||Date.now()>ctx.end)return;if(over){if(performance.now()-dead<650)return;over=false;y=45;vy=0;dist=0;score=0;bd.textContent="🐤";p.textContent="Go again!";lbl()}if(!started){started=true;m.remove()}vy=-60;tone(700,.04,"square",.03)});
+      const end=msg=>{if(over)return;over=true;dead=performance.now();best=Math.max(best,score);bd.textContent="💥";p.textContent=msg+" · tap to fly again";lbl()};
       return timedLoop(el,ctx,now=>{
         const pn=performance.now(),dt=last?Math.min(.05,(pn-last)/1000):0;last=pn;
+        if(sent)return;
+        if(now>=ctx.end){sent=true;best=Math.max(best,score);p.textContent=`Time! Best run: ${best} pipes`;ctx.submit(best);return}
         if(over)return;
-        if(now>=ctx.end){end(`Time! ${score} pipes`);return}
         if(started){vy+=165*dt;y+=vy*dt;dist+=d.sp*dt;if(y<2){y=2;vy=0}}
         bd.style.top=y+"%";bd.style.transform=`translate(-50%,-50%) rotate(${Math.max(-25,Math.min(70,vy))}deg)`;
         let sc=0,hit=false;
@@ -2153,7 +2160,7 @@ Object.assign(GAMES,{
           if(x+12<22)sc++;
           if(x<28&&x+12>22&&(y-3<q.c-d.gap/2||y+3>q.c+d.gap/2))hit=true;
         });
-        if(sc!==score){score=sc;s.textContent=score+" pipes";tone(880,.05,"triangle",.04)}
+        if(sc!==score){score=sc;lbl();tone(880,.05,"triangle",.04)}
         if(hit||y>97){tone(110,.35,"sawtooth",.06);end(`Crashed! ${score} pipes`)}
       });
     },
@@ -2164,23 +2171,25 @@ Object.assign(GAMES,{
   },
   dodge:{
     n:"Meteor Dodge",i:"☄️",play:20000,early:true,
-    en:()=>"Meteors are falling! Drag your finger left and right to move your ship and dodge them. One hit and you're out. Survive the longest!",
-    ar:()=>"في نيازك بتقع! حرك صباعك يمين وشمال عشان تحرك سفينتك وتتفادى. خبطة واحدة وتخسر. اللي يعيش أطول يكسب!",
+    en:()=>"Meteors are falling! Drag your finger left and right to move your ship and dodge them. Get hit and you start over. Your longest run counts!",
+    ar:()=>"في نيازك بتقع! حرك صباعك يمين وشمال عشان تحرك سفينتك وتتفادى. لو اتخبطت تبدأ من الأول. أطول محاولة ليك هي اللي بتتحسب!",
     how:()=>TW("☄️ Drag left and right to dodge","☄️ حرك صباعك يمين وشمال عشان تتفادى"),
     tw:[null,TW("Faster meteors.","نيازك أسرع."),TW("Meteor storm: way more of them.","عاصفة: نيازك كتير أوي.")],
     setup:v=>({v,seed:ri(1e9)}),
     mount(el,ctx){
-      const d=ctx.data,r=rng(d.seed),rocks=[];let px=50,tx=50,over=false;
+      const d=ctx.data,r=rng(d.seed),rocks=[];let px=50,tx=50,over=false,best=0,dead=0,sent=false;
       for(let at=700;at<21000;at+=(d.v===2?230:380)+r()*(d.v===2?220:320)*(1-at/30000))rocks.push({t:at,x:6+r()*88,s:7+r()*5,v:(d.v===1?50:38)+r()*16+at/1000*1.8});
       el.innerHTML=`<div class="stage"><div class="score" data-s>0.0s</div><div class="dga" data-a>${rocks.map(()=>`<i class="met"></i>`).join("")}<div class="ship" data-sh>🛸</div></div><p class="prompt" data-p>Drag to move!</p></div>`;
       const a=el.querySelector("[data-a]"),sh=el.querySelector("[data-sh]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]"),ms=[...a.querySelectorAll(".met")];
       const setX=e=>{const b=a.getBoundingClientRect();tx=Math.max(5,Math.min(95,(e.clientX-b.left)/b.width*100))};
-      a.addEventListener("pointerdown",e=>{e.preventDefault();setX(e);try{a.setPointerCapture(e.pointerId)}catch(err){}});
+      let T0=performance.now(),tt=0;
+      a.addEventListener("pointerdown",e=>{e.preventDefault();setX(e);try{a.setPointerCapture(e.pointerId)}catch(err){}if(over&&!sent&&performance.now()-dead>650&&Date.now()<ctx.end){over=false;T0=performance.now();sh.textContent="🛸";p.textContent="Go again!"}});
       a.addEventListener("pointermove",setX);
-      const T0=performance.now();
       return timedLoop(el,ctx,now=>{
+        if(sent)return;
+        if(now>=ctx.end){sent=true;if(!over)best=Math.max(best,tt);p.textContent=`Time! Best run: ${(best/1000).toFixed(1)}s`;ctx.submit(Math.round(best));return}
         if(over)return;
-        const tt=performance.now()-T0;
+        tt=performance.now()-T0;
         px+=(tx-px)*.3;sh.style.left=px+"%";
         let hit=false;
         rocks.forEach((k,i)=>{
@@ -2189,9 +2198,8 @@ Object.assign(GAMES,{
           m.style.display="";m.style.left=k.x+"%";m.style.top=yy+"%";m.style.width=m.style.height=k.s+"%";
           if(Math.abs(yy-88)<k.s*.42&&Math.abs(k.x-px)<k.s*.36+3)hit=true;
         });
-        s.textContent=(tt/1000).toFixed(1)+"s";
-        if(hit){over=true;sh.textContent="💥";tone(110,.4,"sawtooth",.06);p.textContent=`Hit! You lasted ${(tt/1000).toFixed(1)}s`;ctx.submit(Math.round(tt));return}
-        if(now>=ctx.end){over=true;p.textContent=`You survived! ${(tt/1000).toFixed(1)}s`;ctx.submit(Math.round(tt))}
+        s.textContent=(tt/1000).toFixed(1)+"s"+(best?` · best ${(best/1000).toFixed(1)}s`:"");
+        if(hit){over=true;dead=performance.now();best=Math.max(best,tt);sh.textContent="💥";tone(110,.4,"sawtooth",.06);p.textContent=`Hit! ${(tt/1000).toFixed(1)}s · tap to try again`;s.textContent=(tt/1000).toFixed(1)+"s · best "+(best/1000).toFixed(1)+"s"}
       });
     },
     bot:d=>Math.max(800,3000+ri(14000)-d.v*1500),
@@ -2201,39 +2209,43 @@ Object.assign(GAMES,{
   },
   snake:{
     n:"Snake Rush",i:"🐍",play:25000,early:true,
-    en:d=>`Steer the snake to eat the 🍎. Swipe, use the arrow keys, or tap where you want to turn. Every 5th one is a 🌟 worth 3. Hit a wall${d.v===2?", a rock":""} or yourself and you're out. Most points wins!`,
-    ar:d=>`وجّه التعبان عشان ياكل التفاح 🍎. اسحب، أو استخدم الأسهم، أو دوس مكان ما عايز تلف. كل خامس واحدة نجمة 🌟 بـ٣ نقط. لو خبطت في الحيطة${d.v===2?" أو صخرة":""} أو في نفسك تخسر. أكتر نقط يكسب!`,
+    en:d=>`Steer the snake to eat the 🍎. Swipe, use the arrow keys, or tap where you want to turn. Every 5th one is a 🌟 worth 3. Hit a wall${d.v===2?", a rock":""} or yourself and you start over. Your best run counts!`,
+    ar:d=>`وجّه التعبان عشان ياكل التفاح 🍎. اسحب، أو استخدم الأسهم، أو دوس مكان ما عايز تلف. كل خامس واحدة نجمة 🌟 بـ٣ نقط. لو خبطت في الحيطة${d.v===2?" أو صخرة":""} أو في نفسك تبدأ من الأول. أحسن محاولة ليك هي اللي بتتحسب!`,
     how:()=>TW("🐍 Swipe to steer, eat 🍎, don't crash","🐍 اسحب عشان توجه، كل 🍎 ومتخبطش"),
     tw:[null,TW("Turbo: the snake is way faster.","تيربو: التعبان أسرع بكتير."),TW("Rocks: there are rocks on the board.","صخور: في صخور على اللوحة.")],
     setup:v=>({v,seed:ri(1e9)}),
     mount(el,ctx){
       const d=ctx.data,r=rng(d.seed),N=15,A=cvArena(el,300,300),c=A.c,C=300/N;
-      let sn=[{x:5,y:7},{x:4,y:7},{x:3,y:7}],pv=sn.map(o=>({...o})),dir={x:1,y:0},q=[],acc=0,over=false,pts=0,eaten=0,step=d.v===1?.1:.15;
+      let sn,pv,dir,q,acc,over=false,pts,eaten=0,step,best=0,dead=0,sent=false;
+      const reset=()=>{sn=[{x:5,y:7},{x:4,y:7},{x:3,y:7}];pv=sn.map(o=>({...o}));dir={x:1,y:0};q=[];acc=0;pts=0;step=d.v===1?.1:.15;over=false};reset();
+      const lbl=()=>A.score(pts+" points"+(best?` · best ${best}`:""));
+      const again=()=>{if(!over||sent||performance.now()-dead<700||Date.now()>ctx.end)return false;reset();lbl();A.say("Go again!");if(busy(ap.x,ap.y))place();return true};
       const rocks=new Set();
       if(d.v===2)while(rocks.size<9){const x=ri2(r,N),y=ri2(r,N);if(Math.abs(y-7)>1||x>9)rocks.add(x+","+y)}
-      const busy=(x,y)=>rocks.has(x+","+y)||sn.some(s=>s.x===x&&s.y===y);
-      let ap=null;const place=()=>{let x,y,n=0;do{x=ri2(r,N);y=ri2(r,N);n++}while(busy(x,y)&&n<500);ap={x,y,gold:(eaten+1)%5===0,t:performance.now()}};place();
+      function busy(x,y){return rocks.has(x+","+y)||sn.some(s=>s.x===x&&s.y===y)}
+      let ap=null;function place(){let x,y,n=0;do{x=ri2(r,N);y=ri2(r,N);n++}while(busy(x,y)&&n<500);ap={x,y,gold:(eaten+1)%5===0,t:performance.now()}}place();
       const turn=(x,y)=>{const l=q.length?q[q.length-1]:dir;if((x&&l.x)||(y&&l.y))return;if(q.length<3)q.push({x,y})};
       A.say("Swipe or use the arrows!");A.score("0 points");
       let sp=null;
-      A.cv.addEventListener("pointerdown",e=>{e.preventDefault();sp={...A.at(e),m:false};try{A.cv.setPointerCapture(e.pointerId)}catch(_){}});
+      A.cv.addEventListener("pointerdown",e=>{e.preventDefault();if(again())return;sp={...A.at(e),m:false};try{A.cv.setPointerCapture(e.pointerId)}catch(_){}});
       A.cv.addEventListener("pointermove",e=>{if(!sp)return;const p=A.at(e),dx=p.x-sp.x,dy=p.y-sp.y;if(Math.hypot(dx,dy)<16)return;if(Math.abs(dx)>Math.abs(dy))turn(Math.sign(dx),0);else turn(0,Math.sign(dy));sp={...p,m:true}});
       A.cv.addEventListener("pointerup",e=>{if(!sp)return;const m=sp.m;sp=null;if(m)return;const p=A.at(e),h=sn[0],hx=(h.x+.5)*C,hy=(h.y+.5)*C,l=q.length?q[q.length-1]:dir;if(l.x)turn(0,p.y<hy?-1:1);else turn(p.x<hx?-1:1,0)});
-      const kd=e=>{const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(k){e.preventDefault();turn(k[0],k[1])}};
+      const kd=e=>{const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]}[e.key];if(k){e.preventDefault();if(!again())turn(k[0],k[1])}};
       addEventListener("keydown",kd);
-      const end=msg=>{if(over)return;over=true;A.say(msg);ctx.submit(pts)};
+      const end=msg=>{if(over)return;over=true;dead=performance.now();best=Math.max(best,pts);lbl();A.say(msg+" · tap to go again")};
       const tick=()=>{
         if(q.length)dir=q.shift();
         const h={x:sn[0].x+dir.x,y:sn[0].y+dir.y};
         pv=sn.map(o=>({...o}));
         if(h.x<0||h.y<0||h.x>=N||h.y>=N||rocks.has(h.x+","+h.y)||sn.slice(0,-1).some(s=>s.x===h.x&&s.y===h.y)){A.burst((sn[0].x+.5)*C,(sn[0].y+.5)*C,"#4be3b0",28,180);A.shake(10);tone(110,.4,"sawtooth",.06);end(`Crashed! ${pts} points`);return}
         sn.unshift(h);
-        if(h.x===ap.x&&h.y===ap.y){const v=ap.gold?3:1;pts+=v;eaten++;A.score(pts+" points");A.burst((h.x+.5)*C,(h.y+.5)*C,ap.gold?"#ffd43b":"#ff5b4f",16);A.pop((h.x+.5)*C,(h.y+.2)*C,"+"+v,ap.gold?"#ffd43b":"#fff");tone(ap.gold?1046:660+eaten*12,.07,"triangle",.05);pv.push({...pv[pv.length-1]});step=Math.max(d.v===1?.065:.085,step*.97);place()}
+        if(h.x===ap.x&&h.y===ap.y){const v=ap.gold?3:1;pts+=v;eaten++;lbl();A.burst((h.x+.5)*C,(h.y+.5)*C,ap.gold?"#ffd43b":"#ff5b4f",16);A.pop((h.x+.5)*C,(h.y+.2)*C,"+"+v,ap.gold?"#ffd43b":"#fff");tone(ap.gold?1046:660+eaten*12,.07,"triangle",.05);pv.push({...pv[pv.length-1]});step=Math.max(d.v===1?.065:.085,step*.97);place()}
         else sn.pop();
       };
       const stop=timedLoop(el,ctx,now=>{
         const dt=A.dt();
-        if(!over){if(now>=ctx.end)end(`Time! ${pts} points`);else{acc+=dt;while(acc>=step&&!over){acc-=step;tick()}}}
+        if(!sent&&now>=ctx.end){sent=true;if(!over)best=Math.max(best,pts);over=true;A.say(`Time! Best run: ${best} points`);ctx.submit(best)}
+        if(!over){acc+=dt;while(acc>=step&&!over){acc-=step;tick()}}
         const f=over?1:Math.min(1,acc/step);
         A.begin();
         for(let y=0;y<N;y++)for(let x=0;x<N;x++){c.fillStyle=(x+y)%2?"#1c2f2a":"#20362f";c.fillRect(x*C,y*C,C,C)}
@@ -2259,8 +2271,8 @@ Object.assign(GAMES,{
   },
   bricks:{
     n:"Brick Blast",i:"🏓",play:30000,early:true,
-    en:d=>`Drag to move the paddle and bounce the ball into the bricks. Hit a ✨ brick to get 3 balls. Clear the wall for +5. You have 3 balls${d.v===2?" and a tiny paddle":""}. Most bricks wins!`,
-    ar:d=>`حرك المضرب وخلي الكورة تخبط في الطوب. لو خبطت طوبة ✨ يبقى معاك ٣ كور. لو خلصت الحيطة تاخد +٥. معاك ٣ كور${d.v===2?" ومضرب صغير":""}. أكتر طوب يكسب!`,
+    en:d=>`Drag to move the paddle and bounce the ball into the bricks. Hit a ✨ brick to get 3 balls. Clear the wall for +5. Lose all 3 balls and you get 3 more, but it costs 3 bricks${d.v===2?". Tiny paddle this time":""}. Most bricks wins!`,
+    ar:d=>`حرك المضرب وخلي الكورة تخبط في الطوب. لو خبطت طوبة ✨ يبقى معاك ٣ كور. لو خلصت الحيطة تاخد +٥. لو ضيعت الـ٣ كور تاخد ٣ تانيين بس يتخصم منك ٣ طوب${d.v===2?". والمضرب صغير":""}. أكتر طوب يكسب!`,
     how:()=>TW("🏓 Drag the paddle, smash the bricks","🏓 حرك المضرب واكسر الطوب"),
     tw:[null,TW("Fast ball.","كورة سريعة."),TW("Tiny paddle.","مضرب صغير.")],
     setup:v=>({v,seed:ri(1e9)}),
@@ -2300,7 +2312,7 @@ Object.assign(GAMES,{
             }
           }
           const before=balls.length;balls=balls.filter(b=>b.y<H+10);
-          if(!held&&before&&!balls.length){lives--;A.shake(8);tone(140,.3,"sawtooth",.05);if(lives<=0)end(`Out of balls! ${pts} bricks`);else{A.say(lives===1?"Last ball!":"2 balls left");serve()}}
+          if(!held&&before&&!balls.length){lives--;A.shake(8);tone(140,.3,"sawtooth",.05);if(lives<=0){const lost=Math.min(pts,3);pts-=lost;lives=3;A.score(pts+" bricks");A.pop(150,200,lost?`−${lost} · 3 new balls`:"3 new balls","#ff8c42");A.say("Out of balls! Here are 3 more");serve()}else{A.say(lives===1?"Last ball!":"2 balls left");serve()}}
           if(!over&&bricks.every(b=>b.hp<=0)){pts+=5;A.score(pts+" bricks");A.pop(150,150,"WALL CLEARED +5","#4be3b0");tone(1046,.15,"square",.05);build();serve()}
         }
         A.begin();
@@ -2320,8 +2332,8 @@ Object.assign(GAMES,{
   },
   runner:{
     n:"Rooftop Run",i:"🏃",play:25000,early:true,
-    en:()=>"Run across the rooftops! Tap to jump, tap again in the air to double jump, hold for a higher jump. Jump over the gaps and the 📦 boxes. Grab 🪙 for +10 m. Fall and you're out. Farthest wins!",
-    ar:()=>"اجري فوق السطوح! دوس عشان تنط، ودوس تاني وانت في الهوا عشان تنط مرة كمان، وخليك دايس عشان تنط أعلى. نط فوق الفتحات والصناديق 📦. خد 🪙 عشان +١٠ متر. لو وقعت تخسر. اللي يروح أبعد يكسب!",
+    en:()=>"Run across the rooftops! Tap to jump, tap again in the air to double jump, hold for a higher jump. Jump over the gaps and the 📦 boxes. Grab 🪙 for +10 m. Fall and you start over. Your best run counts!",
+    ar:()=>"اجري فوق السطوح! دوس عشان تنط، ودوس تاني وانت في الهوا عشان تنط مرة كمان، وخليك دايس عشان تنط أعلى. نط فوق الفتحات والصناديق 📦. خد 🪙 عشان +١٠ متر. لو وقعت تبدأ من الأول. أحسن محاولة ليك هي اللي بتتحسب!",
     how:()=>TW("🏃 Tap to jump, tap again to double jump","🏃 دوس عشان تنط، ودوس تاني عشان تنط مرتين"),
     tw:[null,TW("Faster: you start running quicker.","أسرع: بتبدأ تجري أسرع."),TW("Wide gaps: the jumps are longer.","فتحات واسعة: النطات أطول.")],
     setup:v=>({v,seed:ri(1e9)}),
@@ -2334,20 +2346,21 @@ Object.assign(GAMES,{
         if(w>170&&r()<.55)crates.push({x:x+60+r()*(w-110),y,s:r()<.3?32:22});
         if(r()<.6)for(let k=0;k<4;k++)coins.push({x:x-gap+k*22-10,y:Math.min(prev.y,y)-60-Math.sin(k/3*Math.PI)*28,got:false});
         gx=x+w}
-      let px=70,py=200,vy=0,ground=false,jumps=0,dist=0,bonus=0,speed=d.v===1?210:165,over=false,hold=false,started=false,step=0;
+      let px=70,py=200,vy=0,ground=false,jumps=0,dist=0,bonus=0,speed=d.v===1?210:165,over=false,hold=false,started=false,step=0,best=0,dead=0,sent=false;
       const score=()=>Math.floor(dist/10)+bonus;
+      const lbl=()=>A.score(score()+" m"+(best?` · best ${best}`:""));
       A.score("0 m");A.say("Tap to start running!");
-      const jump=()=>{if(over||ctx.done()||Date.now()>ctx.end)return;if(!started){started=true;A.say("Tap to jump!")}if(ground||jumps<2){vy=jumps===0&&ground?-470:-420;ground=false;jumps++;hold=true;tone(jumps>1?820:620,.05,"square",.035);A.burst(px,py,"#cfc6ff",6,60)}};
+      const jump=()=>{if(sent||ctx.done()||Date.now()>ctx.end)return;if(over){if(performance.now()-dead<700)return;over=false;py=200;vy=0;dist=0;bonus=0;speed=d.v===1?210:165;jumps=0;hold=false;for(const o of coins)o.got=false;A.say("Go again!");lbl();return}if(!started){started=true;A.say("Tap to jump!")}if(ground||jumps<2){vy=jumps===0&&ground?-470:-420;ground=false;jumps++;hold=true;tone(jumps>1?820:620,.05,"square",.035);A.burst(px,py,"#cfc6ff",6,60)}};
       A.cv.addEventListener("pointerdown",e=>{e.preventDefault();jump()});
       const up=()=>{hold=false};A.cv.addEventListener("pointerup",up);A.cv.addEventListener("pointercancel",up);
       const kd=e=>{if(e.key===" "||e.key==="ArrowUp"||e.key==="w"){e.preventDefault();if(e.type==="keydown"){if(!e.repeat)jump()}else hold=false}};
       addEventListener("keydown",kd);addEventListener("keyup",kd);
-      const end=msg=>{if(over)return;over=true;A.say(msg);ctx.submit(score())};
+      const end=msg=>{if(over)return;over=true;dead=performance.now();best=Math.max(best,score());lbl();A.say(msg+" · tap to run again")};
       const stop=timedLoop(el,ctx,now=>{
         const dt=A.dt();
+        if(!sent&&now>=ctx.end){sent=true;if(!over&&started)best=Math.max(best,score());over=true;A.say(`Time! Best run: ${best} m`);ctx.submit(best)}
         if(!over&&started){
-          if(now>=ctx.end){end(`Time! ${score()} m`)}
-          else{
+          {
             speed+=dt*7;dist+=speed*dt;step+=dt*speed/14;
             const oy=py;vy+=GR*(hold&&vy<0?.55:1)*dt;py+=vy*dt;ground=false;
             const wx=dist+px;
@@ -2355,7 +2368,7 @@ Object.assign(GAMES,{
             for(const k of crates){const kx=k.x-dist;if(px+8>kx&&px-8<kx+k.s&&py>k.y-k.s+2){if(oy<=k.y-k.s+4&&vy>=0){py=k.y-k.s;vy=0;ground=true;jumps=0}else{A.burst(px,py-14,"#c08a4a",18,160);A.shake(10);tone(120,.35,"sawtooth",.06);end(`Bonk! ${score()} m`)}}}
             for(const o of coins){if(o.got)continue;const ox=o.x-dist;if(Math.abs(ox-px)<16&&Math.abs(o.y-(py-16))<20){o.got=true;bonus+=10;A.pop(ox,o.y-10,"+10","#ffd43b");A.burst(ox,o.y,"#ffd43b",8,80);tone(1180,.06,"triangle",.04)}}
             if(py>H+30){A.shake(6);tone(110,.4,"sawtooth",.06);end(`Fell! ${score()} m`)}
-            A.score(score()+" m");
+            if(!over)lbl();
           }
         }
         A.begin();
@@ -3541,14 +3554,22 @@ function makeList(){
     return out;
   }
   const per=G.per||2,pool=(G.games&&G.games.length?G.games:GAME_IDS).filter(id=>GAMES[id]&&!GAMES[id].casino);
-  let bag=[],last=null;
-  const count=G.len==="all"?pool.length:(G.len||6);
+  let bag=[],last=null,first=true;
+  const count=G.len==="all"?pool.length:(G.len||6),seen=playedAt();
   for(let g=0;g<count;g++){
-    if(!bag.length){bag=shuffle(pool);if(pool.length>1&&bag[0]===last)bag.push(bag.shift())}
+    if(!bag.length){bag=shuffle(pool);if(first){const k={};bag.forEach(id=>k[id]=(seen[id]||0)+Math.random()*6*36e5);bag.sort((a,b)=>k[a]-k[b]);first=false}if(pool.length>1&&bag[0]===last)bag.push(bag.shift())}
     const id=bag.shift();last=id;
     for(let i=0;i<per;i++)out.push({id,v:per===1?ri(3):Math.min(2,i+(per===2?ri(2):0)),n:i,of:per});
   }
   return out;
+}
+function playedAt(){try{return JSON.parse(ls.get("cp.played")||"{}")||{}}catch(e){return{}}}
+function notePlayed(id){const m=playedAt();m[id]=Date.now();ls.set("cp.played",JSON.stringify(m))}
+function isFinale(){
+  if(!G||!G.list||!G.list.length||G.mode==="casino")return false;
+  if(G.mode==="single")return G.list.length>=3&&G.k===G.list.length-1;
+  if(G.mode!=="party"||G.list.length<4)return false;
+  const e=G.list[G.k];return !!e&&G.list.slice(G.k).every(x=>x.id===e.id)&&G.list.some(x=>x.id!==e.id);
 }
 function startGame(){
   const ros=practice?G.roster:lobbyRoster();
@@ -3567,6 +3588,7 @@ function beginIntro(){
   G.bail=[];
   if(G.mode==="casino")for(const p of G.roster)if((G.total[p.id]||0)<25){G.total[p.id]=100;G.bail.push(p.id)}
   G.live=null;
+  if(G.mode==="party"||G.mode==="single")notePlayed(e.id);
   G.phase="intro";G.data=cur().setup(e.v);G.t0=Date.now();G.dur=e.n===0?sp:Math.max(3000,Math.round(sp*.6));G.done=[];G.res=null;H=freshH();mySub=null;
 }
 function beginPlay(){
@@ -3584,6 +3606,7 @@ function endPlay(Vo){
   const a=g.award(V,G.data);
   const pts={},x2=[];
   G.roster.forEach(p=>{pts[p.id]=a.pts[p.id]||0;if(partyX2(p)){x2.push(p.id);G.x2used[p.id]=true;pts[p.id]*=2}});
+  const fin=isFinale();if(fin)G.roster.forEach(p=>{pts[p.id]*=2});
   G.roster.forEach(p=>{G.total[p.id]=(G.total[p.id]||0)+pts[p.id]});
   const best=Math.max(0,...Object.values(pts));
   G.roster.forEach(p=>{const top=best>0&&pts[p.id]===best;if(top)G.wins[p.id]=(G.wins[p.id]||0)+1;G.streak[p.id]=top?(G.streak[p.id]||0)+1:0});
@@ -3592,7 +3615,7 @@ function endPlay(Vo){
   if(G.mode==="casino")for(const p of G.roster)if(pts[p.id]>0&&(!G.cbig||pts[p.id]>G.cbig.v))G.cbig={id:p.id,v:pts[p.id]};
   G.zero=G.zero||{};G.bs=G.bs||{};
   G.roster.forEach(p=>{if(pts[p.id]<=0)G.zero[p.id]=(G.zero[p.id]||0)+1;G.bs[p.id]=Math.max(G.bs[p.id]||0,G.streak[p.id]||0)});
-  G.res={pts,lab,head:a.head,x2};
+  G.res={pts,lab,head:a.head,x2,fin};
   G.phase="result";G.t0=Date.now();G.dur=(SPEED[G.speed]||SPEED.normal).result;
   botEmotes(pts,best);
 }
@@ -4743,13 +4766,13 @@ function introHTML(){
   const g=cur(),e=entry(),tw=g.tw&&g.tw[G.data.v];
   const can=inRoster()&&!(G.x2used||{})[me.pid],on=!!(pX2&&pX2.g===G.gid&&pX2.k===G.k);
   const hw=g.how&&g.how(G.data),cas=G.mode==="casino",bail=(G.bail||[]).map(id=>esc(nameOf(id)));
-  return `<div class="intro"><div class="gicon">${g.i}</div><div class="gname">${esc(g.n)}</div>${e.of>1?`<div class="ground">Round ${e.n+1} of ${e.of}</div>`:""}${hw?`<div class="how">${esc(hw.en)}<span dir="rtl" lang="ar">${esc(hw.ar)}</span></div>`:""}${cas?`<div class="fakechips">🪙 Fake chips only. No real money. <span dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية.</span></div>`:""}${bail.length?`<div class="fakechips">🆘 ${bail.join(", ")} went broke, so the house gave them 100 chips.</div>`:""}${tw?`<div class="twist"><b>Twist:</b> ${esc(tw.en)}<span dir="rtl" lang="ar">${esc(tw.ar)}</span></div>`:""}<p class="gen">${esc(g.en(G.data))}</p><p class="gar" dir="rtl" lang="ar">${esc(g.ar(G.data))}</p><div class="cdwrap"><span class="cdl">Starting in</span><span class="cd" id="cd"></span></div>${inRoster()&&!cas?`<button class="x2 big2${on?" on":""}" data-act="px2" ${can?"":"disabled"}>${can?(on?"×2 ON for this round":"Use ×2 on this round"):"×2 used"}</button>`:""}</div>`;
+  return `<div class="intro"><div class="gicon">${g.i}</div><div class="gname">${esc(g.n)}</div>${e.of>1?`<div class="ground">Round ${e.n+1} of ${e.of}</div>`:""}${hw?`<div class="how">${esc(hw.en)}<span dir="rtl" lang="ar">${esc(hw.ar)}</span></div>`:""}${cas?`<div class="fakechips">🪙 Fake chips only. No real money. <span dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية.</span></div>`:""}${bail.length?`<div class="fakechips">🆘 ${bail.join(", ")} went broke, so the house gave them 100 chips.</div>`:""}${isFinale()?`<div class="twist fin"><b>⭐ Final ${G.mode==="single"?"round":"game"}: double points!</b> Anyone can still catch up.<span dir="rtl" lang="ar">⭐ آخر ${G.mode==="single"?"راوند":"لعبة"}: النقط بالضعف! أي حد لسه يقدر يلحق.</span></div>`:""}${tw?`<div class="twist"><b>Twist:</b> ${esc(tw.en)}<span dir="rtl" lang="ar">${esc(tw.ar)}</span></div>`:""}<p class="gen">${esc(g.en(G.data))}</p><p class="gar" dir="rtl" lang="ar">${esc(g.ar(G.data))}</p><div class="cdwrap"><span class="cdl">Starting in</span><span class="cd" id="cd"></span></div>${inRoster()&&!cas?`<button class="x2 big2${on?" on":""}" data-act="px2" ${can?"":"disabled"}>${can?(on?"×2 ON for this round":"Use ×2 on this round"):"×2 used"}</button>`:""}</div>`;
 }
 function resultHTML(){
   const g=cur(),r=G.res;
   const sg=v=>v>0?"+"+fmtc(v):v<0?"−"+fmtc(-v):"0";
   const rows=G.roster.slice().sort((a,b)=>(r.pts[b.id]||0)-(r.pts[a.id]||0)).map((p,i)=>{const v=r.pts[p.id]||0;return `<div class="rr${v>0?" got":v<0?" lost":""}" style="--i:${i}" data-pid="${esc(p.id)}"><span class="dot" style="background:${COLS[p.col%COLS.length]}"></span><span class="n">${esc(p.name)}</span><span class="l">${esc(r.lab[p.id]||"—")}</span><span class="p">${sg(v)}</span></div>`}).join("");
-  return `<div class="table anim"><div class="potlbl">${g.i} ${esc(g.n)}${entry().of>1?` · Round ${entry().n+1}/${entry().of}`:""}</div><div class="headline">${r.head}</div><div class="rres">${rows}</div>${r.x2&&r.x2.length?`<p class="sub">${r.x2.map(id=>esc(nameOf(id))).join(", ")} used ×2.</p>`:""}<p class="note">${G.k+1>=G.list.length?"Final scores next…":entry().n+1<entry().of?"Next round coming up…":"Next game coming up…"}</p></div>`;
+  return `<div class="table anim"><div class="potlbl">${g.i} ${esc(g.n)}${entry().of>1?` · Round ${entry().n+1}/${entry().of}`:""}</div><div class="headline">${r.head}</div><div class="rres">${rows}</div>${r.x2&&r.x2.length?`<p class="sub">${r.x2.map(id=>esc(nameOf(id))).join(", ")} used ×2.</p>`:""}${r.fin?`<p class="sub">⭐ Final ${G.mode==="single"?"round":"game"}: points were doubled.</p>`:""}<p class="note">${G.k+1>=G.list.length?"Final scores next…":entry().n+1<entry().of?"Next round coming up…":"Next game coming up…"}</p></div>`;
 }
 function optsHTML(host,lens){
   const dis=host?"":"disabled";

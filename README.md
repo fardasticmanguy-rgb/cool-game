@@ -108,6 +108,9 @@ Tap the faint little **🔐** in the bottom-right corner to open [Chat](https://
 
 ## Extras
 
+- **No sitting out**: in Snake Rush, Rooftop Run, Flap Dash, Meteor Dodge and Tower Stack, crashing doesn't knock you out. Tap to go again and your best run counts. In Brick Blast you get 3 new balls for a small penalty
+- **⭐ Final game, double points**: in Party (4+ games) the last game is worth double, and in One game the last round is. Anyone can still catch up
+- **Fresh games every time**: Party picks the games you haven't played lately first
 - Emoji reactions to trash-talk without talking. With Family friendly off, 💬 adds the Arabic phrases
 - **Family friendly** mode is on by default
 - Bots can fill empty seats
