@@ -39,7 +39,7 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🧮 Math Rush | Answer as many as you can |
 | 🔍 Odd One Out | Find the different emoji |
 | ⏱️ Stop at 5 | Stop the hidden clock at 5.00 |
-| 🎨 Color Trap | Tap the color, not the word |
+| 🎨 Color Trap | Tap the color, not the word. Mistakes don't cost points |
 | 🤝 Grab or Share | Share with everyone, or grab it all |
 | ⚖️ Pick a Side | The smaller side wins. With 2 players it turns into a Chaser vs Dodger duel |
 | 🚀 Rocket Cash | Cash out before the rocket explodes |
@@ -93,17 +93,17 @@ The casino is an open floor. Everyone starts with 1,000 chips and walks between 
 
 ## 🔐 Private chat
 
-Tap the **🔐 CHAT** tab on the right edge to open [Chat](https://fardasticmanguy-rgb.github.io/chat/) in a side panel, right inside the game.
+Tap the faint little **🔐** in the bottom-right corner to open [Chat](https://fardasticmanguy-rgb.github.io/chat/) in a side panel, right inside the game.
 
 - Type a room code to join, just like on the Chat site. Messages are encrypted with the code
-- **— (minimize)** hides the panel but keeps you connected. New notes show a badge and a notification
+- **— (minimize)** hides the panel but keeps you connected. New notes show a small red dot on the 🔐
 - **🔒 (close)** locks it. Nothing is saved on the device: no room codes, no history. Next time you open it you type the code again
 - **🎮 Invite** sends your current lobby to the chat room, so friends can tap Join
 - Tap **Join** on a game invite in the chat and you go straight into that lobby
 
 ## Extras
 
-- Emoji reactions to trash-talk without talking
+- Emoji reactions to trash-talk without talking. With Family friendly off, 💬 adds the Arabic phrases
 - **Family friendly** mode is on by default
 - Bots can fill empty seats
 - **Teams**: turn Teams on in Lobby options (Party, One game, Casino), tap 🔴 Join Red or 🔵 Join Blue. The team with the best average wins
@@ -113,7 +113,6 @@ Tap the **🔐 CHAT** tab on the right edge to open [Chat](https://fardasticmang
 - **Jump in mid-game**: open a lobby that is already playing (or tap Jump in) and you join at the next round. Late joiners start with the lowest score (1,000 chips in Casino). If the room is full, a bot gives up its seat. Locked lobbies stay locked
 - **Online now** shows who else has the game open, and which lobby they're in
 - **Invite** anyone online from your lobby, or tap **Share link** to paste it in the chat
-- **Chats inside the game**: tap 💬 (or the chat panel on a computer) and switch to **Chats** to use your [Chat](https://fardasticmanguy-rgb.github.io/chat/) rooms without leaving Crashpot. In a lobby, tap Play in a chat room and **Invite them to my lobby**. Tapping Join on a game invite drops you straight in
 - **Refresh-proof lobbies**: refresh as the host and your lobby, players and game come back. Guests who refresh rejoin on their own
 - Fonts ship with the game, so they work on school Wi-Fi, Firefox and tablets
 
