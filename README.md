@@ -62,6 +62,11 @@ A party of tiny games for 2 to 6 players. No talking needed.
 | 🍽️ Wobbly Waiter | Keep the tray of drinks from tipping over |
 | 🤔 Most Likely To… | Vote who's most likely to trip over nothing |
 | 🤷 Would You Rather | Pick a silly side, then the two sides fight it out by mashing ARGUE |
+| 🐍 Snake Rush | Swipe to steer, eat 🍎, don't hit the walls or yourself |
+| 🏓 Brick Blast | Drag the paddle, smash bricks, ✨ bricks split into 3 balls |
+| 🏃 Rooftop Run | Tap to jump (and double jump) across rooftops, grab 🪙 |
+| 🍉 Fruit Swipe | Swipe to slice flying fruit, combos for bonus, avoid 💣 |
+| 🏀 Hoop Shot | Flick the ball into the hoop. Swish is 3, 3 in a row and you're 🔥 |
 | ⚡ Micro Madness | 13 tiny 3 second games in a row: swat the fly, catch the toast, don't press it… 3 lives, faster every time |
 
 Tug of War, Red Light Green Light, Shaky Bridge and Hot Potato are live: you see everyone move in real time.
