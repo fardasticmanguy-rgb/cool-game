@@ -209,11 +209,11 @@ input:focus{border-color:var(--butter)}
 .invt .btn.primary{background:var(--cardink);color:var(--butter);box-shadow:none}
 .jt{position:fixed;left:12px;right:12px;bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 84px));margin:0 auto;max-width:320px;z-index:79;text-align:center;background:var(--mint);color:var(--cardink);font-weight:800;border-radius:999px;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.4);pointer-events:none}
 .jt.show{animation:fade .25s}
-.pcb{position:fixed;right:0;top:42%;z-index:96;border:0;border-radius:14px 0 0 14px;background:var(--mint);color:var(--cardink);padding:10px 6px 10px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;box-shadow:-4px 4px 16px rgba(0,0,0,.35)}
-.pcb span{font-size:20px;line-height:1}
-.pcb small{font-family:var(--display);font-size:9px;letter-spacing:.5px}
-.pcb b{position:absolute;top:-6px;left:-6px;background:var(--coral);color:var(--cardink);border-radius:999px;font-size:11px;padding:2px 6px;font-family:var(--body);animation:pulse .8s infinite}
-.pcb.on{background:var(--butter)}
+.pcb{position:fixed;right:0;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:96;border:0;border-radius:10px 0 0 10px;background:var(--panel);color:var(--ink);padding:5px 3px 5px 5px;display:flex;align-items:center;cursor:pointer;opacity:.22;transition:opacity .2s}
+.pcb:hover,.pcb:focus-visible{opacity:1}
+.pcb span{font-size:13px;line-height:1}
+.pcb b{position:absolute;top:-2px;left:-2px;width:8px;height:8px;border-radius:50%;background:var(--coral);font-size:0;padding:0}
+.pcb.on{opacity:.5}
 .pcp{position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);z-index:97;background:#171a21;display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.5);animation:pcin .22s ease-out}
 @keyframes pcin{from{transform:translateX(100%)}to{transform:none}}
 .pcp[hidden]{display:none}
@@ -227,7 +227,6 @@ input:focus{border-color:var(--butter)}
 .codebox b{font-family:var(--display);font-weight:400;font-size:28px;letter-spacing:.25em;color:var(--mint)}
 #jcode{font-family:var(--display);letter-spacing:.3em;text-transform:uppercase;text-align:center;max-width:140px}
 .clock{max-width:560px;margin:0 auto;padding:10px max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:6px}
-body.haschat .clock{max-width:924px}
 .ckmain{appearance:none;border:0;width:100%;text-align:left;background:var(--panel);color:var(--ink);border-radius:12px;padding:8px 12px;display:flex;flex-direction:column;gap:1px;cursor:pointer;font:inherit}
 .clock.math .ckmain{background:var(--mint);color:var(--cardink)}
 .ckm{font-weight:800;font-size:14px}
@@ -282,7 +281,7 @@ body.haschat .clock{max-width:924px}
 .score{font-family:var(--display);font-size:18px;color:var(--mint)}
 .q{font-family:var(--display);font-size:clamp(40px,13vw,64px);line-height:1;color:var(--ink)}
 .shake{animation:shake .35s}
-.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%}
 .choice{appearance:none;border:0;border-radius:14px;background:var(--butter);color:var(--cardink);font-family:var(--display);font-size:28px;padding:18px 0;cursor:pointer;box-shadow:0 5px 0 var(--butter-d)}
 .choice.wrong{background:var(--raise);color:var(--coral);box-shadow:none}
 .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:100%;max-width:340px}
@@ -292,7 +291,9 @@ body.haschat .clock{max-width:924px}
 .watch.shown{color:var(--butter)}
 .word{font-family:var(--display);font-size:clamp(44px,14vw,72px);line-height:1;min-height:1.1em}
 .swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%}
-.sw{appearance:none;border:3px solid var(--ink);border-radius:16px;aspect-ratio:1;cursor:pointer}
+.sw{appearance:none;border:3px solid var(--ink);border-radius:16px;aspect-ratio:1;cursor:pointer;transition:transform .1s}
+.sw:active{transform:scale(.92)}
+.sw.hint{box-shadow:0 0 0 4px var(--bg),0 0 0 8px var(--mint);transform:scale(1.06)}
 .duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
 .pick{appearance:none;border:0;border-radius:18px;padding:22px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--display);font-size:20px;color:var(--cardink);cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.35)}
 .pick span{font-size:52px;line-height:1}
@@ -322,33 +323,6 @@ body.haschat .clock{max-width:924px}
 .ffbtn.on .sw2{background:var(--mint)}
 .ffbtn.on .sw2 i{transform:translateX(18px)}
 #shell{min-height:100%}
-@media (min-width:960px){
-  body.haschat #shell{display:grid;grid-template-columns:minmax(0,560px) 340px;justify-content:center;gap:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-  body.haschat #app{margin:0;padding-left:0;padding-right:0;max-width:none}
-  .chat{position:sticky;top:16px;height:calc(100vh - 32px);margin-block:16px}
-}
-.chat{background:var(--panel);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-.chat.sheet{position:fixed;left:0;right:0;bottom:0;height:min(75vh,560px);z-index:60;border-radius:18px 18px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.5);padding-bottom:env(safe-area-inset-bottom,0px);margin:0}
-.chead{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
-.chead b{font-family:var(--display);font-weight:400;letter-spacing:.06em;color:var(--butter)}
-.clog{flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:6px;min-height:0}
-.cm{font-size:14px;line-height:1.35;overflow-wrap:anywhere}
-.cm b{font-weight:800}
-.cm.ce span{font-size:18px}
-.cm.mine{opacity:.9}
-#cphr .phrs{padding:8px 10px;margin:0;border-top:1px solid var(--line);max-height:120px;overflow-y:auto}
-.cin{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
-.cin input{padding:9px 12px;font-size:15px}
-.chatfab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:55;width:54px;height:54px;border-radius:50%;border:0;background:var(--butter);font-size:24px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4)}
-.chatfab b{position:absolute;top:-4px;right:-4px;background:var(--coral);color:var(--cardink);border-radius:999px;font-size:11px;padding:2px 6px;font-family:var(--body)}
-@media (min-width:960px){.chatbtn{display:none}}
-.chat.cfloat{left:auto;right:16px;bottom:16px;width:400px;height:min(80vh,640px);border-radius:18px}
-.ctabs{display:flex;gap:6px}
-.chead .sp{flex:1}
-.ctab{border:0;background:transparent;color:var(--ink);opacity:.6;font:inherit;font-weight:700;padding:6px 10px;border-radius:999px;cursor:pointer}
-.ctab.on{background:var(--line);opacity:1;color:var(--butter)}
-.cpane{flex:1;display:flex;flex-direction:column;min-height:0}
-.cframe{flex:1;width:100%;border:0;background:#171a21;min-height:0}
 .pows{display:flex;gap:6px}
 .pows .x2{padding:4px 10px;font-size:13px}
 .peek{margin-top:6px;font-size:14px;color:var(--mint);font-weight:700}
@@ -359,7 +333,7 @@ body.haschat .clock{max-width:924px}
 .x2.big2{margin-top:6px;border-color:var(--cardink);color:var(--cardink);font-size:15px;padding:8px 16px}
 .x2.big2.on{background:var(--cardink);color:var(--butter)}
 .x2.big2[disabled]{border-color:rgba(0,0,0,.25);color:rgba(0,0,0,.4)}
-.mtag{font-family:var(--display);font-size:14px;padding:4px 12px;border-radius:999px;background:var(--raise);color:var(--ink)}
+.mtag{font-family:var(--display);font-size:18px;padding:6px 16px;border-radius:999px;background:var(--raise);color:var(--ink)}
 .mtag.word{background:var(--ink);color:var(--cardink)}
 .duo.trio{grid-template-columns:repeat(3,1fr)}
 .duo.trio .pick{font-size:15px;padding:16px 4px}
@@ -720,8 +694,8 @@ body.haschat .clock{max-width:924px}
 .mmbig.mmq{font-family:var(--display);font-size:46px;color:var(--ink);margin-bottom:60px}
 .mmredbtn{appearance:none;border:0;width:150px;height:150px;border-radius:50%;background:#ff3b30;color:#fff;font-family:var(--display);font-size:26px;box-shadow:0 10px 0 #a3201a;cursor:pointer}
 .mmsheep{position:absolute;font-size:34px;transform:translate(-50%,0)}
-.mmopts{position:absolute;bottom:12px;left:0;right:0;display:flex;gap:10px;justify-content:center}
-.mmopt{appearance:none;border:0;min-width:70px;padding:12px 16px;border-radius:12px;background:var(--butter);color:var(--cardink);font-family:var(--display);font-size:24px;cursor:pointer;box-shadow:0 4px 0 var(--butter-d)}
+.mmopts{position:absolute;bottom:12px;left:8px;right:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mmopt{appearance:none;border:0;min-width:0;padding:12px 4px;border-radius:12px;background:var(--butter);color:var(--cardink);font-family:var(--display);font-size:24px;cursor:pointer;box-shadow:0 4px 0 var(--butter-d)}
 .mmmeter{position:absolute;bottom:14px;left:15%;right:15%;height:12px;border-radius:999px;background:var(--raise);overflow:hidden}
 .mmmeter i{display:block;height:100%;width:0;background:var(--mint)}
 .mmrope{position:absolute;left:50%;top:0;height:55%;width:6px;transform:translateX(-50%);background:repeating-linear-gradient(#c98b4a 0 8px,#a86c34 8px 16px)}
@@ -788,16 +762,32 @@ body.haschat .clock{max-width:924px}
 .spot.flash{animation:fade .5s both;background:var(--raise);opacity:1}
 .spot.found{background:var(--coral);opacity:1}
 .spot.found .sn{color:var(--cardink)}
+body.playing #clock{display:none}
+body.playing #app{height:100vh;height:100dvh;min-height:0;gap:8px;padding-block:8px 10px}
+body.playing #s-stage{min-height:0}
+body.playing .stage{min-height:0;padding:12px 10px;gap:10px}
+body.playing .players{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+body.playing .players::-webkit-scrollbar{display:none}
+body.playing .chip{flex:1 0 72px;padding:4px 8px}
+body.playing .chip .sc{font-size:15px}
+body.playing .howbar{padding:5px 10px;margin-bottom:6px;font-size:13px}
+body.playing .howbar span{font-size:11px}
+body.playing .pad{min-height:0}
+body.playing .stage{justify-content:safe center}
+body.playing .mashbtn{width:min(240px,70vw,34vh)}
+body.playing .stk{flex:1 1 auto;height:auto;min-height:140px;max-height:262px}
+body.playing .fla,body.playing .dga{flex:1 1 auto;height:auto;min-height:170px;max-height:340px}
+body.playing .mmarea{flex:1 1 auto;height:auto;min-height:170px;max-height:250px}
+@media (max-height:760px){body.playing #s-emo{display:none}}
 </style>
 </head>
 <body>
 <div id="clock" class="clock"></div>
 <div id="invt" class="invt" hidden></div>
 <div id="jt" class="jt" hidden></div>
-<button id="pcb" class="pcb" aria-label="Private chat"><span>🔐</span><small>CHAT</small><b id="pcn" hidden></b></button>
+<button id="pcb" class="pcb" aria-label="Notes"><span>🔐</span><b id="pcn" hidden></b></button>
 <aside id="pcp" class="pcp" hidden></aside>
-<div id="shell"><div id="app"></div><aside id="chat" class="chat" hidden></aside></div>
-<button id="chatfab" class="chatfab" data-act="chat" hidden aria-label="Open chat">💬<b id="unread" hidden></b></button>
+<div id="shell"><div id="app"></div></div>
 
 <script>
 const BUS_TOP="crashpot6";
@@ -1591,7 +1581,7 @@ function mathQs(seed,v){
     else if(op==="−"){a=6+Math.floor(r()*(v===2?50:20));b=1+Math.floor(r()*(a-1));ans=a-b}
     else{a=2+Math.floor(r()*(v===2?11:8));b=2+Math.floor(r()*(v===2?11:8));ans=a*b}
     const ch=new Set([ans]);
-    while(ch.size<3){const d=(1+Math.floor(r()*4))*(r()<.5?-1:1)*(op==="×"&&r()<.4?a:1)*(v===2&&r()<.3?10:1);if(ans+d>=0)ch.add(ans+d)}
+    while(ch.size<4){const d=(1+Math.floor(r()*4))*(r()<.5?-1:1)*(op==="×"&&r()<.4?a:1)*(v===2&&r()<.3?10:1);if(ans+d>=0)ch.add(ans+d)}
     out.push({q:`${a} ${op} ${b}`,ans,ch:shuffle([...ch],r)});
   }
   return out;
@@ -1603,7 +1593,7 @@ function findBoards(seed,size){
 }
 function colorSeq(seed,v){
   const r=rng(seed),out=[];
-  for(let i=0;i<60;i++){const w=Math.floor(r()*4);let k=Math.floor(r()*3);if(k>=w)k++;out.push({w,k,m:v===1?"word":v===2?(Math.floor(i/4)%2?"word":"ink"):"ink"})}
+  for(let i=0;i<80;i++){const w=Math.floor(r()*4);let k=w;if(r()>.35){k=Math.floor(r()*3);if(k>=w)k++}out.push({w,k,m:v===1?"word":v===2?(Math.floor(i/6)%2?"word":"ink"):"ink"})}
   return out;
 }
 function rpTable(){const n=G&&G.roster?G.roster.length:4;return n<=2?[5,0]:n===3?[5,2,0]:RP}
@@ -1718,7 +1708,7 @@ const GAMES={
         const b=e.target.closest(".choice");if(!b)return;e.preventDefault();
         const now=Date.now();if(ctx.done()||now>ctx.end||now<lock)return;
         if(+b.dataset.v===qs[i%qs.length].ans){n++;i++;se.textContent=n+" right";show()}
-        else{lock=now+600;b.classList.add("wrong");qe.classList.add("shake");setTimeout(()=>qe.classList.remove("shake"),400)}
+        else{lock=now+900;b.classList.add("wrong");qe.classList.add("shake");setTimeout(()=>qe.classList.remove("shake"),400)}
       });
       show();
       return timedLoop(el,ctx,now=>{if(now>=ctx.end&&!ctx.done()){ch.innerHTML="";qe.textContent="Time!";ctx.submit(n)}});
@@ -1776,27 +1766,27 @@ const GAMES={
     rec:{lower:true,valid:v=>v>=0,label:"Human clock",fmt:v=>(v/1000).toFixed(2)+"s off"}
   },
   color:{
-    n:"Color Trap",i:"🎨",play:10000,
-    en:d=>d.v===1?"Reverse! Tap the color the word SAYS, not its ink.":d.v===2?"Mixed! The tag on top switches every 4 words. INK = tap the ink color. WORD = tap what it says.":"Tap the COLOR of the word, not what the word says!",
-    ar:d=>d.v===1?"بالعكس! دوس على اللون اللي الكلمة بتقوله، مش لون الحبر.":d.v===2?"مخلوط! العلامة اللي فوق بتتغير كل ٤ كلمات. INK يعني لون الحبر، WORD يعني الكلمة.":"دوس على لون الكلمة، مش على الكلمة نفسها!",
-    tw:[null,TW("Reverse: tap what the word says.","بالعكس: دوس على الكلمة."),TW("Mixed: the rule flips every 4 words.","مخلوط: القاعدة بتتغير كل ٤ كلمات.")],
+    n:"Color Trap",i:"🎨",play:15000,
+    en:d=>d.v===1?"Reverse! Tap the color the word SAYS, not its ink.":d.v===2?"Mixed! The tag on top switches every 6 words. INK = tap the ink color. WORD = tap what it says. Mistakes don't cost points.":"Tap the COLOR of the word, not what the word says! Mistakes don't cost points.",
+    ar:d=>d.v===1?"بالعكس! دوس على اللون اللي الكلمة بتقوله، مش لون الحبر.":d.v===2?"مخلوط! العلامة اللي فوق بتتغير كل ٦ كلمات. INK يعني لون الحبر، WORD يعني الكلمة. الغلط مش بيخصم.":"دوس على لون الكلمة، مش على الكلمة نفسها! الغلط مش بيخصم.",
+    tw:[null,TW("Reverse: tap what the word says.","بالعكس: دوس على الكلمة."),TW("Mixed: the rule flips every 6 words.","مخلوط: القاعدة بتتغير كل ٦ كلمات.")],
     setup:v=>({v,seed:ri(1e9)}),
     mount(el,ctx){
-      const seq=colorSeq(ctx.data.seed,ctx.data.v);let i=0,n=0;
+      const seq=colorSeq(ctx.data.seed,ctx.data.v);let i=0,n=0,lock=0;
       el.innerHTML=`<div class="stage"><div class="score" data-s>0 pts</div><div class="mtag" data-m></div><div class="word" data-w></div><div class="swatches">${INK.map((c,k)=>`<button class="sw" data-k="${k}" style="background:${c[1]}" aria-label="${c[0]}"></button>`).join("")}</div></div>`;
       const w=el.querySelector("[data-w]"),se=el.querySelector("[data-s]"),mt=el.querySelector("[data-m]");
       let lastM="";const show=()=>{const s=seq[i%seq.length];w.textContent=INK[s.w][0];w.style.color=INK[s.k][1];mt.textContent=s.m==="ink"?"TAP THE INK":"TAP THE WORD";mt.className="mtag "+s.m+(lastM&&lastM!==s.m?" flip":"");lastM=s.m};
       el.querySelector(".swatches").addEventListener("pointerdown",e=>{
         const b=e.target.closest(".sw");if(!b)return;e.preventDefault();
-        if(ctx.done()||Date.now()>ctx.end)return;
+        const now=Date.now();if(ctx.done()||now>ctx.end||now<lock)return;
         const s=seq[i%seq.length],want=s.m==="ink"?s.k:s.w;
-        if(+b.dataset.k===want)n++;else{n--;w.classList.add("shake");setTimeout(()=>w.classList.remove("shake"),300)}
+        if(+b.dataset.k===want){n++;tone(880,.05,"triangle",.04)}else{lock=now+350;w.classList.add("shake");setTimeout(()=>w.classList.remove("shake"),300);const ok=el.querySelector(`.sw[data-k="${want}"]`);if(ok){ok.classList.add("hint");setTimeout(()=>ok.classList.remove("hint"),350)}}
         i++;se.textContent=n+" pts";show();
       });
       show();
       return timedLoop(el,ctx,now=>{if(now>=ctx.end&&!ctx.done()){w.textContent="Time!";w.style.color="";ctx.submit(n)}});
     },
-    bot:d=>Math.max(0,2+ri(9)-d.v*2),
+    bot:d=>Math.max(0,5+ri(12)-d.v*2),
     fmt:v=>v+" pts",
     award(V){const r=rankAward(V,false,v=>v>0);return{...r,head:r.order[0]?`${nm(r.order[0])} wasn't fooled: ${V[r.order[0]]} pts`:"Everyone got trapped!"}}
   },
@@ -2038,12 +2028,12 @@ const GAMES={
   },
   whack:{
     n:"Whack-a-Mole",i:"🔨",play:12000,
-    en:d=>`Smack the moles 🐹 for +1. Don't touch the bombs 💣, they cost 3!${d.v===2?" Gold 🌟 = +3.":""}`,
-    ar:d=>`اضرب الهامستر 🐹 تاخد +١. متلمسش القنابل 💣، بتخصم ٣!${d.v===2?" الدهب 🌟 = +٣.":""}`,
+    en:d=>`Smack the moles 🐹 for +1. Don't touch the bombs 💣, they cost 1!${d.v===2?" Gold 🌟 = +3.":""}`,
+    ar:d=>`اضرب الهامستر 🐹 تاخد +١. متلمسش القنابل 💣، بتخصم ١!${d.v===2?" الدهب 🌟 = +٣.":""}`,
     tw:[null,TW("Bomb party: way more bombs.","قنابل كتير أوي."),TW("Gold rush: faster, with gold 🌟 worth +3.","أسرع، وفي دهب 🌟 بـ +٣.")],
     setup:v=>{const pops=[],busy=Array(9).fill(0);let t=400;while(t<11400){const free=[...Array(9).keys()].filter(h=>busy[h]<t);if(free.length){const h=free[ri(free.length)],dur=v===2?650+ri(300):850+ri(400),q=Math.random(),ty=q<(v===1?.35:.2)?1:v===2&&q>.86?2:0;pops.push([h,t,dur,ty]);busy[h]=t+dur+150}t+=v===2?220+ri(220):300+ri(330)}return{v,pops}},
     mount(el,ctx){
-      const d=ctx.data,hit=new Set(),E=["🐹","💣","🌟"],W=[1,-3,3],shown=Array(9).fill("");let n=0;
+      const d=ctx.data,hit=new Set(),E=["🐹","💣","🌟"],W=[1,-1,3],shown=Array(9).fill("");let n=0;
       el.innerHTML=`<div class="stage"><div class="score" data-s>0 pts</div><div class="whholes" data-g>${Array.from({length:9},(_,k)=>`<button class="whhole" data-k="${k}"><span></span></button>`).join("")}</div></div>`;
       const g=el.querySelector("[data-g]"),s=el.querySelector("[data-s]"),hs=[...g.querySelectorAll(".whhole")];
       const at=(h,t)=>{for(let i=0;i<d.pops.length;i++){const q=d.pops[i];if(q[0]===h&&t>=q[1]&&t<q[1]+q[2])return i}return -1};
@@ -2111,7 +2101,7 @@ Object.assign(GAMES,{
     ar:()=>"دوس عشان العصفورة تطير وتعدي من الفتحات بين المواسير. لو لمست ماسورة أو الأرض تخسر. أكتر مواسير يكسب!",
     how:()=>TW("🐤 Tap to flap through the gaps","🐤 دوس عشان تطير من الفتحات"),
     tw:[null,TW("Faster: the pipes come quicker.","أسرع: المواسير بتيجي أسرع."),TW("Tight: smaller gaps.","ضيق: الفتحات أصغر.")],
-    setup:v=>({v,seed:ri(1e9),sp:v===1?33:25,gap:v===2?29:36}),
+    setup:v=>({v,seed:ri(1e9),sp:v===1?30:24,gap:v===2?35:42}),
     mount(el,ctx){
       const d=ctx.data,r=rng(d.seed),pipes=Array.from({length:40},(_,i)=>({x:75+i*44,c:d.gap/2+8+r()*(100-d.gap-16)}));
       let y=45,vy=0,last=0,started=false,over=false,score=0,dist=0;
@@ -2152,7 +2142,7 @@ Object.assign(GAMES,{
     setup:v=>({v,seed:ri(1e9)}),
     mount(el,ctx){
       const d=ctx.data,r=rng(d.seed),rocks=[];let px=50,tx=50,over=false;
-      for(let at=700;at<21000;at+=(d.v===2?230:380)+r()*(d.v===2?220:320)*(1-at/30000))rocks.push({t:at,x:6+r()*88,s:7+r()*5,v:(d.v===1?58:42)+r()*20+at/1000*2.2});
+      for(let at=700;at<21000;at+=(d.v===2?230:380)+r()*(d.v===2?220:320)*(1-at/30000))rocks.push({t:at,x:6+r()*88,s:7+r()*5,v:(d.v===1?50:38)+r()*16+at/1000*1.8});
       el.innerHTML=`<div class="stage"><div class="score" data-s>0.0s</div><div class="dga" data-a>${rocks.map(()=>`<i class="met"></i>`).join("")}<div class="ship" data-sh>🛸</div></div><p class="prompt" data-p>Drag to move!</p></div>`;
       const a=el.querySelector("[data-a]"),sh=el.querySelector("[data-sh]"),s=el.querySelector("[data-s]"),p=el.querySelector("[data-p]"),ms=[...a.querySelectorAll(".met")];
       const setX=e=>{const b=a.getBoundingClientRect();tx=Math.max(5,Math.min(95,(e.clientX-b.left)/b.width*100))};
@@ -2168,7 +2158,7 @@ Object.assign(GAMES,{
           const yy=-8+k.v*(tt-k.t)/1000,m=ms[i];
           if(tt<k.t||yy>110){if(m.style.display!=="none")m.style.display="none";return}
           m.style.display="";m.style.left=k.x+"%";m.style.top=yy+"%";m.style.width=m.style.height=k.s+"%";
-          if(Math.abs(yy-88)<k.s*.42&&Math.abs(k.x-px)<k.s*.42+3.5)hit=true;
+          if(Math.abs(yy-88)<k.s*.42&&Math.abs(k.x-px)<k.s*.36+3)hit=true;
         });
         s.textContent=(tt/1000).toFixed(1)+"s";
         if(hit){over=true;sh.textContent="💥";tone(110,.4,"sawtooth",.06);p.textContent=`Hit! You lasted ${(tt/1000).toFixed(1)}s`;ctx.submit(Math.round(tt));return}
@@ -2654,7 +2644,7 @@ const MICRO=[
   {t:"SCRUB THE TEETH!",a:"اغسل السنان!",f:"🦷 Your teeth packed their bags and left.",mk(A,win){let down=false,lx=0,ly=0,dist=0;A.classList.add("mmhold");A.innerHTML=`<div class="mmbig">🦷</div><div class="mmmeter"><i></i></div>`;const m=A.querySelector(".mmmeter i");const dn=e=>{e.preventDefault();down=true;lx=e.clientX;ly=e.clientY};const mv=e=>{if(!down)return;dist+=Math.hypot(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;m.style.width=Math.min(100,dist/7)+"%";if(dist>=700){down=false;A.querySelector(".mmbig").textContent="✨";win()}};const up=()=>{down=false};A.addEventListener("pointerdown",dn);A.addEventListener("pointermove",mv);A.addEventListener("pointerup",up);return()=>{A.removeEventListener("pointerdown",dn);A.removeEventListener("pointermove",mv);A.removeEventListener("pointerup",up);A.classList.remove("mmhold")}}},
   {t:"CATCH THE TOAST!",a:"امسك التوست!",f:"🍞 Toast on the floor. Five second rule!",mk(A,win,lose,dur){const b=mmEl(A,"mmi","🍞");b.style.left=(10+ri(70))+"%";b.style.top="-10%";const t0=performance.now();let raf=0;const fall=()=>{const f=(performance.now()-t0)/(dur*.85);b.style.top=(-10+f*95)+"%";if(f>=1){lose();return}raf=requestAnimationFrame(fall)};raf=requestAnimationFrame(fall);b.addEventListener("pointerdown",e=>{e.preventDefault();cancelAnimationFrame(raf);b.textContent="😋";win()});return()=>cancelAnimationFrame(raf)}},
   {t:"CUT THE ROPE!",a:"اقطع الحبل!",f:"✂️ You missed the rope. The piano fell on the cake.",mk(A,win){A.classList.add("mmhold");A.innerHTML=`<div class="mmrope"></div><div class="mmbig mmpiano">🎹</div>`;let down=false,side=0;const sd=e=>{const r=A.getBoundingClientRect();return e.clientX<r.left+r.width/2?-1:1};const dn=e=>{e.preventDefault();down=true;side=sd(e)};const mv=e=>{if(!down)return;const s=sd(e);if(s!==side){down=false;A.querySelector(".mmrope").classList.add("cut");win()}};const up=()=>{down=false};A.addEventListener("pointerdown",dn);A.addEventListener("pointermove",mv);A.addEventListener("pointerup",up);return()=>{A.removeEventListener("pointerdown",dn);A.removeEventListener("pointermove",mv);A.removeEventListener("pointerup",up);A.classList.remove("mmhold")}}},
-  {t:"QUICK MATH!",a:"حساب بسرعة!",f:"🧮 Your math teacher felt that.",mk(A,win,lose){const a=2+ri(8),b=2+ri(8),ans=a+b,wr=ans+(ri(2)?1:-1)*(1+ri(2));A.innerHTML=`<div class="mmbig mmq">${a} + ${b}</div>`;const row=document.createElement("div");row.className="mmopts";shuffle([ans,wr]).forEach(v=>{const x=document.createElement("button");x.className="mmopt";x.textContent=v;x.addEventListener("pointerdown",e=>{e.preventDefault();if(v===ans)win();else lose("🧮 Your math teacher felt that.")});row.appendChild(x)});A.appendChild(row)}},
+  {t:"QUICK MATH!",a:"حساب بسرعة!",f:"🧮 Your math teacher felt that.",mk(A,win,lose){const a=2+ri(8),b=2+ri(8),ans=a+b,ch=new Set([ans]);while(ch.size<4){const w=ans+(ri(2)?1:-1)*(1+ri(3));if(w>0)ch.add(w)}A.innerHTML=`<div class="mmbig mmq">${a} + ${b}</div>`;const row=document.createElement("div");row.className="mmopts";shuffle([...ch]).forEach(v=>{const x=document.createElement("button");x.className="mmopt";x.textContent=v;x.addEventListener("pointerdown",e=>{e.preventDefault();if(v===ans)win();else lose("🧮 Your math teacher felt that.")});row.appendChild(x)});A.appendChild(row)}},
   {t:"WAKE UP!",a:"اصحى!",f:"😴 You slept through the whole thing. Again.",mk(A,win){let n=7;const f=mmEl(A,"mmi mmc","😴");f.style.fontSize="90px";f.addEventListener("pointerdown",e=>{e.preventDefault();n--;f.classList.remove("shake");void f.offsetWidth;f.classList.add("shake");tone(400+n*50,.04,"square",.03);if(n<=0){f.textContent="😳";win()}})}}
 ];
 const HOW={
@@ -2671,7 +2661,7 @@ const HOW={
   steady:()=>TW("☝️ Touch the circle and keep your finger inside","☝️ المس الدايرة وخلي صباعك جواها"),
   copy:()=>TW("🧠 Watch the lights, then tap the same order","🧠 بص على الأنوار، ودوس بنفس الترتيب"),
   aim:()=>TW("🎯 Tap FIRE when the white line is on the red","🎯 دوس FIRE لما الخط الأبيض ييجي على الأحمر"),
-  whack:()=>TW("🔨 Hit 🐹 (+1) · never hit 💣 (−3)","🔨 اضرب 🐹 (+١) · متضربش 💣 (−٣)")
+  whack:()=>TW("🔨 Hit 🐹 (+1) · never hit 💣 (−1)","🔨 اضرب 🐹 (+١) · متضربش 💣 (−١)")
 };
 for(const id in HOW)if(GAMES[id]&&!GAMES[id].how)GAMES[id].how=HOW[id];
 const fmtc=n=>Math.round(n).toLocaleString("en-US");
@@ -4216,7 +4206,7 @@ function sync(){
   if(!nr)return;
   if(isHost)hostTick();
   else{const best=bestHost();if(best)adopt(best)}
-  render();checkEmotes();checkChat();
+  render();checkEmotes();
 }
 function watchdog(){
   if(!nr||isHost||screen!=="room")return;
@@ -4235,105 +4225,13 @@ function checkEmotes(){
   }
   if(G&&G.be)for(const id in G.be)seeEmo(id,G.be[id]);
 }
-const BAD=["fuck","shit","bitch","dick","pussy","cunt","whore","nigg","طيز","عرص","خول","كس","متناك","شرموط","زب","وسخ","حيوان","جزمة","يلعن","معفن","منيوك","لبوة","🖕","👉🍑"];
-let chatLog=[],chatN=0,lastChatAt=0,chatOpen=false,unread=0,chatSig="",chatTab="lobby",lobbySent="";
-const CHAT_URL=/\.github\.io$/.test(location.hostname)?new URL("../chat/",location.href).href:"https://fardasticmanguy-rgb.github.io/chat/";
-const seenChat=new Map();
 const wide=()=>window.matchMedia("(min-width:960px)").matches;
-function maskBad(t){
-  if(!G||!G.ff)return t;
-  let out=t;
-  for(const w of BAD){const re=new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,"\\function seeEmo(id,e){"),"gi");out=out.replace(re,m=>"*".repeat(Math.max(3,[...m].length)))}
-  return out;
-}
-function logChat(id,txt,kind){
-  const p=G&&G.roster.find(r=>r.id===id);
-  let name=p?p.name:id===me.pid?me.name:"";
-  if(!name&&nr)for(const peer of nr.peers()){const pr=peer.presence||{};if(pr.pid===id)name=clean(pr.name)}
-  chatLog.push({id,name:name||"Someone",col:p?p.col:id===me.pid?me.col:0,txt:String(txt).slice(0,120),kind,t:Date.now()});
-  if(chatLog.length>150)chatLog.shift();
-  if(id!==me.pid&&!((wide()&&screen==="room"||chatOpen)&&chatTab==="lobby"))unread++;
-  renderChat();
-}
-function checkChat(){
-  if(!nr)return;
-  for(const p of nr.peers()){
-    if(p.sameTab)continue;
-    const pr=p.presence||{},c=pr.chat;
-    if(typeof pr.pid!=="string")continue;
-    if(!seenChat.has(pr.pid)){seenChat.set(pr.pid,c&&Number.isInteger(c.n)?c.n:0);continue}
-    if(!c||!Number.isInteger(c.n)||typeof c.m!=="string"||c.n<=seenChat.get(pr.pid))continue;
-    seenChat.set(pr.pid,c.n);
-    logChat(pr.pid,clean2(c.m),"msg");
-  }
-}
-function clean2(s){return String(s??"").replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁦-⁩]/g,"").trim().slice(0,100)}
-function sendChat(){
-  const i=$("#chatin");if(!i)return;
-  const m=clean2(i.value);if(!m)return;
-  const now=Date.now();if(now-lastChatAt<600)return;
-  lastChatAt=now;chatN++;i.value="";
-  logChat(me.pid,m,"msg");
-  if(nr&&!practice)nr.presence({chat:{n:chatN,m}}).catch(()=>{});
-}
-function renderChat(){
-  const box=$("#chat"),fab=$("#chatfab");if(!box)return;
-  const inRoom=screen==="room";
-  if(!inRoom)chatTab="rooms";
-  const dock=inRoom&&wide(),show=dock||chatOpen;
-  box.hidden=!show;box.classList.toggle("sheet",show&&!dock);box.classList.toggle("cfloat",show&&!dock&&wide());
-  document.body.classList.toggle("haschat",dock);
-  if(fab){fab.hidden=dock||chatOpen;const u=$("#unread");if(u){u.hidden=!unread;u.textContent=unread>9?"9+":unread}}
-  sendLobby();
-  if(!show)return;
-  if(!box.dataset.built){
-    box.dataset.built="1";
-    box.innerHTML=`<div class="chead"><div class="ctabs"><button class="ctab" data-act="ctab" data-t="lobby" id="ctlobby">Lobby</button><button class="ctab" data-act="ctab" data-t="rooms" id="ctrooms">Chats</button></div><span class="sp"></span><button class="btn small ghost" data-act="chatclose" id="chatclose">Close</button></div><div class="cpane" id="clobby"><div class="clog" id="clog"></div><div id="cphr"></div><div class="cin"><input id="chatin" maxlength="100" autocomplete="off" placeholder="Say something…" aria-label="Chat message"><button class="btn small primary" data-act="chatsend">Send</button></div></div><div class="cpane" id="crooms" hidden></div>`;
-  }
-  const cl=$("#chatclose");if(cl)cl.hidden=dock;
-  $("#ctlobby").hidden=!inRoom;
-  $("#ctlobby").classList.toggle("on",chatTab==="lobby");$("#ctrooms").classList.toggle("on",chatTab==="rooms");
-  $("#clobby").hidden=chatTab!=="lobby";$("#crooms").hidden=chatTab!=="rooms";
-  if(chatTab==="rooms"&&!$("#cframe")){const f=document.createElement("iframe");f.id="cframe";f.className="cframe";f.title="Chat";f.allow="clipboard-write";f.src=CHAT_URL+"?embed=1";$("#crooms").append(f)}
-  const rude=G&&!G.ff;
-  const ph=$("#cphr"),phHtml=rude?`<div class="phrs" dir="rtl" lang="ar">${PHR.map((t,k)=>`<button class="phr" data-act="emo" data-i="${EMO.length+k}">${esc(t)}</button>`).join("")}</div>`:"";
-  if(ph.dataset.k!==phHtml){ph.dataset.k=phHtml;ph.innerHTML=phHtml}
-  const sig=chatLog.length+"|"+(chatLog.length?chatLog[chatLog.length-1].t:0)+"|"+(G&&G.ff);
-  if(sig===chatSig)return;
-  chatSig=sig;
-  const log=$("#clog"),atBottom=log.scrollHeight-log.scrollTop-log.clientHeight<40;
-  log.innerHTML=chatLog.length?chatLog.map(e=>`<div class="cm${e.kind==="emo"?" ce":""}${e.id===me.pid?" mine":""}"><b style="color:${COLS[e.col%COLS.length]}">${esc(e.name)}</b> <span dir="auto">${esc(maskBad(e.txt))}</span></div>`).join(""):`<div class="note">No messages yet. Say hi 👋</div>`;
-  if(atBottom||chatLog.length&&chatLog[chatLog.length-1].id===me.pid)log.scrollTop=log.scrollHeight;
-}
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="chatin"){e.preventDefault();sendChat()}});
-function chatFrame(){const f=$("#cframe");return f&&f.contentWindow?f:null}
-function toFrame(msg){const f=chatFrame();if(f)try{f.contentWindow.postMessage(msg,location.origin)}catch(e){}}
-function sendLobby(force){
-  const l=screen==="room"&&!practice&&code?{code,mode:G?G.mode:""}:null,k=JSON.stringify(l);
-  if(!force&&k===lobbySent)return;
-  lobbySent=k;toFrame({cpLobby:l});
-}
-window.addEventListener("message",async e=>{
-  const f=chatFrame();
-  if(!f||e.source!==f.contentWindow||e.origin!==location.origin||!e.data||typeof e.data!=="object")return;
-  if(e.data.cpReady){sendLobby(true);if(me.name)toFrame({cpName:me.name})}
-  const p=e.data.cpPlay;
-  if(p&&typeof p==="object"){
-    const c=String(p.c||"").toLowerCase().replace(/[^a-z0-9]/g,"").slice(0,12);
-    if(c.length<2||joining)return;
-    if(screen==="room"&&code===c)return;
-    if(!wide()){chatOpen=false}
-    if(screen==="room")await leave();
-    await playWith({play:c,mode:String(p.m||""),h:p.h?"1":"",name:String(p.name||"")});
-  }
-});
-window.addEventListener("resize",()=>renderChat());
 
 function seeEmo(id,e){
   if(!e||typeof e!=="object"||!Number.isInteger(e.i)||!REACT(e.i)||!Number.isInteger(e.n))return;
   if(e.n<=(seenEmo.get(id)||0))return;
   seenEmo.set(id,e.n);
-  if(emoOk(e.i)){spawnEmo(id,e.i);logChat(id,REACT_TXT(e.i)||REACT(e.i),"emo")}
+  if(emoOk(e.i)){spawnEmo(id,e.i)}
 }
 function spawnEmo(id,i){
   const el=document.querySelector(`[data-pid="${CSS.escape(id)}"]`);
@@ -4349,7 +4247,7 @@ function sendEmo(i){
   const now=Date.now();
   if(now-lastEmoAt<450||!emoOk(i))return;
   lastEmoAt=now;emoN++;
-  spawnEmo(me.pid,i);logChat(me.pid,REACT_TXT(i)||REACT(i),"emo");
+  spawnEmo(me.pid,i);
   if(nr&&!practice)nr.presence({emo:{i,n:emoN}}).catch(()=>{});
 }
 
@@ -4424,7 +4322,7 @@ async function leave(){
   stopStage();
   const r=nr;nr=null;ss.set("cp.rejoin","");ss.set("cp.host","");
   if(r){try{await r.presence({g:null,res:null});await r.leave()}catch(e){}}
-  isHost=false;practice=false;G=null;code=null;mySub=null;cPick=null;armX2=false;armSh=false;pX2=null;myAct=null;bSel=null;hSel=[];hMyKnown=null;hMyPend=null;chatLog=[];chatSig="";chatOpen=false;unread=0;
+  isHost=false;practice=false;G=null;code=null;mySub=null;cPick=null;armX2=false;armSh=false;pX2=null;myAct=null;bSel=null;hSel=[];hMyKnown=null;hMyPend=null;
   lobbyPresence();
   screen="menu";render();
 }
@@ -4441,7 +4339,8 @@ let showPhr=false;
 function emoOk(i){return Number.isInteger(i)&&!!REACT(i)&&!(i>=RUDE&&(!G||G.ff))}
 function emoBar(){
   const emos=EMO.map((e,i)=>!emoOk(i)?"":`<button class="emo${i===7?" wide":""}" data-act="emo" data-i="${i}" aria-label="React ${i===7?"بعبوص":e}">${e}</button>`).join("");
-  return `<div class="emos">${emos}<button class="emo chatbtn" data-act="chat" aria-label="Chat">💬</button></div>`;
+  const rude=G&&!G.ff;
+  return `<div class="emos">${emos}${rude?`<button class="emo" data-act="phr" aria-label="Phrases">💬</button>`:""}</div>${rude&&showPhr?`<div class="phrs" dir="rtl" lang="ar">${PHR.map((t,k)=>`<button class="phr" data-act="emo" data-i="${EMO.length+k}">${esc(t)}</button>`).join("")}</div>`:""}`;
 }
 function topBar(label){return `<div class="top"><div class="rd">${label}</div><span class="sp"></span>${!isHost&&!practice?`<button class="mute" data-act="reload" title="Stuck? Reload and rejoin">↻</button>`:""}<button class="mute" data-act="mute">${muted?"Sound off":"Sound on"}</button><button class="btn small ghost" data-act="leave">Leave</button></div>`}
 
@@ -4630,7 +4529,8 @@ function renderStage(){
   part("s-stage",G.phase==="intro"?introHTML():resultHTML());
 }
 function render(){
-  try{renderMain()}finally{renderChat();onlineBeat();renderJoinToast()}
+  document.body.classList.toggle("playing",screen==="room"&&!!G&&G.phase==="play");
+  try{renderMain()}finally{onlineBeat();renderJoinToast()}
 }
 function renderMain(){
   const root=$("#app");
@@ -4692,10 +4592,6 @@ document.addEventListener("click",e=>{
   else if(a==="px2")togglePX2();
   else if(["brole","bact","btg"].includes(a))bClick(a,b);
   else if(["hhide","hmove","hsel","hgo"].includes(a))hClick(a,b);
-  else if(a==="chat"){if(!(screen==="room"&&wide())){chatOpen=true;if(chatTab==="lobby")unread=0;renderChat();setTimeout(()=>{const i=chatTab==="lobby"&&$("#chatin");if(i)i.focus()},50)}else{chatTab="lobby";renderChat();const i=$("#chatin");if(i)i.focus()}}
-  else if(a==="chatclose"){chatOpen=false;renderChat()}
-  else if(a==="ctab"){chatTab=b.dataset.t==="rooms"?"rooms":"lobby";if(chatTab==="lobby")unread=0;renderChat();if(chatTab==="lobby"){const i=$("#chatin");if(i)i.focus()}}
-  else if(a==="chatsend")sendChat();
   else if(a==="sh")cToggleSh();
   else if(a==="pk")cPeek();
   else if(a==="ff")toggleFF();
@@ -4753,7 +4649,7 @@ document.addEventListener("click",e=>{
 window.addEventListener("message",e=>{
   if(!PC.fr||e.source!==PC.fr.contentWindow)return;
   const d=e.data&&typeof e.data==="object"?e.data:{};
-  if(d.chat==="new"&&(PC.min||document.hidden)){PC.n+=Math.max(1,Math.min(50,d.n|0));pcBadge();if(PC.min)kToast("🔐 New note in your chat");tone(880,.06,"triangle",.03)}
+  if(d.chat==="new"&&(PC.min||document.hidden)){PC.n+=Math.max(1,Math.min(50,d.n|0));pcBadge();tone(880,.06,"triangle",.03)}
   else if(d.cpPlay&&typeof d.cpPlay==="object")pcPlay(d.cpPlay.c,d.cpPlay.m,d.cpPlay.h);
   else if(d.cpReady)pcPost({cpLobby:screen==="room"&&!practice&&code?{code,mode:G?G.mode:""}:null});
 });
