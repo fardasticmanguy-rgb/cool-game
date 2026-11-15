@@ -2208,7 +2208,7 @@ Object.assign(GAMES,{
         rocks.forEach((k,i)=>{
           const yy=-8+k.v*(tt-k.t)/1000,m=ms[i];
           if(tt<k.t||yy>110){if(m.style.display!=="none")m.style.display="none";return}
-          m.style.display="";m.style.left=k.x+"%";m.style.top=yy+"%";m.style.width=m.style.height=k.s+"%";
+          m.style.display="block";m.style.left=k.x+"%";m.style.top=yy+"%";m.style.width=m.style.height=k.s+"%";
           if(Math.abs(yy-88)<k.s*.42&&Math.abs(k.x-px)<k.s*.36+3)hit=true;
         });
         s.textContent=(tt/1000).toFixed(1)+"s"+(best?` · best ${(best/1000).toFixed(1)}s`:"");
