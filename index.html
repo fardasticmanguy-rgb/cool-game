@@ -447,6 +447,15 @@ input:focus{border-color:var(--butter)}
 .krr.me{outline:2px solid var(--butter)}
 .kmrow{display:flex;gap:6px;align-items:center;font-weight:700;color:var(--dim);font-size:14px}
 .kmg .gmtile.dim{opacity:.45}
+.ktw{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:260px}
+.ktw .gmtile{aspect-ratio:2/1;font-size:22px}
+.ktw .gmtile.dim{opacity:.45}
+.kcoin{font-size:84px;line-height:1;text-align:center}
+.kcoin.flip{animation:rumble .12s infinite}
+.kwheel{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%;max-width:300px}
+.kwheel span{background:var(--raise);border-radius:10px;padding:10px 0;text-align:center;font-family:var(--display);font-size:16px;color:var(--dim)}
+.kwheel span.lo{color:var(--ink)}.kwheel span.mid{color:var(--butter)}.kwheel span.hi{color:var(--mint)}
+.kwheel span.on{outline:3px solid var(--butter);transform:scale(1.08)}
 .kmm{display:flex;flex-direction:column;align-items:center;line-height:1}
 .kmm b{font-family:var(--display);font-weight:400;font-size:30px;color:var(--mint)}
 .kmm small{color:var(--dim);font-weight:700;min-height:16px;margin-top:4px}
@@ -3109,7 +3118,7 @@ function kTickBots(now){
     H.kbot[p.id]=now+4000+ri(7000);
     let bal=kTot(p.id);
     if(bal<50){G.base[p.id]+=300;kFeed("🆘",`${p.name} got 300 chips from the house`);continue}
-    const bet=botBet(bal),r=Math.random(),ks=["mines","plinko","slots","roulette","blackjack","hilo","dice"],t=ks[ri(ks.length)];
+    const bet=botBet(bal),r=Math.random(),ks=["mines","plinko","slots","roulette","blackjack","hilo","dice","towers","limbo","coin","wheel","baccarat"],t=ks[ri(ks.length)];
     const x=r<.002?25:r<.012?8:r<.042?3:r<.44?2:0;
     G.base[p.id]+=Math.round(bet*x)-bet;G.at[p.id]=t;
     if(x>=3&&bet*(x-1)>=200){kFeed(KT[t].i,`${p.name} hit ×${x} on ${KT[t].n} (+${fmtc(bet*(x-1))})`);kCbig(p.id,bet*(x-1))}
@@ -3405,6 +3414,110 @@ const KT={
     });
     return{un:finish,busy:()=>!!cur};
   }},
+  towers:{i:"🗼",n:"Towers",mount(el){
+    let on=false,bet=0,row=0,bombs=[],lvl=1;
+    const R=8,C=3,mul=n=>Math.floor(.97*Math.pow(C/(C-lvl),n)*100)/100;
+    el.innerHTML=`<div class="stage cas"><div class="kmrow"><span>Bombs per floor</span>${[1,2].map(v=>`<button class="betb${v===lvl?" on":""}" data-lv="${v}">${v}</button>`).join("")}</div><div class="ktw" data-g>${Array.from({length:R},(_,r)=>Array.from({length:C},(_,c)=>`<button class="cell gmtile" data-r="${R-1-r}" data-c="${c}" disabled></button>`).join("")).join("")}</div><div class="kmm"><b data-m>×1.00</b><small data-nx></small></div>${kBetHTML()}<button class="gmbank" data-b>START</button><p class="prompt" data-p>Climb the tower. Pick a safe tile on every floor.</p></div>`;
+    const g=el.querySelector("[data-g]"),bk=el.querySelector("[data-b]"),p=el.querySelector("[data-p]"),mm=el.querySelector("[data-m]"),nx=el.querySelector("[data-nx]");
+    const upd=()=>{mm.textContent="×"+(row?mul(row):1).toFixed(2);nx.textContent=on&&row<R?`next floor: ×${mul(row+1).toFixed(2)}`:"";bk.textContent=on?(row?`CASH OUT ${fmtc(bet*mul(row))}`:"PICK A TILE"):"START";bk.disabled=on&&!row;el.querySelectorAll("[data-lv]").forEach(x=>x.disabled=on);g.querySelectorAll(".gmtile").forEach(x=>{if(!x.textContent)x.disabled=!on||+x.dataset.r!==row})};
+    const reveal=()=>g.querySelectorAll(".gmtile").forEach(x=>{x.disabled=true;if(!x.textContent){const b=bombs[+x.dataset.r].has(+x.dataset.c);x.textContent=b?"💣":"💎";x.classList.add("dim")}});
+    const cash=()=>{if(!on||!row)return;const x=mul(row),w=Math.floor(bet*x);on=false;kGive(w);kBigWin("towers",x,w-bet);p.textContent=`Cashed out ×${x.toFixed(2)}! +${fmtc(w-bet)} 🤑`;tone(1046,.15,"square",.05);reveal();upd()};
+    el.querySelector(".kmrow").addEventListener("pointerdown",e=>{const x=e.target.closest("[data-lv]");if(!x||on)return;e.preventDefault();lvl=+x.dataset.lv;el.querySelectorAll("[data-lv]").forEach(y=>y.classList.toggle("on",y===x));upd()});
+    bk.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      if(on){cash();return}
+      const a=kBetUse();if(!a||!kTake(a))return;
+      bet=a;on=true;row=0;bombs=Array.from({length:R},()=>new Set(shuffle([0,1,2]).slice(0,lvl)));
+      g.querySelectorAll(".gmtile").forEach(x=>{x.textContent="";x.className="cell gmtile"});
+      p.textContent="Start at the bottom and climb!";tone(660,.06,"square",.04);upd();
+    });
+    g.addEventListener("pointerdown",e=>{
+      const c=e.target.closest(".gmtile");if(!c||!on||c.textContent||+c.dataset.r!==row)return;e.preventDefault();
+      if(bombs[row].has(+c.dataset.c)){on=false;c.textContent="💥";c.classList.add("wrong");g.classList.remove("shake");void g.offsetWidth;g.classList.add("shake");tone(110,.35,"sawtooth",.06);p.textContent=`BOOM! −${fmtc(bet)}`;reveal();kBump();upd();return}
+      c.textContent="💎";c.classList.add("gmsafe");row++;tone(480+row*50,.07,"triangle",.04);
+      if(row>=R){cash();return}
+      p.textContent="Safe! Climb higher or cash out.";upd();
+    });
+    upd();
+    return{un(){if(on){if(row)cash();else{on=false;kGive(bet)}}},busy:()=>on};
+  }},
+  limbo:{i:"🎯",n:"Limbo",mount(el){
+    let tg=2,tm=null,cur=null;
+    el.innerHTML=`<div class="stage cas"><div class="kmm"><b data-m>×1.00</b><small data-t>Target ×2.00</small></div><div class="kmrow"><span>Target</span>${[1.5,2,3,5,10].map(v=>`<button class="betb${v===tg?" on":""}" data-tg="${v}">${v}×</button>`).join("")}</div>${kBetHTML()}<button class="gmbank" data-b>ROLL</button><p class="prompt" data-p>Pick a target. If the roll reaches it, you win that multiplier.</p></div>`;
+    const mm=el.querySelector("[data-m]"),tt=el.querySelector("[data-t]"),bk=el.querySelector("[data-b]"),p=el.querySelector("[data-p]");
+    const finish=()=>{if(!cur)return;clearInterval(tm);const c=cur;cur=null;const win=c.r>=c.tg,w=win?Math.floor(c.bet*c.tg):0;mm.textContent="×"+c.r.toFixed(2);mm.style.color=win?"":"var(--coral)";kGive(w);kBigWin("limbo",win?c.tg:0,w-c.bet);p.textContent=win?`Hit! +${fmtc(w-c.bet)} 🤑`:`Too low. −${fmtc(c.bet)}`;tone(win?1046:160,.15,win?"square":"sawtooth",.05);bk.disabled=false;el.querySelectorAll("[data-tg]").forEach(x=>x.disabled=false)};
+    el.querySelector(".kmrow").addEventListener("pointerdown",e=>{const x=e.target.closest("[data-tg]");if(!x||cur)return;e.preventDefault();tg=+x.dataset.tg;el.querySelectorAll("[data-tg]").forEach(y=>y.classList.toggle("on",y===x));tt.textContent=`Target ×${tg.toFixed(2)}`});
+    bk.addEventListener("pointerdown",e=>{
+      e.preventDefault();if(cur)return;
+      const a=kBetUse();if(!a||!kTake(a))return;
+      const r=Math.max(1,Math.min(1000,Math.floor(.97/(1-Math.random())*100)/100));
+      cur={bet:a,tg,r};bk.disabled=true;el.querySelectorAll("[data-tg]").forEach(x=>x.disabled=true);mm.style.color="";p.textContent="Rolling…";
+      let k=0;tm=setInterval(()=>{k++;mm.textContent="×"+(1+Math.random()*Math.min(r,20)).toFixed(2);tone(300+k*40,.03,"square",.02);if(k>=10)finish()},90);
+    });
+    return{un:finish,busy:()=>!!cur};
+  }},
+  coin:{i:"🪙",n:"Coin Streak",mount(el){
+    let on=false,bet=0,n=0,busy=false;
+    const mul=k=>Math.floor(Math.pow(1.94,k)*100)/100;
+    el.innerHTML=`<div class="stage cas"><div class="kcoin" data-c>🪙</div><div class="kmm"><b data-m>×1.00</b><small data-s></small></div>${kBetHTML()}<div class="duo" data-btns><button class="pick cbtn" data-a="0" disabled><span>🙂</span>HEADS</button><button class="pick cbtn" data-a="1" disabled><span>🦅</span>TAILS</button></div><button class="gmbank" data-b>START</button><p class="prompt" data-p>Call the flip. Every right call multiplies by 1.94. Cash out anytime.</p></div>`;
+    const cn=el.querySelector("[data-c]"),mm=el.querySelector("[data-m]"),ss2=el.querySelector("[data-s]"),bk=el.querySelector("[data-b]"),p=el.querySelector("[data-p]");
+    const show=()=>{mm.textContent="×"+(n?mul(n):1).toFixed(2);ss2.textContent=on?`${n} in a row · next ×${mul(n+1).toFixed(2)}`:"";el.querySelectorAll("[data-btns] .cbtn").forEach(b=>b.disabled=!on||busy);bk.textContent=on?(n?`CASH OUT ${fmtc(bet*mul(n))}`:"CALL A SIDE"):"START";bk.disabled=on&&(!n||busy)};
+    const cash=()=>{if(!on||!n)return;const x=mul(n),w=Math.floor(bet*x);on=false;kGive(w);kBigWin("coin",x,w-bet);p.textContent=`Cashed out ×${x.toFixed(2)}! +${fmtc(w-bet)} 🤑`;tone(1046,.15,"square",.05);show()};
+    bk.addEventListener("pointerdown",e=>{e.preventDefault();if(busy)return;if(on){cash();return}const a=kBetUse();if(!a||!kTake(a))return;bet=a;on=true;n=0;cn.textContent="🪙";p.textContent="Heads or tails?";tone(660,.06,"square",.04);show()});
+    el.querySelector("[data-btns]").addEventListener("pointerdown",e=>{
+      const b=e.target.closest(".cbtn");if(!b||!on||busy)return;e.preventDefault();
+      busy=true;show();const call=+b.dataset.a,res=ri(2);cn.classList.add("flip");tone(500,.1,"square",.03);
+      setTimeout(()=>{
+        cn.classList.remove("flip");busy=false;cn.textContent=res?"🦅":"🙂";
+        if(!document.body.contains(el))return;
+        if(res!==call){on=false;tone(150,.3,"sawtooth",.05);p.textContent=`Wrong! −${fmtc(bet)}`;mm.textContent="×0";ss2.textContent="";el.querySelectorAll("[data-btns] .cbtn").forEach(x=>x.disabled=true);bk.textContent="START";bk.disabled=false;return}
+        n++;tone(500+n*60,.07,"triangle",.04);p.textContent="Right! Go again or CASH OUT.";show();
+      },650);
+    });
+    show();
+    return{un(){if(on){if(n)cash();else{on=false;kGive(bet)}}},busy:()=>on};
+  }},
+  wheel:{i:"🍀",n:"Wheel of Fortune",mount(el){
+    const WH=[0,0,0,1.5,0,0,2,0,0,1.2,0,0,3,0,0,8];
+    let cur=null,tm=null;
+    el.innerHTML=`<div class="stage cas"><div class="kwheel" data-w>${WH.map(x=>`<span class="${x>=8?"hi":x>=2?"mid":x?"lo":""}">${x?x+"×":"💀"}</span>`).join("")}</div>${kBetHTML()}<button class="gmbank" data-b>SPIN</button><p class="prompt" data-p>Spin the wheel. Land on a multiplier to win.</p></div>`;
+    const w=el.querySelector("[data-w]"),bk=el.querySelector("[data-b]"),p=el.querySelector("[data-p]"),sp=[...w.children];
+    const finish=()=>{if(!cur)return;clearInterval(tm);const c=cur;cur=null;sp.forEach((x,i)=>x.classList.toggle("on",i===c.i));const x=WH[c.i],win=Math.floor(c.bet*x);kGive(win);kBigWin("wheel",x,win-c.bet);p.textContent=x?`${x}×! +${fmtc(win-c.bet)} 🤑`:`💀 Bust. −${fmtc(c.bet)}`;tone(x?1046:160,.15,x?"square":"sawtooth",.05);bk.disabled=false};
+    bk.addEventListener("pointerdown",e=>{
+      e.preventDefault();if(cur)return;
+      const a=kBetUse();if(!a||!kTake(a))return;
+      cur={bet:a,i:ri(WH.length)};bk.disabled=true;p.textContent="Spinning…";
+      let k=0,pos=ri(WH.length);const total=WH.length*2+((cur.i-pos+WH.length)%WH.length);
+      tm=setInterval(()=>{pos=(pos+1)%WH.length;k++;sp.forEach((x,i)=>x.classList.toggle("on",i===pos));tone(300+(k%8)*30,.025,"square",.02);if(k>=total)finish()},85);
+    });
+    return{un:finish,busy:()=>!!cur};
+  }},
+  baccarat:{i:"🎴",n:"Baccarat",mount(el){
+    let cur=null,tms=[];
+    const bv=c=>c.r>=10?0:c.r,bt=cs=>cs.reduce((a,c)=>a+bv(c),0)%10;
+    el.innerHTML=`<div class="stage cas"><div class="ctab"><div class="clab">Player <b data-pv></b></div><div class="cards" data-pc></div><div class="clab">Banker <b data-bv></b></div><div class="cards" data-bc></div></div>${kBetHTML()}<div class="duo trio" data-o><button class="pick cbtn dc0" data-c="0"><span>🙂</span>PLAYER<small>×2</small></button><button class="pick cbtn dc1" data-c="2"><span>🤝</span>TIE<small>×9</small></button><button class="pick cbtn dc2" data-c="1"><span>🏦</span>BANKER<small>×1.95</small></button></div><p class="prompt" data-p>Closest to 9 wins. Tap a side to bet and deal.</p></div>`;
+    const pc=el.querySelector("[data-pc]"),bc=el.querySelector("[data-bc]"),pv=el.querySelector("[data-pv]"),bvv=el.querySelector("[data-bv]"),p=el.querySelector("[data-p]");
+    const draw=(P,B,n)=>{pc.innerHTML=P.slice(0,n.p).map(c=>pcard(c)).join("");bc.innerHTML=B.slice(0,n.b).map(c=>pcard(c)).join("");pv.textContent=n.p?bt(P.slice(0,n.p)):"";bvv.textContent=n.b?bt(B.slice(0,n.b)):""};
+    const finish=()=>{if(!cur)return;tms.forEach(clearTimeout);tms=[];const c=cur;cur=null;draw(c.P,c.B,{p:c.P.length,b:c.B.length});const x=c.o===c.c?(c.o===2?9:c.o===1?1.95:2):0,w=Math.floor(c.bet*x);kGive(w);kBigWin("baccarat",x,w-c.bet);p.textContent=`${["Player","Banker","Tie"][c.o]} wins! ${x?"+"+fmtc(w-c.bet)+" 🤑":"−"+fmtc(c.bet)}`;tone(x?1046:160,.15,x?"square":"sawtooth",.05);el.querySelectorAll(".cbtn").forEach(b=>{b.disabled=false;b.classList.remove("sel")})};
+    el.querySelector("[data-o]").addEventListener("pointerdown",e=>{
+      const b=e.target.closest(".cbtn");if(!b||cur)return;e.preventDefault();
+      const a=kBetUse();if(!a||!kTake(a))return;
+      const dk=kDeck(),P=[dk.pop(),dk.pop()],B=[dk.pop(),dk.pop()];
+      let pt=bt(P),bb=bt(B),p3=null;
+      if(pt<8&&bb<8){
+        if(pt<=5){p3=bv(dk[dk.length-1]);P.push(dk.pop())}
+        const d=p3===null?bb<=5:bb<=2||(bb===3&&p3!==8)||(bb===4&&p3>=2&&p3<=7)||(bb===5&&p3>=4&&p3<=7)||(bb===6&&(p3===6||p3===7));
+        if(d)B.push(dk.pop());
+      }
+      pt=bt(P);bb=bt(B);
+      cur={bet:a,c:+b.dataset.c,P,B,o:pt>bb?0:bb>pt?1:2};
+      b.classList.add("sel");el.querySelectorAll(".cbtn").forEach(x=>x.disabled=true);p.textContent="Dealing…";
+      const seq=[{p:1,b:0},{p:1,b:1},{p:2,b:1},{p:2,b:2},{p:P.length,b:2},{p:P.length,b:B.length}];
+      seq.forEach((n,i)=>tms.push(setTimeout(()=>{draw(P,B,n);tone(400+i*40,.05,"triangle",.04)},i*350)));
+      tms.push(setTimeout(finish,seq.length*350+250));
+    });
+    return{un:finish,busy:()=>!!cur};
+  }},
   duel:{i:"⚔️",n:"Duel a friend",mount(el){
     let gm="coin";
     el.innerHTML=`<div class="stage cas kduel"><div class="headline">⚔️ Bet against your friends</div><p class="sub">Pick a game and a bet, then challenge someone. Winner takes the bet from the loser.</p><div class="kgms">${Object.keys(DUELS).map(k=>`<button class="betb${k===gm?" on":""}" data-gm="${k}">${DUELS[k].i} ${DUELS[k].n}</button>`).join("")}</div>${kBetHTML()}<div class="kdl" data-l></div><div class="kdh" data-h></div></div>`;
@@ -3436,7 +3549,7 @@ const KT_IDS=Object.keys(KT);
 function kToast(t){const jt=$("#jt");if(!jt)return;jt.textContent=t;jt.hidden=false;jt.classList.remove("show");void jt.offsetWidth;jt.classList.add("show");clearTimeout(jnTimer);jnTimer=setTimeout(()=>{jt.hidden=true},2200)}
 function kStop(){if(kUn&&kUn.un)try{kUn.un()}catch(e){}kUn=null;kMounted=""}
 function kPartEl(el,html){if(el&&el.dataset.k!==html){el.dataset.k=html;el.innerHTML=html}}
-const KD={crash:"Ride the rocket with everyone. Cash out before it blows.",mines:"Flip tiles, dodge the bombs, cash out anytime.",plinko:"Drop a ball and see where it lands.",slots:"Spin three reels. Match them up.",roulette:"Bet on a color or a number.",blackjack:"Beat the dealer to 21.",hilo:"Guess if the next card is higher or lower.",dice:"Roll two dice. Over or under 7?",duel:"Challenge a friend and take their chips."};
+const KD={crash:"Ride the rocket with everyone. Cash out before it blows.",mines:"Flip tiles, dodge the bombs, cash out anytime.",plinko:"Drop a ball and see where it lands.",slots:"Spin three reels. Match them up.",roulette:"Bet on a color or a number.",blackjack:"Beat the dealer to 21.",hilo:"Guess if the next card is higher or lower.",dice:"Roll two dice. Over or under 7?",towers:"Climb the tower one safe tile at a time. Cash out before a bomb.",limbo:"Pick a target multiplier and hope the roll beats it.",coin:"Call heads or tails. Every right call multiplies your bet.",wheel:"Spin the wheel and land on a multiplier.",baccarat:"Bet on Player, Banker or Tie. Closest to 9 wins.",duel:"Challenge a friend and take their chips."};
 function kTabsHTML(){if(kTab==="home"||!KT[kTab])return `<div class="khd"><b>🎰 Pick a game</b><small>Play any game, as long as you want. Most money when time runs out wins.</small></div>`;return `<div class="khd row"><button class="btn small ghost" data-ktab="home">← All games</button><b>${KT[kTab].i} ${esc(KT[kTab].n)}</b></div>`}
 function kHomeHTML(){
   const at={};for(const p of G.roster){const t=p.id===me.pid?null:(G.at||{})[p.id];if(t&&KT[t])(at[t]=at[t]||[]).push(p.name)}
@@ -4798,7 +4911,7 @@ function optsHTML(host,lens){
   const games=GAME_IDS.map(id=>{const on=G.games.includes(id);return `<button class="gtog${on?" on":""}" data-act="opt" data-k="game" data-v="${id}" ${dis}><span>${GAMES[id].i}</span>${esc(GAMES[id].n)}</button>`}).join("");
   return `<section class="panel opts"><h2>LOBBY OPTIONS${host?"":" · host only"}</h2>
   <div class="orow"><span class="ol">Mode</span><div class="segs">${seg("mode",[["cards","🃏 Cards"],["brawl","⚔️ Brawl"],["hide","🙈 Hide & Seek"],["party","🎉 Party"],["single","🎯 One game"],["casino","🎰 Casino"]],G.mode)}<button class="seg tryall${G.mode==="party"&&G.len==="all"&&(G.games||[]).length>=GAME_IDS.length?" on":""}" data-act="opt" data-k="tryall" ${dis}>⭐ Try every game</button></div></div>
-  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Time</span><div class="segs">${seg("cmin",[["5","5 min"],["8","8 min"],["12","12 min"]],String(G.cmin||8))}</div></div><p class="note">🪙 Fake chips only, no real money. An open casino: everyone starts with 1,000 chips and walks between tables whenever they want. 🚀 Crash is live, so you all ride the same rocket. 💣 Mines, 🔻 Plinko, 🎰 Slots, 🎡 Roulette, 🃏 Blackjack, 🔼 Higher or Lower, 🎲 Dice. ⚔️ Challenge friends to duels and take their chips. No rounds: pick any game from the menu, play as much as you want, and switch whenever. Friends can walk in anytime. Most money when time runs out wins.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كازينو مفتوح: كل واحد بيبدأ بـ ١٠٠٠ ويلعب اللي هو عايزه. الكراش لايف وكلكم راكبين نفس الصاروخ. ودي صحابك تحدي وخد فيشهم. مفيش جولات: اختار أي لعبة من القايمة والعب براحتك وغيّر وقت ما تحب. وأي حد يقدر يدخل في أي وقت. اللي معاه أكتر فلوس لما الوقت يخلص يكسب.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
+  ${G.mode==="brawl"?`<p class="note">Everyone picks a fighter. Each turn: Attack, Parry, Charge or Special, all at the same time. Last one standing wins. Works with any number of players.</p><p class="note ar" dir="rtl" lang="ar">كل واحد يختار مقاتل. كل دور: اضرب، صد، اشحن، أو حركة خاصة. آخر واحد عايش يكسب.</p>`:G.mode==="hide"?`<p class="note">Hiders pick a spot. The seeker searches a few spots each turn. Hiders can sneak next door, but moving makes noise. Everyone gets a turn to seek.</p><p class="note ar" dir="rtl" lang="ar">اللي بيستخبوا يختاروا مكان. اللي بيدور يدور في كام مكان كل دور. ممكن تتحرك جنبك بس الحركة بتعمل صوت.</p>`:G.mode==="cards"?`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("rounds",[["6","6"],["8","8"],["10","10"]],String(G.rounds))}</div></div><p class="note">More rounds = more cards in your hand.</p>`:G.mode==="casino"?`<div class="orow"><span class="ol">Time</span><div class="segs">${seg("cmin",[["5","5 min"],["8","8 min"],["12","12 min"]],String(G.cmin||8))}</div></div><p class="note">🪙 Fake chips only, no real money. An open casino: everyone starts with 1,000 chips and walks between tables whenever they want. 🚀 Crash is live, so you all ride the same rocket. 💣 Mines, 🔻 Plinko, 🎰 Slots, 🎡 Roulette, 🃏 Blackjack, 🔼 Higher or Lower, 🎲 Dice, 🗼 Towers, 🎯 Limbo, 🪙 Coin Streak, 🍀 Wheel of Fortune, 🎴 Baccarat. ⚔️ Challenge friends to duels and take their chips. No rounds: pick any game from the menu, play as much as you want, and switch whenever. Friends can walk in anytime. Most money when time runs out wins.</p><p class="note ar" dir="rtl" lang="ar">فيش وهمية بس، مفيش فلوس حقيقية. كازينو مفتوح: كل واحد بيبدأ بـ ١٠٠٠ ويلعب اللي هو عايزه. الكراش لايف وكلكم راكبين نفس الصاروخ. ودي صحابك تحدي وخد فيشهم. مفيش جولات: اختار أي لعبة من القايمة والعب براحتك وغيّر وقت ما تحب. وأي حد يقدر يدخل في أي وقت. اللي معاه أكتر فلوس لما الوقت يخلص يكسب.</p>`:G.mode==="party"?`<div class="orow"><span class="ol">Games</span><div class="segs">${lens}</div></div><div class="orow"><span class="ol">Rounds each</span><div class="segs">${seg("per",[["1","1"],["2","2"],["3","3"]],String(G.per))}</div></div><p class="note">${G.len==="all"?"⭐ All: every game comes up once, so you can try them all.":"Each round of a game adds a new twist."}</p>`:`<div class="orow"><span class="ol">Rounds</span><div class="segs">${seg("srounds",[["3","3"],["5","5"],["7","7"]],String(G.srounds))}</div></div><p class="note">Pick the game below. It gets harder every round.</p>`}
   ${["party","single","casino"].includes(G.mode)?`<div class="orow"><span class="ol">Teams</span><button class="ffbtn${G.teams?" on":""}" data-act="opt" data-k="teams" ${dis}><span class="sw2"><i></i></span>${G.teams?"🔴 vs 🔵 On":"Off"}</button></div>`:""}
   <div class="orow"><span class="ol">Speed</span><div class="segs">${seg("speed",[["chill","Chill"],["normal","Normal"],["fast","Fast"]],G.speed)}</div></div>
   <div class="orow"><span class="ol">Bots</span><div class="segs">${seg("botlvl",[["easy","Easy"],["normal","Normal"],["hard","Hard"]],G.botlvl)}</div></div>
